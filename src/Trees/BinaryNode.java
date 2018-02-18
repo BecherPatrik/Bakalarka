@@ -1,0 +1,98 @@
+package Trees;
+
+import Graphic.BinaryGraphicNode;
+import Graphic.IGraphicNode;
+
+public class BinaryNode implements INode<BinaryNode> {
+	private int value;
+	private BinaryNode parent = null;
+	private BinaryNode right = null;
+	private BinaryNode left = null;
+	private BinaryGraphicNode graphicNode;
+
+	public BinaryNode(int value, BinaryNode parent) {
+		this.value = value;
+		this.parent = parent;
+		this.graphicNode = new BinaryGraphicNode(value);
+	}
+	
+	public BinaryNode(int value) {
+        this.value = value;
+        this.graphicNode = new BinaryGraphicNode(value);
+    }
+
+	@Override
+	public boolean equals(Object obj) {
+		BinaryNode node = (BinaryNode) obj;
+		return (value == node.getValue());
+	}
+
+	@Override
+	public BinaryGraphicNode getGraphicNode() {
+		return graphicNode;
+	}
+	
+	@Override
+	public void setGraphicNode(IGraphicNode graphicNode) {
+		this.graphicNode = (BinaryGraphicNode) graphicNode;
+	}
+
+	@Override
+	public BinaryNode getLeft() {
+		return left;
+	}
+
+	@Override
+	public void setLeft(BinaryNode node) {
+		left = node;
+		node.setParent(this);	
+	}
+
+	@Override
+	public BinaryNode getRight() {
+		return right;
+	}
+
+	@Override
+	public void setRight(BinaryNode node) {
+		right = node;
+		node.setParent(this);
+	}
+
+	@Override
+	public BinaryNode getParent() {
+		return parent;
+	}
+
+	@Override
+	public void setParent(BinaryNode node) {
+		parent = node;
+	}
+
+	@Override
+	public void setNode(BinaryNode node) {
+		value = node.getValue();
+		right = node.getRight();
+		left = node.getLeft();
+	}
+
+	@Override
+	public int getValue() {
+		return value;
+	}
+
+	@Override
+	public void setValue(int value) {
+		this.value = value;		
+	}
+
+	@Override
+	public void deleteLeft() {
+		this.left = null;
+	}
+
+	@Override
+	public void deleteRight() {
+		this.right = null;
+	}
+}

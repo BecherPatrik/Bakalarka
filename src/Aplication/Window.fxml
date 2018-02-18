@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.cell.CheckBoxListCell?>
+<?import javafx.scene.control.ToggleButton?>
+
+<BorderPane fx:id="bpWindow" fx:controller="Aplication.WindowController" xmlns:fx="http://javafx.com/fxml" stylesheets="@styles.css">
+	<left>
+		<VBox fx:id="treesMenu">
+			<Button fx:id="btnBack" text="Zpět" prefWidth="160" prefHeight="47" onAction="#hideMenu" alignment="CENTER_LEFT" styleClass="tree-button, menu-button" />
+			<Button fx:id="btnBinary" text="Binary tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button fx:id="btnAVL" text="AVL strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button fx:id="btnB" text="B-strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button fx:id="btnRedBlack" text="Červeno-černý strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button fx:id="btnRadixSearch" text="Radix Search tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button fx:id="btnPatricia" text="Patricia tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
+		</VBox>
+	</left>
+	<center>
+		<BorderPane>
+			<top>
+				<BorderPane fx:id="menu">
+					<left>
+						<Button fx:id="btnTrees" prefWidth="160" prefHeight="47" text="Menu" onAction="#showMenu" alignment="CENTER" styleClass="tree-button, menu-button" />
+					</left>
+					<right>
+						<HBox fx:id="hBoxInput" spacing="7" alignment="CENTER_RIGHT">
+							<padding>
+								<Insets top="7" right="7" bottom="7" />
+						   	</padding>
+							<HBox spacing="4" alignment="CENTER_RIGHT">
+								<Text styleClass="menu-text">Číslo:</Text>
+								<TextField fx:id="inputNumber" prefWidth="100" onInputMethodTextChanged="#textFieldValidator" />
+							</HBox>
+							<Button fx:id="btnInsert" text="Vložit" onAction="#insertNumber" styleClass="action-button" />
+							<Button fx:id="btnDelete" text="Smazat" onAction="#deleteNumber" styleClass="action-button" disable="true" />
+							<Button fx:id="btnSearch" text="Hledat" onAction="#searchNumber" styleClass="action-button" disable="true" />
+						</HBox>
+					</right>
+				</BorderPane>
+			</top>
+			<center>
+				<BorderPane fx:id="borderPaneTree">
+					<center>
+					 	<ScrollPane fx:id="scrollPane" >
+							<Pane fx:id="paneTree" />
+						</ScrollPane> 
+					</center>
+					<bottom>
+						<BorderPane styleClass="bottom">
+							<padding>
+								<Insets top="7" right="7" bottom="3" left="7" />
+							</padding>
+							<right>
+								<HBox spacing="4" alignment="TOP_RIGHT">									
+									<Text styleClass="menu-text">Rychlost animace:</Text>
+									<Slider fx:id="sliderSpeed" showTickLabels="true" majorTickUnit="25" prefWidth="200"/>
+									<Button fx:id="btnRepeat" text="Opakuj poslední krok" onAction="#repeatLastAnimation" styleClass="action-button" />							
+								</HBox>
+							</right>
+						</BorderPane>
+					</bottom>
+				</BorderPane>
+			</center>
+		</BorderPane>
+	</center>
+</BorderPane>
