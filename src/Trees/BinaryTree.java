@@ -41,21 +41,21 @@ public class BinaryTree implements ITree<BinaryNode> {
             
             if (helpNode.getRight() == null) {
                 helpNode.getParent().deleteLeft();  //smažu nejlevìjšího  
-                result.addAnimation(AnimatedAction.MOVE, result.getNode(), helpNode);
+                result.addAnimation(AnimatedAction.MOVENODE, result.getNode(), helpNode);
             } else {
             	helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadím místo nìho jeho pravého
             	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode(), helpNode);
-            	result.addAnimation(AnimatedAction.MOVE, helpNode, helpNode.getRight());
+            	result.addAnimation(AnimatedAction.MOVENODE, helpNode, helpNode.getRight());
             }
         } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka nemá jeho rodiè    
         	result.addAnimation(AnimatedAction.DELETE, null, true);
-            result.addAnimation(AnimatedAction.MOVE, result.getNode(), removedNode.getLeft());
+            result.addAnimation(AnimatedAction.MOVENODE, result.getNode(), removedNode.getLeft());
             
             removedNode.setNode(removedNode.getLeft());
             
         } else if (removedNode.getRight() != null) {
         	result.addAnimation(AnimatedAction.DELETE, null, true);
-            result.addAnimation(AnimatedAction.MOVE, result.getNode(), removedNode.getRight());
+            result.addAnimation(AnimatedAction.MOVENODE, result.getNode(), removedNode.getRight());
             
             removedNode.setNode(removedNode.getRight());            
         } else {

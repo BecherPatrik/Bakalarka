@@ -51,13 +51,14 @@
 								<Text styleClass="menu-text">Číslo:</Text>
 								<TextField fx:id="inputNumber" prefWidth="100" onInputMethodTextChanged="#textFieldValidator" />
 							</HBox>
-							<Button fx:id="btnInsert" text="Vložit" onAction="#insertNumber" styleClass="action-button" />
-							<Button fx:id="btnDelete" text="Smazat" onAction="#deleteNumber" styleClass="action-button" disable="true" />
-							<Button fx:id="btnSearch" text="Hledat" onAction="#searchNumber" styleClass="action-button" disable="true" />
+							<Button fx:id="btnInsert" text="Vložit" onAction="#insertNumber" styleClass="action-button" disable="true"/>
+							<Button fx:id="btnSearch" text="Hledat" onAction="#searchNumber" styleClass="action-button" disable="true"/>
+							<Button fx:id="btnDelete" text="Smazat" onAction="#deleteNumber" styleClass="action-button" disable="true"/>							
+							<Button fx:id="btnNewTree" text="Nový" onAction="#newTree" styleClass="action-button" disable="false"/>							
 						</HBox>
 					</right>
 				</BorderPane>
-			</top>
+			</top> 
 			<center>
 				<BorderPane fx:id="borderPaneTree">
 					<center>
@@ -65,9 +66,16 @@
 							<Pane fx:id="paneTree" />
 						</ScrollPane> 
 					</center>
+					<right>
+					<VBox fx:id="pseudoCode">
+					<ListView prefWidth="160" >
+					</ListView>
+			
+					</VBox>
+					</right>
 					<bottom>
 						<BorderPane styleClass="bottom">
-							<padding>
+							<padding> 
 								<Insets top="7" right="7" bottom="3" left="7" />
 							</padding>
 							<right>

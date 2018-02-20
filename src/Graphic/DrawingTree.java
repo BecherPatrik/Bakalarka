@@ -37,7 +37,7 @@ public class DrawingTree {
 	private DoubleProperty speed = new SimpleDoubleProperty();
 	
 	private final static double ROOTBORDER = 20;	
-	private final static double DOWNMARGIN = 80;
+	private final static double DOWNMARGIN = 40;
 	
 	private int maxLevel;
 	private double moreSpace = 0;
@@ -104,7 +104,7 @@ public class DrawingTree {
 		DoubleProperty startNodeX = new SimpleDoubleProperty();	
 		DoubleProperty startNodeY = new SimpleDoubleProperty();	
 		
-		startNodeX.bind(paneWight.subtract(DOWNMARGIN));	
+		startNodeX.bind(paneWight.subtract(80));	
 		startNodeY.bind(new SimpleDoubleProperty(ROOTBORDER));	
 		
 		newIGraphicNode = result.getNode().getGraphicNode(); //vkládaný list	
@@ -342,7 +342,7 @@ public class DrawingTree {
 		case DELETE:
 			deleteNodeAnimation();			
 			break;
-		case MOVE:
+		case MOVENODE:
 			moveAnimation();			
 			break;		
 		case MOVEVALUE:

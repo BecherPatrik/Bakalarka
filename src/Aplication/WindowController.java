@@ -23,6 +23,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -87,12 +88,19 @@ public class WindowController implements Initializable {
 	}
 
 	private void numberOnly() {
+		inputNumber.setTooltip(new Tooltip("Zadávejte hodnoty od 0 - 1000"));
 		inputNumber.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-			//	if (!newValue.matches("[-](\\d*)")) {
 				if (!newValue.matches("(\\d*)")) {					
-					inputNumber.setText(newValue.replaceAll("[^\\d]", ""));
+					inputNumber.setText(newValue.replaceAll("[^\\d]", ""));	
+					inputNumber.getTooltip().show(primaryStage); //TODO
+					//inputNumber.getTooltip().hid
+				} 
+				if (!inputNumber.getText().isEmpty()) {
+					btnInsert.setDisable(false);
+				} else {
+					btnInsert.setDisable(true);
 				}
 			}
 		});
@@ -102,7 +110,7 @@ public class WindowController implements Initializable {
 		this.primaryStage = primaryStage;		
 		
 		d = new DrawingTree(t, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
-		d.insertRoot(t.getRoot().getGraphicNode());	
+		d.insertRoot(t.getRoot().getGraphicNode());	//TODO
 		btnSearch.setDisable(false);
 	}
 
@@ -112,6 +120,13 @@ public class WindowController implements Initializable {
 		Result<BinaryNode> n = t.insert(Integer.parseInt(inputNumber.getText()));		
 		d.insertNode(n);
 	}
+	
+	@FXML
+	public void searchNumber() {
+		disableButtons();
+		Result<BinaryNode> n = t.search(Integer.parseInt(inputNumber.getText()));		
+		d.searchNode(n);
+	}
 
 	@FXML
 	public void deleteNumber() {
@@ -119,13 +134,11 @@ public class WindowController implements Initializable {
 		Result<BinaryNode> n = t.delete(Integer.parseInt(inputNumber.getText()));		
 		d.deleteNode(n);
 	}
-
-	@FXML
-	public void searchNumber() {
-		disableButtons();
-		Result<BinaryNode> n = t.search(Integer.parseInt(inputNumber.getText()));		
-		d.searchNode(n);
-	}
+	
+	@FXML 
+	public void newTree() {
+		//TODO
+	}	
 
 	@FXML
 	public void showMenu() {
