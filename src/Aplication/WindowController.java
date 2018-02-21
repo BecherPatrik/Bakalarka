@@ -30,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 public class WindowController implements Initializable {
 
@@ -85,7 +86,10 @@ public class WindowController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		hideMenu();
 		numberOnly();
+		sliderFormat();
 	}
+
+	
 
 	private void numberOnly() {
 		inputNumber.setTooltip(new Tooltip("Zadávejte hodnoty od 0 - 1000"));
@@ -105,9 +109,35 @@ public class WindowController implements Initializable {
 			}
 		});
 	}
+	
+	private void sliderFormat() {
+		sliderSpeed.setSnapToTicks(true);
+		sliderSpeed.setShowTickMarks(true);
+        sliderSpeed.setShowTickLabels(true);
+        sliderSpeed.setMinorTickCount(0);
+        
+        
+		sliderSpeed.setLabelFormatter(new StringConverter<Double>() {
+            @Override
+            public String toString(Double n) {
+                if (n == 0) return "VYP";
+                if (n == 25) return "25%";
+                if (n == 50) return "50%";
+                if (n == 75) return "75%";
+                return "100%";              
+            }
+
+            @Override
+            public Double fromString(String s) {
+                return 0d;                
+            }
+        });
+		
+	}
 
 	public void setPrimaryStage(Stage primaryStage) {
-		this.primaryStage = primaryStage;		
+		this.primaryStage = primaryStage;
+		sliderSpeed.setValue(25);
 		
 		d = new DrawingTree(t, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
 		d.insertRoot(t.getRoot().getGraphicNode());	//TODO

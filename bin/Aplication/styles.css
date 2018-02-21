@@ -12,6 +12,12 @@
     -fx-fill: white;
 }
 
+Label {
+	-fx-font-size: 14.0pt;
+    -fx-font-family: "Segoe UI Light";
+    -fx-fill: white;    
+}
+
 VBox { 
     -fx-background-color: black;
 }
@@ -31,7 +37,15 @@ VBox {
  -fx-background-color: none;  /* Hide the track */
  -fx-background-insets: 1.0 0.0 -1.0 0.0, 0.0, 1.0;
  -fx-background-radius: 2.5, 2.5, 1.5;
- -fx-padding: 0.208333em; /* 2.5 */
+ -fx-padding: 2.5; /* 2.5 */
+}
+
+.slider .fill {
+ -fx-background-color: #00828b;
+ -fx-padding: 0.333333em; 
+}
+.slider .fill:hover {
+ -fx-background-color: #219297;
 }
  
 .button {
@@ -202,11 +216,4 @@ VBox {
 	-fx-background-color: #1d1d1d;
 }
 
-.slider .fill {
- -fx-background-color: #00828b;
- -fx-padding: 0.333333em; 
-}
-.slider .fill:hover {
- -fx-background-color: #219297;
-}
 

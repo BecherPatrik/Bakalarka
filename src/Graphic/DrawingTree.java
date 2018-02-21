@@ -541,7 +541,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Zvírazní nalezený list
+	 * Zvýrazní nalezený list
 	 */
 	private void highlightFindNode() {
 		StrokeTransition st3 = new StrokeTransition(Duration.millis(250), wayList.get(wayList.size() - 1).getShape(), Color.WHITE, Color.YELLOW);

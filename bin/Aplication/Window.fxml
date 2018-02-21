@@ -65,14 +65,7 @@
 					 	<ScrollPane fx:id="scrollPane" >
 							<Pane fx:id="paneTree" />
 						</ScrollPane> 
-					</center>
-					<right>
-					<VBox fx:id="pseudoCode">
-					<ListView prefWidth="160" >
-					</ListView>
-			
-					</VBox>
-					</right>
+					</center>					
 					<bottom>
 						<BorderPane styleClass="bottom">
 							<padding> 
@@ -80,8 +73,8 @@
 							</padding>
 							<right>
 								<HBox spacing="4" alignment="TOP_RIGHT">									
-									<Text styleClass="menu-text">Rychlost animace:</Text>
-									<Slider fx:id="sliderSpeed" showTickLabels="true" majorTickUnit="25" prefWidth="200"/>
+									<Text styleClass="menu-text">Rychlost:</Text>
+									<Slider fx:id="sliderSpeed" showTickLabels="true" majorTickUnit="25" prefWidth="200" />
 									<Button fx:id="btnRepeat" text="Opakuj poslední krok" onAction="#repeatLastAnimation" styleClass="action-button" />							
 								</HBox>
 							</right>

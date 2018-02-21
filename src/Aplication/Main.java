@@ -14,10 +14,9 @@ public class Main extends Application {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("Window.fxml"));
 		Parent root = loader.load();
 
-		WindowController controller = loader.getController();
-		//controller.setPrimaryStage(primaryStage);		
+		WindowController controller = loader.getController();		
 
-		primaryStage.setTitle("Trees");
+		primaryStage.setTitle("Stromy");
 		primaryStage.setMinHeight(450);
 		primaryStage.setMinWidth(831);
 		primaryStage.setScene(new Scene(root, 815, 505));
