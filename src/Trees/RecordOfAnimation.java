@@ -3,7 +3,7 @@ package Trees;
 public class RecordOfAnimation {
 	private AnimatedAction action;
 	private INode<?> node;
-	private Object object; //objekt k animaci pokud je pot¯eba
+	private Object object; //objekt k animaci pokud je pot≈ôeba
 	
 	public RecordOfAnimation(AnimatedAction action, INode<?> node, Object object) {
 		super();
@@ -21,7 +21,7 @@ public class RecordOfAnimation {
 	}
 
 	/**
-	 * ZÌsk· druh˝ pomocn˝ objekt (kaûd· animace pozn· o co se jedn·)
+	 * Z√≠sk√° druh√Ω pomocn√Ω objekt (ka≈æd√° animace pozn√° o co se jedn√°)
 	 * @return
 	 */
 	public Object getObject() {

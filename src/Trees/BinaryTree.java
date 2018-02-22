@@ -12,42 +12,42 @@ public class BinaryTree implements ITree<BinaryNode> {
     	BinaryNode removedNode, helpNode = null;
         
         Result<BinaryNode> result = search(value);
-        Side side = result.getSide(); //zjistím smìr
+        Side side = result.getSide(); //zjistÃ­m smÄ›r
         removedNode = (BinaryNode) result.getNode();
 
         if (side != Side.NONE)  //pokud ho nenajdu TODO
             return null;
 
-        if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { //pokud má dva potomky (bere se nejlevìjší z pravé vìtve)
+        if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { //pokud mÃ¡ dva potomky (bere se nejlevÄ›jÅ¡Ã­ z pravÃ© vÄ›tve)
         	
-        	helpNode = removedNode.getRight(); //dosadím pravého 
+        	helpNode = removedNode.getRight(); //dosadÃ­m pravÃ©ho 
 
-            if (helpNode.getLeft() == null) { //pokud pravı potomek nemá levého    
+            if (helpNode.getLeft() == null) { //pokud pravÃ½ potomek nemÃ¡ levÃ©ho    
             	removedNode.setValue(helpNode.getValue());
             	removedNode.setRight(helpNode.getRight());
             } else {
-            	while (helpNode.getLeft()!= null) {  //dokud nemám poslední levı
+            	while (helpNode.getLeft()!= null) {  //dokud nemÃ¡m poslednÃ­ levÃ½
                     helpNode = helpNode.getLeft();
                 }
             //	helpNode.setLeft(removedNode.getLeft()); 
             //	helpNode.setRight(removedNode.getRight());
             }
-             // uloím levého potomka mazaného do toho co ho nahradí
+             // uloÅ¾Ã­m levÃ©ho potomka mazanÃ©ho do toho co ho nahradÃ­
             
-            removedNode.setValue(helpNode.getValue()); //uloím jeho hodnotu do toho co mau
+            removedNode.setValue(helpNode.getValue()); //uloÅ¾Ã­m jeho hodnotu do toho co maÅ¾u
             
             
             result.addAnimation(AnimatedAction.DELETE, null, true);            
             
             if (helpNode.getRight() == null) {
-                helpNode.getParent().deleteLeft();  //smau nejlevìjšího  
+                helpNode.getParent().deleteLeft();  //smaÅ¾u nejlevÄ›jÅ¡Ã­ho  
                 result.addAnimation(AnimatedAction.MOVENODE, result.getNode(), helpNode);
             } else {
-            	helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadím místo nìho jeho pravého
+            	helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadÃ­m mÃ­sto nÄ›ho jeho pravÃ©ho
             	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode(), helpNode);
             	result.addAnimation(AnimatedAction.MOVENODE, helpNode, helpNode.getRight());
             }
-        } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka nemá jeho rodiè    
+        } else if (removedNode.getLeft() != null) {   //zjistÃ­m jakÃ©ho potomka nemÃ¡ jeho rodiÄ    
         	result.addAnimation(AnimatedAction.DELETE, null, true);
             result.addAnimation(AnimatedAction.MOVENODE, result.getNode(), removedNode.getLeft());
             
@@ -59,15 +59,15 @@ public class BinaryTree implements ITree<BinaryNode> {
             
             removedNode.setNode(removedNode.getRight());            
         } else {        	
-        	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá dìti 
-            if (side == Side.LEFT) { //nemá ádného potomka, tak je to list => smau ho
+        	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemÃ¡ dÄ›ti 
+            if (side == Side.LEFT) { //nemÃ¡ Å¾Ã¡dnÃ©ho potomka, tak je to list => smaÅ¾u ho
                 removedNode.getParent().deleteLeft();
             } else if (removedNode.equals(root)) {
             	root = null;
-            } else { //pokud ani jedna monost jedná se o koøen
+            } else { //pokud ani jedna moÅ¾nost jednÃ¡ se o koÅ™en
             	removedNode.getParent().deleteRight();            	
             }
-            return result; //bez animace zmìny koøenu
+            return result; //bez animace zmÄ›ny koÅ™enu
         } 
         
         return result;
@@ -80,17 +80,17 @@ public class BinaryTree implements ITree<BinaryNode> {
 			return null;
 		}
 		Result<BinaryNode> result = search(value);
-	    Side side = result.getSide(); //ovìøíme poslední stranu
-	    BinaryNode parent = (BinaryNode) result.getNode();  // vrátí prvek (side = null) nebo rodièe a místo kam uloit (side = R, L)
+	    Side side = result.getSide(); //ovÄ›Å™Ã­me poslednÃ­ stranu
+	    BinaryNode parent = (BinaryNode) result.getNode();  // vrÃ¡tÃ­ prvek (side = null) nebo rodiÄe a mÃ­sto kam uloÅ¾it (side = R, L)
 	    
 	    if (side == Side.LEFT) {
 	    	parent.setLeft(new BinaryNode(value, parent));
-	    	result.setNode(parent.getLeft()); //zmìním vısledek z rodièe na novı node
+	    	result.setNode(parent.getLeft()); //zmÄ›nÃ­m vÃ½sledek z rodiÄe na novÃ½ node
 	    } else if (side == Side.RIGHT) {
 	    	parent.setRight(new BinaryNode(value, parent));
 	    	result.setNode(parent.getRight());
 	    } else {
-	    	result.setNode(null); //u je obsaen  
+	    	result.setNode(null); //uÅ¾ je obsaÅ¾en  
 	    	return result;
 	    }
 	    
@@ -104,8 +104,8 @@ public class BinaryTree implements ITree<BinaryNode> {
 	}
 	
 	/**
-	 * @param value - hledanı list
-	 * @return ResultNode<BinaryNode> - vrací nalezenı list (side = NONE) nebo vrací rodièe a stranu
+	 * @param value - hledanÃ½ list
+	 * @return ResultNode<BinaryNode> - vracÃ­ nalezenÃ½ list (side = NONE) nebo vracÃ­ rodiÄe a stranu
 	 * 
 	 */
 	@Override

@@ -9,7 +9,7 @@ public class Result<T> {
 	private Side side; 
 	private ArrayList<IGraphicNode> way;
 	private ArrayList<RecordOfAnimation> recordOfAnimations;
-	//kolekce smìrù
+	//kolekce smÄ›rÅ¯
 	
 	public Result(INode<T> node) {
 		super();
@@ -35,7 +35,7 @@ public class Result<T> {
 	}	
 
 	/**
-	 * Pøídá smìr do kolekce smìrù
+	 * PÅ™Ã­dÃ¡ smÄ›r do kolekce smÄ›rÅ¯
 	 * @param side
 	 */
 	public void addSide(IGraphicNode node) {
@@ -47,7 +47,7 @@ public class Result<T> {
 	}
 	
 	/**
-	 * Pøidá záznam o animaci do seznamu animací pro provedení
+	 * PÅ™idÃ¡ zÃ¡znam o animaci do seznamu animacÃ­ pro provedenÃ­
 	 * @param action
 	 * @param node1
 	 * @param object

@@ -81,7 +81,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Vloení koøenu
+	 * VloÅ¾enÃ­ koÅ™enu
 	 * @param root
 	 */
 	public void insertRoot(INode<?> rootNode){
@@ -98,7 +98,7 @@ public class DrawingTree {
 		startNodeX.bind(paneWight.subtract(80));	
 		startNodeY.bind(new SimpleDoubleProperty(ROOTBORDER));	
 		
-		root.setX(startNodeX); // vloím poèáteèní souøadnice
+		root.setX(startNodeX); // vloÅ¾Ã­m poÄÃ¡teÄnÃ­ souÅ™adnice
 		root.setY(startNodeY);		
 		
 		paneTree.getChildren().add(root.getNode());
@@ -129,7 +129,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Vykreslení nového listu 
+	 * VykreslenÃ­ novÃ©ho listu 
 	 * @param result
 	 */
 	public void insertNode(Result<?> result) {
@@ -140,7 +140,7 @@ public class DrawingTree {
 			return;
 		}
 		
-		xAnimatedNode = new SimpleDoubleProperty(); //souøadnice x listu	
+		xAnimatedNode = new SimpleDoubleProperty(); //souÅ™adnice x listu	
 		yAnimatedNode = new SimpleDoubleProperty();
 		double computedX;	
 		DoubleProperty startNodeX = new SimpleDoubleProperty();	
@@ -149,18 +149,18 @@ public class DrawingTree {
 		startNodeX.bind(paneWight.subtract(80));	
 		startNodeY.bind(new SimpleDoubleProperty(ROOTBORDER));	
 		
-		newIGraphicNode = result.getNode().getGraphicNode(); //vkládanı list	
+		newIGraphicNode = result.getNode().getGraphicNode(); //vklÃ¡danÃ½ list	
 		
 		newIGraphicNode.setParent(((INode<?>) result.getNode().getParent()).getGraphicNode());
 		newIGraphicNode.setLevel(result.getWay().size());
 		newIGraphicNode.setSide(result.getSide());
 		
-		paneTree.getChildren().add(newIGraphicNode.getNode()); //pøidám list 
+		paneTree.getChildren().add(newIGraphicNode.getNode()); //pÅ™idÃ¡m list 
 		
-		newIGraphicNode.setX(startNodeX); // vloím poèáteèní souøadnice
+		newIGraphicNode.setX(startNodeX); // vloÅ¾Ã­m poÄÃ¡teÄnÃ­ souÅ™adnice
 		newIGraphicNode.setY(startNodeY);		
 		
-		computedX = computeX(newIGraphicNode); //vypoèítám posunutí od rodièe
+		computedX = computeX(newIGraphicNode); //vypoÄÃ­tÃ¡m posunutÃ­ od rodiÄe
 		
 		if (result.getSide() == Side.LEFT) {
 			xAnimatedNode.bind(newIGraphicNode.getParent().getX().subtract(computedX));	
@@ -169,10 +169,10 @@ public class DrawingTree {
 		}
 		yAnimatedNode.bind(newIGraphicNode.getParent().getY().add(DOWNMARGIN));
 		
-		//zavolám animaci
+		//zavolÃ¡m animaci
 		startAnimation(result.getRecordOfAnimations());	
 		
-		createBranch(computedX); //vloení vìtve
+		createBranch(computedX); //vloÅ¾enÃ­ vÄ›tve
 		
 		nodes.add(newIGraphicNode);	
 		
@@ -180,7 +180,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Vypoèítá posunutí od rodièe
+	 * VypoÄÃ­tÃ¡ posunutÃ­ od rodiÄe
 	 * @param node
 	 * @return
 	 */
@@ -189,7 +189,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Vloí vìtev do pane
+	 * VloÅ¾Ã­ vÄ›tev do pane
 	 */
 	private void insertBranch() {
 		paneTree.getChildren().add(newIGraphicNode.getBranch());
@@ -198,7 +198,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Smazání listu + zavolá pøekreslení
+	 * SmazÃ¡nÃ­ listu + zavolÃ¡ pÅ™ekreslenÃ­
 	 * @param node
 	 */
 	public void deleteNode(Result<?> result) {
@@ -215,7 +215,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Najítí listu 
+	 * NajÃ­tÃ­ listu 
 	 * @param node
 	 */
 	public void searchNode(Result<?> result) {
@@ -232,11 +232,11 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Vloení vìtve
+	 * VloÅ¾enÃ­ vÄ›tve
 	 * @param parent
 	 * @param node
 	 * @param side
-	 * @param x - posunutí oproti rodièovi
+	 * @param x - posunutÃ­ oproti rodiÄovi
 	 */
 	private void createBranch(double x) {
 		Pane branch = new Pane();
@@ -263,7 +263,7 @@ public class DrawingTree {
 	
 	/**
 	 * 
-	 * @param node - list kam se má vìtev pøesunùt
+	 * @param node - list kam se mÃ¡ vÄ›tev pÅ™esunÅ¯t
 	 */
 	private void relocateNodeAndBranch(IGraphicNode node) {
 		double computedX = computeX(node);
@@ -284,7 +284,7 @@ public class DrawingTree {
 	}	
 	
 	/**
-	 * Vypoète hodnoty moreSpace a maxLevel
+	 * VypoÄte hodnoty moreSpace a maxLevel
 	 */
 	private void computeMoreSpace(){
 		int max = maxLevel();
@@ -310,8 +310,8 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Pøekreslí celı strom 
-	 * TODO: listy nejsù nabindované + neposunujù se + první vìtve upravit
+	 * PÅ™ekreslÃ­ celÃ½ strom 
+	 * TODO: listy nejsÅ¯ nabindovanÃ© + neposunujÅ¯ se + prvnÃ­ vÄ›tve upravit
 	 */
 	private void redraw() {	
 		redraw = false;		
@@ -333,7 +333,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Sníí všem potomkùm level
+	 * SnÃ­Å¾Ã­ vÅ¡em potomkÅ¯m level
 	 * @param iNode
 	 */
 	private void decreaseLevel(INode<?> iNode) {
@@ -362,7 +362,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Spuští další animace po skonèení pøedchozích, aby na sebe navazovaly
+	 * SpuÅ¡tÃ­ dalÅ¡Ã­ animace po skonÄenÃ­ pÅ™edchozÃ­ch, aby na sebe navazovaly
 	 */
 	private void nextAnimation() {
 		if (indexAnimation >= recordOfAnimations.size()) {
@@ -397,14 +397,14 @@ public class DrawingTree {
 	}	
 
 	/**
-	 * Zavolá znovu metodu highlightNode pro kadı list zvláš
+	 * ZavolÃ¡ znovu metodu highlightNode pro kaÅ¾dÃ½ list zvlÃ¡Å¡Å¥
 	 */
 	private void nextSearchNode() {
 		highlightNode(wayList.get(index));
 	}		
 	
 	/**
-	 * Animace vloení nového listu
+	 * Animace vloÅ¾enÃ­ novÃ©ho listu
 	 */
 	private void insertNodeAnimation() {		
 		Timeline timeline = new Timeline();
@@ -434,8 +434,8 @@ public class DrawingTree {
 
 	private void deleteNodeAnimation() {
 		IGraphicNode node = wayList.get(wayList.size() - 1);
-		node.highlightFindNode(); // zvırazním mazanı node
-		if ((boolean) recordOfAnimations.get(indexAnimation).getObject()) { //pokud má dìti
+		node.highlightFindNode(); // zvÃ½raznÃ­m mazanÃ½ node
+		if ((boolean) recordOfAnimations.get(indexAnimation).getObject()) { //pokud mÃ¡ dÄ›ti
 			node.setValue("");
 			indexAnimation++;
 			nextAnimation();
@@ -458,7 +458,7 @@ public class DrawingTree {
 					paneTree.getChildren().remove(node.getNode());
 					paneTree.getChildren().remove(node.getBranch());
 					
-					//musím zviditelnit kvùli viditelnosti pro opakování posledního kroku
+					//musÃ­m zviditelnit kvÅ¯li viditelnosti pro opakovÃ¡nÃ­ poslednÃ­ho kroku
 					FadeTransition fadeTransitionNode = new FadeTransition(Duration.millis(1), node.getNode());
 					fadeTransitionNode.setFromValue(0.0);
 					fadeTransitionNode.setToValue(1.0);			
@@ -503,11 +503,11 @@ public class DrawingTree {
 				} else {	
 					if (iNodeRemoved.getParent() == null) {
 						iNodeMoved.getGraphicNode().setX(rootX);
-						nodes.remove(iNodeMoved.getGraphicNode()); //dám roota na první místo
+						nodes.remove(iNodeMoved.getGraphicNode()); //dÃ¡m roota na prvnÃ­ mÃ­sto
 						nodes.add(0, iNodeMoved.getGraphicNode());
 					}
 					
-					decreaseLevel(iNodeMoved); //sníím všem potomkùm level
+					decreaseLevel(iNodeMoved); //snÃ­Å¾Ã­m vÅ¡em potomkÅ¯m level
 					
 					iNodeMoved.getGraphicNode().setLevel(iNodeRemoved.getGraphicNode().getLevel());
 					iNodeMoved.getGraphicNode().setParent(iNodeRemoved.getGraphicNode().getParent());
@@ -517,7 +517,7 @@ public class DrawingTree {
 					paneTree.getChildren().remove(iNodeRemoved.getGraphicNode().getNode());	
 					nodes.remove(iNodeRemoved.getGraphicNode());
 					
-					iNodeRemoved.setGraphicNode(iNodeMoved.getGraphicNode()); //zmìním INode1 jeho grafickı node... 
+					iNodeRemoved.setGraphicNode(iNodeMoved.getGraphicNode()); //zmÄ›nÃ­m INode1 jeho grafickÃ½ node... 
 				}
 				
 				computeMoreSpace();
@@ -552,7 +552,7 @@ public class DrawingTree {
 	}
 
 	/**
-	 * Animace zvıraznìní vìtve a následnì listu 
+	 * Animace zvÃ½raznÄ›nÃ­ vÄ›tve a nÃ¡slednÄ› listu 
 	 * @param node
 	 */
 	private void highlightNode(IGraphicNode node) {
@@ -597,7 +597,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * Zvırazní nalezenı list
+	 * ZvÃ½raznÃ­ nalezenÃ½ list
 	 */
 	private void highlightFindNode() {
 		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getShape(), Color.WHITE, Color.YELLOW);
@@ -671,7 +671,7 @@ public class DrawingTree {
 	 * public void draw(INode<T> node, Side side) { Grid grind =
 	 * node.GraphicNode.Grind;
 	 * 
-	 * if (side == Side.Null) { //jedná se o root node.GraphicNode.Level = 0;
+	 * if (side == Side.Null) { //jednÃ¡ se o root node.GraphicNode.Level = 0;
 	 * Canvas.SetLeft(grind, _canvasWight / 2); Canvas.SetTop(grind, 10);
 	 * _canvas.Children.Add(grind); Thread.Sleep(500); } else if (side ==
 	 * Side.Left) { //TODO ....

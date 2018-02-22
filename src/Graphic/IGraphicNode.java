@@ -19,7 +19,7 @@ public interface IGraphicNode {
 	int getLevel();	
 	void setLevel(int level);	
 	int getSize();
-	void setSize(); //k Ëemu?
+	void setSize(); //k ƒçemu?
 	Pane getBranch();
 	void setBranch(Pane branch);
 	Shape getShape();

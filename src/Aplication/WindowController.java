@@ -103,7 +103,7 @@ public class WindowController implements Initializable {
 	}	
 
 	/**
-	 * Nastaví Stage
+	 * NastavÃ­ Stage
 	 * @param primaryStage
 	 */
 	public void setPrimaryStage(Stage primaryStage) {
@@ -114,7 +114,7 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Funkce pro animaci skrytí menu
+	 * Funkce pro animaci skrytÃ­ menu
 	 */
 	@FXML
 	private void hideMenu() {
@@ -134,7 +134,7 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Funkce pro animaci zobrazení menu
+	 * Funkce pro animaci zobrazenÃ­ menu
 	 */
 	@FXML
 	private void showMenu() {
@@ -149,7 +149,7 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Nastaví validátor pro textField inputNumber
+	 * NastavÃ­ validÃ¡tor pro textField inputNumber
 	 */
 	private void numberOnly() {
 		inputNumber.textProperty().addListener(new ChangeListener<String>() {
@@ -169,7 +169,7 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Naformátuje Slider
+	 * NaformÃ¡tuje Slider
 	 */
 	private void sliderFormat() {
 		sliderSpeed.setSnapToTicks(true);
@@ -196,20 +196,20 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Nastaví toolTips
+	 * NastavÃ­ toolTips
 	 */
 	private void toolTips() {
-		inputNumber.setTooltip(new Tooltip("Zadávejte pouze hodnoty\nod 0 do 10 000"));
-		btnInsert.setTooltip(new Tooltip("Vloí zadanou hodnotu"));
-		btnSearch.setTooltip(new Tooltip("Vyhledá zadanou hodnotu"));
-		btnDelete.setTooltip(new Tooltip("Smae zadanou hodnotu"));
-		btnNewTree.setTooltip(new Tooltip("Vytvoøí novı strom..."));
-		btnRepeat.setTooltip(new Tooltip("Zopakuje poslední krok"));
-		sliderSpeed.setTooltip(new Tooltip("Nastavení rychlosti animace"));
+		inputNumber.setTooltip(new Tooltip("ZadÃ¡vejte pouze hodnoty\nod 0 do 10 000"));
+		btnInsert.setTooltip(new Tooltip("VloÅ¾Ã­ zadanou hodnotu"));
+		btnSearch.setTooltip(new Tooltip("VyhledÃ¡ zadanou hodnotu"));
+		btnDelete.setTooltip(new Tooltip("SmaÅ¾e zadanou hodnotu"));
+		btnNewTree.setTooltip(new Tooltip("VytvoÅ™Ã­ novÃ½ strom..."));
+		btnRepeat.setTooltip(new Tooltip("Zopakuje poslednÃ­ krok"));
+		sliderSpeed.setTooltip(new Tooltip("NastavenÃ­ rychlosti animace"));
 	}
 
 	/**
-	 * Funkce pro vkládání èísla
+	 * Funkce pro vklÃ¡dÃ¡nÃ­ ÄÃ­sla
 	 */
 	@FXML
 	private void insertNumber() {
@@ -229,7 +229,7 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Funkce pro hledání èísla
+	 * Funkce pro hledÃ¡nÃ­ ÄÃ­sla
 	 */
 	@FXML
 	private void searchNumber() {
@@ -244,7 +244,7 @@ public class WindowController implements Initializable {
 	}
 
 	/**
-	 * Funkce pro mazání èísla
+	 * Funkce pro mazÃ¡nÃ­ ÄÃ­sla
 	 */
 	@FXML
 	private void deleteNumber() {
@@ -259,7 +259,7 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Vytvoøení nového stromu pøes tlaèítko
+	 * VytvoÅ™enÃ­ novÃ©ho stromu pÅ™es tlaÄÃ­tko
 	 */
 	@FXML 
 	private void newTree() {
@@ -270,7 +270,7 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Vytvoøení nového prázdného stromu
+	 * VytvoÅ™enÃ­ novÃ©ho prÃ¡zdnÃ©ho stromu
 	 */
 	private void newEmptyTree() {
 		oldGraphicTreeNodes = new ArrayList<>();
@@ -301,11 +301,11 @@ public class WindowController implements Initializable {
 	}	
 	
 	/**
-	 * Vytvoøení nového náhodného stromu 
+	 * VytvoÅ™enÃ­ novÃ©ho nÃ¡hodnÃ©ho stromu 
 	 * @param count
 	 */
 	private void newRandomTree(int count) {
-		//TODO vypnùt animace
+		//TODO vypnÅ¯t animace
 	}
 
 	/**
@@ -332,14 +332,14 @@ public class WindowController implements Initializable {
 	}
 
 	/**
-	 * Dialog pro zmìnu stromu
+	 * Dialog pro zmÄ›nu stromu
 	 * @return
 	 */
 	private boolean dialogChangeTree() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Zmìna typu stromu");
-		alert.setHeaderText("Zmìnou typu stromu bude smazán aktuální strom.");
-		alert.setContentText("Smazat aktuální strom?");
+		alert.setTitle("ZmÄ›na typu stromu");
+		alert.setHeaderText("ZmÄ›nou typu stromu bude smazÃ¡n aktuÃ¡lnÃ­ strom.");
+		alert.setContentText("Smazat aktuÃ¡lnÃ­ strom?");
 
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
@@ -349,7 +349,7 @@ public class WindowController implements Initializable {
 	}
 
 	/**
-	 * Zopakuje poslední animaci
+	 * Zopakuje poslednÃ­ animaci
 	 */
 	@FXML
 	private void repeatLastAnimation() {
@@ -389,7 +389,7 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Povoluje a ruší povolení pouívání tlaèítek podle moností co se s danım stromem dá dìlat
+	 * Povoluje a ruÅ¡Ã­ povolenÃ­ pouÅ¾Ã­vÃ¡nÃ­ tlaÄÃ­tek podle moÅ¾nostÃ­ co se s danÃ½m stromem dÃ¡ dÄ›lat
 	 */
 	private void checkEnableButtons() {
 		if (!inputNumber.getText().isEmpty()) {
@@ -414,7 +414,7 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Povolí manipulaci s tlaèítkami po ukonèení animace
+	 * PovolÃ­ manipulaci s tlaÄÃ­tkami po ukonÄenÃ­ animace
 	 */
 	public void enableButtons() {
 	//	checkEnableButtons();
@@ -429,7 +429,7 @@ public class WindowController implements Initializable {
 	}
 	
 	/**
-	 * Znemoní pouívání tlaèítek v prùbìhu animace 
+	 * ZnemoÅ¾nÃ­ pouÅ¾Ã­vÃ¡nÃ­ tlaÄÃ­tek v prÅ¯bÄ›hu animace 
 	 */
 	private void disableButtons() {
 		btnInsert.setDisable(true);
