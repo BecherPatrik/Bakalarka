@@ -8,6 +8,31 @@ public class BinaryTree implements ITree<BinaryNode> {
     }
     
     @Override
+	public Result<BinaryNode> insert(int value) {
+		if (root == null) {
+			root = new BinaryNode(value);
+			return null;
+		}
+		Result<BinaryNode> result = search(value);
+	    Side side = result.getSide(); //ověříme poslední stranu
+	    BinaryNode parent = (BinaryNode) result.getNode();  // vrátí prvek (side = null) nebo rodiče a místo kam uložit (side = R, L)
+	    
+	    if (side == Side.LEFT) {
+	    	parent.setLeft(new BinaryNode(value, parent));
+	    	result.setNode(parent.getLeft()); //změním výsledek z rodiče na nový node
+	    } else if (side == Side.RIGHT) {
+	    	parent.setRight(new BinaryNode(value, parent));
+	    	result.setNode(parent.getRight());
+	    } else {
+	    	result.setNode(null); //už je obsažen  
+	    	return result;
+	    }
+	    
+	    result.addAnimation(AnimatedAction.INSERT, null, null);
+	    return result;
+	}
+    
+    @Override
 	public Result<BinaryNode> delete(int value) {
     	BinaryNode removedNode, helpNode = null;
         
@@ -64,44 +89,14 @@ public class BinaryTree implements ITree<BinaryNode> {
                 removedNode.getParent().deleteLeft();
             } else if (removedNode.equals(root)) {
             	root = null;
-            } else { //pokud ani jedna možnost jedná se o kořen
+            } else {
             	removedNode.getParent().deleteRight();            	
             }
             return result; //bez animace změny kořenu
         } 
         
         return result;
-	}
-    
-	@Override
-	public Result<BinaryNode> insert(int value) {
-		if (root == null) {
-			root = new BinaryNode(value);
-			return null;
-		}
-		Result<BinaryNode> result = search(value);
-	    Side side = result.getSide(); //ověříme poslední stranu
-	    BinaryNode parent = (BinaryNode) result.getNode();  // vrátí prvek (side = null) nebo rodiče a místo kam uložit (side = R, L)
-	    
-	    if (side == Side.LEFT) {
-	    	parent.setLeft(new BinaryNode(value, parent));
-	    	result.setNode(parent.getLeft()); //změním výsledek z rodiče na nový node
-	    } else if (side == Side.RIGHT) {
-	    	parent.setRight(new BinaryNode(value, parent));
-	    	result.setNode(parent.getRight());
-	    } else {
-	    	result.setNode(null); //už je obsažen  
-	    	return result;
-	    }
-	    
-	    result.addAnimation(AnimatedAction.INSERT, null, null);
-	    return result;
-	}
-	
-	@Override
-	public BinaryNode getRoot() {
-		return root;
-	}
+	}	
 	
 	/**
 	 * @param value - hledaný list
@@ -143,5 +138,14 @@ public class BinaryTree implements ITree<BinaryNode> {
         }
         return resultNode;
     }
-
+	
+	/********************************************************************************************************
+	 * GETS & SETS
+	 * 
+	 *******************************************************************************************************/
+	
+	@Override
+	public BinaryNode getRoot() {
+		return root;
+	}
 }

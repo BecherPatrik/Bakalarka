@@ -7,31 +7,75 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
 
 public interface IGraphicNode {	
-	void createNode();	
+	/**
+	 * Vytvoří Node a uloží ho do StackPane
+	 */
+	void createStackPaneNode();
+	
+	/**
+	 * Obyčejné zvýraznění procházeného listu
+	 */
 	void highlightNode();
-	DoubleProperty getX();
-	void setX(DoubleProperty x) ;
-	DoubleProperty getY();
-	void setY(DoubleProperty rootY);
-	void setValue(String value);
-	String getValue();
-	StackPane getNode();
-	int getLevel();	
-	void setLevel(int level);	
-	int getSize();
-	void setSize(); //k čemu?
-	Pane getBranch();
-	void setBranch(Pane branch);
-	Shape getShape();
-	void setBranchEndY(double y);
-	void setBranchEndX(double x);
-	void setSide(Side side);
-	Side getSide();	
-	double getBranchEndX();
-	void setBranchStartX(double x);
-	double getBranchStartX();
+	
+	/**
+	 * Zvýraznění nalezeného listu
+	 */
+	void highlightFindNode();
+	
+	/**
+	 * Odstraní jakékoliv zvýraznění
+	 */
+	void setDefaultColorNode();
+	
+	/********************************************************************************************************
+	 * GETS & SETS
+	 * 
+	 *******************************************************************************************************/
+	
+	/**
+	 * Vrátí POLOMĚR Circle
+	 * @return
+	 */
+	int getRadiusSize();
+	
 	IGraphicNode getParent();
 	void setParent(IGraphicNode parent);
-	void setDefaultColorNode();
-	void highlightFindNode();
+	
+	Side getSide();
+	void setSide(Side side);	
+	
+	int getLevel();	
+	void setLevel(int level);
+	
+	String getValue();
+	void setValue(String value);
+	
+	DoubleProperty getX();
+	void setX(DoubleProperty x) ;
+	
+	DoubleProperty getY();
+	void setY(DoubleProperty rootY);
+	
+	/**
+	 * Vrátí Circle pro možnost animovat zvíraznění
+	 * @return
+	 */
+	Shape getCircleShape();
+	
+	/**
+	 * Vrátí celý StackPane
+	 * @return
+	 */
+	StackPane getStackPaneNode();
+	
+	Pane getBranch();
+	void setBranch(Pane branch);
+	
+	double getBranchStartX();
+	void setBranchStartX(double x);
+	
+	double getBranchEndX();
+	void setBranchEndX(double x);
+	
+	void setBranchEndY(double y);	
 }

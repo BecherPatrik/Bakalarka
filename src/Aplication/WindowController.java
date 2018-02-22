@@ -214,7 +214,7 @@ public class WindowController implements Initializable {
 	@FXML
 	private void insertNumber() {
 		oldGraphicTreeNodes.clear();
-		oldGraphicTreeNodes.addAll(graphicTree.getNodes());
+		oldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		lastAction = AnimatedAction.INSERT;
 		
 		disableButtons();		
@@ -234,7 +234,7 @@ public class WindowController implements Initializable {
 	@FXML
 	private void searchNumber() {
 		oldGraphicTreeNodes.clear();
-		oldGraphicTreeNodes.addAll(graphicTree.getNodes());
+		oldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		lastAction = AnimatedAction.SEARCH;
 		
 		disableButtons();
@@ -249,7 +249,7 @@ public class WindowController implements Initializable {
 	@FXML
 	private void deleteNumber() {
 		oldGraphicTreeNodes.clear();
-		oldGraphicTreeNodes.addAll(graphicTree.getNodes());
+		oldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		lastAction = AnimatedAction.DELETE;
 		
 		disableButtons();
@@ -353,16 +353,16 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void repeatLastAnimation() {
-		graphicTree.setNodes(oldGraphicTreeNodes);
+		graphicTree.setListGraphicNodes(oldGraphicTreeNodes);
 		
 		paneTree.getChildren().clear();
 		
-		for (IGraphicNode node : graphicTree.getNodes()) {
-			paneTree.getChildren().add(node.getNode());			
+		for (IGraphicNode node : graphicTree.getListGraphicNodes()) {
+			paneTree.getChildren().add(node.getStackPaneNode());			
 			if (node.getBranch() != null) {								
 				paneTree.getChildren().add(node.getBranch());
-				node.getParent().getNode().toFront();
-				node.getNode().toFront();
+				node.getParent().getStackPaneNode().toFront();
+				node.getStackPaneNode().toFront();
 			}			
 		}
 

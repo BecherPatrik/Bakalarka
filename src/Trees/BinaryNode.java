@@ -20,23 +20,60 @@ public class BinaryNode implements INode<BinaryNode> {
         this.value = value;
         this.graphicNode = new BinaryGraphicNode(value);
     }
-
+	
 	@Override
-	public boolean equals(Object obj) {
-		BinaryNode node = (BinaryNode) obj;
-		return (value == node.getValue());
+	public void deleteLeft() {
+		this.left = null;
 	}
 
 	@Override
-	public BinaryGraphicNode getGraphicNode() {
-		return graphicNode;
+	public void deleteRight() {
+		this.right = null;
 	}
 	
 	@Override
-	public void setGraphicNode(IGraphicNode graphicNode) {
-		this.graphicNode = (BinaryGraphicNode) graphicNode;
+	public void setNode(BinaryNode node) {
+		value = node.getValue();
+		right = node.getRight();
+		left = node.getLeft();
+	}
+	
+	/********************************************************************************************************
+	 * GETS & SETS
+	 * 
+	 *******************************************************************************************************/
+
+	@Override
+	public int getValue() {
+		return value;
 	}
 
+	@Override
+	public void setValue(int value) {
+		this.value = value;		
+	}
+	
+	@Override
+	public BinaryNode getParent() {
+		return parent;
+	}
+
+	@Override
+	public void setParent(BinaryNode node) {
+		parent = node;
+	}
+	
+	@Override
+	public BinaryNode getRight() {
+		return right;
+	}
+
+	@Override
+	public void setRight(BinaryNode node) {
+		right = node;
+		node.setParent(this);
+	}
+	
 	@Override
 	public BinaryNode getLeft() {
 		return left;
@@ -49,50 +86,18 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 
 	@Override
-	public BinaryNode getRight() {
-		return right;
+	public BinaryGraphicNode getGraphicNode() {
+		return graphicNode;
 	}
-
+	
 	@Override
-	public void setRight(BinaryNode node) {
-		right = node;
-		node.setParent(this);
+	public void setGraphicNode(IGraphicNode graphicNode) {
+		this.graphicNode = (BinaryGraphicNode) graphicNode;
 	}
-
+	
 	@Override
-	public BinaryNode getParent() {
-		return parent;
-	}
-
-	@Override
-	public void setParent(BinaryNode node) {
-		parent = node;
-	}
-
-	@Override
-	public void setNode(BinaryNode node) {
-		value = node.getValue();
-		right = node.getRight();
-		left = node.getLeft();
-	}
-
-	@Override
-	public int getValue() {
-		return value;
-	}
-
-	@Override
-	public void setValue(int value) {
-		this.value = value;		
-	}
-
-	@Override
-	public void deleteLeft() {
-		this.left = null;
-	}
-
-	@Override
-	public void deleteRight() {
-		this.right = null;
+	public boolean equals(Object obj) {
+		BinaryNode node = (BinaryNode) obj;
+		return (value == node.getValue());
 	}
 }

@@ -1,8 +1,8 @@
 package Trees;
 
 public interface ITree<T> {
-	Result<T> delete(int value);
-    Result<T> insert(int value);
-    T getRoot();
+	Result<T> insert(int value);
+	Result<T> delete(int value);    
     Result<T> search(int value);
+    T getRoot();    
 }

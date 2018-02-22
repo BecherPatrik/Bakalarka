@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Aplication.WindowController;
-import Trees.AnimatedAction;
 import Trees.INode;
 import Trees.ITree;
 import Trees.RecordOfAnimation;
@@ -25,22 +24,18 @@ import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class DrawingTree {
 	private WindowController windowController;
-	private List<IGraphicNode> nodes = new ArrayList<>();	
+	private List<IGraphicNode> listGraphicNodes = new ArrayList<>();	
 
-	private ReadOnlyDoubleProperty paneWight;
+	private ReadOnlyDoubleProperty paneTreeWeight;
 	private Pane paneTree;
-	private DoubleProperty speed = new SimpleDoubleProperty();
+	private DoubleProperty animationSpeed = new SimpleDoubleProperty();
 	
 	private final static double ROOTBORDER = 20;	
-	private final static double DOWNMARGIN = 40;
-	
-	private final int SLOWANIMATION = 250;
-	private final int FASTANIMATION = 105;
+	private final static double DOWNMARGIN = 40;	
 	
 	private int maxLevel;
 	private double moreSpace = 0;
@@ -54,30 +49,24 @@ public class DrawingTree {
 	private ArrayList<IGraphicNode> wayList;
 	private ArrayList<RecordOfAnimation> recordOfAnimations;
 	
-	private int index = 0;
+	private final int SLOWANIMATION = 250;
+	private final int FASTANIMATION = 105;
+	
+	private int wayIndex = 0;
 	private int indexAnimation = 0;
-	private boolean redraw = false;
+	private boolean isRedraw = false;
 	
 	private DoubleProperty xAnimatedNode = new SimpleDoubleProperty();
 	private DoubleProperty yAnimatedNode = new SimpleDoubleProperty();
 
 	public DrawingTree(ITree<?> tree, Pane paneTree, DoubleProperty speed, ReadOnlyDoubleProperty stageWidthProperty, WindowController windowController) {
-		this.paneWight = stageWidthProperty;
+		this.paneTreeWeight = stageWidthProperty;
 		this.paneTree = paneTree;
 		//this.tree = tree;		
-		this.speed = speed;
+		this.animationSpeed = speed;
 		this.windowController = windowController;
 	//	Class<T> animationClass;
 	//	this.treeAnimation = animationClass.getConstructor(ITree.class, Canvas.class).newInstance(this.canvas, this.tree);
-	}	
-
-	public List<IGraphicNode> getNodes() {
-		return nodes;
-	}
-	
-	public void setNodes(List<IGraphicNode> oldGraphicTreeNodes) {
-		nodes.clear();
-		nodes.addAll(oldGraphicTreeNodes);		
 	}
 	
 	/**
@@ -89,25 +78,25 @@ public class DrawingTree {
 		root.setLevel(0);
 		
 		rootY.bind(new SimpleDoubleProperty(ROOTBORDER));		
-		rootX.bind(paneWight.subtract(31).divide(2.0).add(root.getSize() / 2));			
+		rootX.bind(paneTreeWeight.subtract(31).divide(2.0).add(root.getRadiusSize() / 2));			
 		
 		
 		DoubleProperty startNodeX = new SimpleDoubleProperty();	
 		DoubleProperty startNodeY = new SimpleDoubleProperty();	
 		
-		startNodeX.bind(paneWight.subtract(80));	
+		startNodeX.bind(paneTreeWeight.subtract(80));	
 		startNodeY.bind(new SimpleDoubleProperty(ROOTBORDER));	
 		
 		root.setX(startNodeX); // vložím počáteční souřadnice
 		root.setY(startNodeY);		
 		
-		paneTree.getChildren().add(root.getNode());
+		paneTree.getChildren().add(root.getStackPaneNode());
 		
-		nodes.add(root);
+		listGraphicNodes.add(root);
 		
 		Timeline timeline = new Timeline();
 
-		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - speed.get())),
+		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
 				new KeyValue(root.getX(), rootX.get()),
 				new KeyValue(root.getY(), rootY.get()));
 
@@ -146,7 +135,7 @@ public class DrawingTree {
 		DoubleProperty startNodeX = new SimpleDoubleProperty();	
 		DoubleProperty startNodeY = new SimpleDoubleProperty();	
 		
-		startNodeX.bind(paneWight.subtract(80));	
+		startNodeX.bind(paneTreeWeight.subtract(80));	
 		startNodeY.bind(new SimpleDoubleProperty(ROOTBORDER));	
 		
 		newIGraphicNode = result.getNode().getGraphicNode(); //vkládaný list	
@@ -155,7 +144,7 @@ public class DrawingTree {
 		newIGraphicNode.setLevel(result.getWay().size());
 		newIGraphicNode.setSide(result.getSide());
 		
-		paneTree.getChildren().add(newIGraphicNode.getNode()); //přidám list 
+		paneTree.getChildren().add(newIGraphicNode.getStackPaneNode()); //přidám list 
 		
 		newIGraphicNode.setX(startNodeX); // vložím počáteční souřadnice
 		newIGraphicNode.setY(startNodeY);		
@@ -174,7 +163,7 @@ public class DrawingTree {
 		
 		createBranch(computedX); //vložení větve
 		
-		nodes.add(newIGraphicNode);	
+		listGraphicNodes.add(newIGraphicNode);	
 		
 		computeMoreSpace();		
 	}
@@ -185,16 +174,16 @@ public class DrawingTree {
 	 * @return
 	 */
 	private double computeX(IGraphicNode node) {
-		return (newIGraphicNode.getParent().getSize() / 2) * (5 - (node.getLevel() * 1.1)) + moreSpace;
+		return (newIGraphicNode.getParent().getRadiusSize() / 2) * (5 - (node.getLevel() * 1.1)) + moreSpace;
 	}
 	
 	/**
-	 * Vloží větev do pane
+	 * Vloží větev do paneTree
 	 */
 	private void insertBranch() {
 		paneTree.getChildren().add(newIGraphicNode.getBranch());
-		newIGraphicNode.getParent().getNode().toFront();
-		newIGraphicNode.getNode().toFront();
+		newIGraphicNode.getParent().getStackPaneNode().toFront();
+		newIGraphicNode.getStackPaneNode().toFront();
 	}
 	
 	/**
@@ -240,7 +229,7 @@ public class DrawingTree {
 	 */
 	private void createBranch(double x) {
 		Pane branch = new Pane();
-		int space = newIGraphicNode.getParent().getSize() / 2;
+		int space = newIGraphicNode.getParent().getRadiusSize() / 2;
 		Line line;
 		//Line line2, line3;
 		
@@ -262,12 +251,12 @@ public class DrawingTree {
 	}  
 	
 	/**
-	 * 
+	 * Přemístí list 
 	 * @param node - list kam se má větev přesunůt
 	 */
 	private void relocateNodeAndBranch(IGraphicNode node) {
 		double computedX = computeX(node);
-		int space = node.getParent().getSize() / 2;
+		int space = node.getParent().getRadiusSize() / 2;
 		DoubleProperty newX = new SimpleDoubleProperty();
 	
 		if (node.getSide() == Side.LEFT) {
@@ -293,16 +282,20 @@ public class DrawingTree {
 			if(max < 3) {
 				moreSpace = 0;
 			} else {
-				moreSpace = newIGraphicNode.getParent().getSize() * (max / 1.8);
+				moreSpace = newIGraphicNode.getParent().getRadiusSize() * (max / 1.8);
 			}
 			maxLevel = max;
-			redraw = true;
+			isRedraw = true;
 		}		
 	}
 	
+	/**
+	 * Vypočítá maximální level
+	 * @return
+	 */
 	private int maxLevel() {
 		int max = 0;
-		for (IGraphicNode iGraphicNode : nodes) {
+		for (IGraphicNode iGraphicNode : listGraphicNodes) {
 			if (iGraphicNode.getLevel() > max)
 				max = iGraphicNode.getLevel();
 		}		
@@ -314,8 +307,8 @@ public class DrawingTree {
 	 * TODO: listy nejsů nabindované + neposunujů se + první větve upravit
 	 */
 	private void redraw() {	
-		redraw = false;		
-		for (IGraphicNode iGraphicNode : nodes.subList(1, nodes.size())) {
+		isRedraw = false;		
+		for (IGraphicNode iGraphicNode : listGraphicNodes.subList(1, listGraphicNodes.size())) {
 			relocateNodeAndBranch(iGraphicNode);
 		}
 		/*for (IGraphicNode iGraphicNode : nodes.subList(1, nodes.size())) {
@@ -351,10 +344,15 @@ public class DrawingTree {
 		}
 	}
 	
-	/***************************************************************************************
+	/********************************************************************************************************
 	 * Animace!
-	 * @param recordOfAnimations 
-	 ***************************************************************************************/	
+	 * 
+	 *******************************************************************************************************/
+	
+	/**
+	 * Nachystá prostředí pro nové animace a spustí je
+	 * @param recordOfAnimations
+	 */
 	private void startAnimation(ArrayList<RecordOfAnimation> recordOfAnimations) {
 		indexAnimation = 0;
 		this.recordOfAnimations = recordOfAnimations;
@@ -366,7 +364,7 @@ public class DrawingTree {
 	 */
 	private void nextAnimation() {
 		if (indexAnimation >= recordOfAnimations.size()) {
-			if (redraw) {				
+			if (isRedraw) {				
 				redraw();
 			}
 			windowController.enableButtons();
@@ -375,7 +373,7 @@ public class DrawingTree {
 		
 		switch (recordOfAnimations.get(indexAnimation).getAction()) {
 		case SEARCH:
-			index = 0;
+			wayIndex = 0;
 			nextSearchNode();
 			break;
 		case INSERT:
@@ -400,7 +398,7 @@ public class DrawingTree {
 	 * Zavolá znovu metodu highlightNode pro každý list zvlášť
 	 */
 	private void nextSearchNode() {
-		highlightNode(wayList.get(index));
+		highlightNode(wayList.get(wayIndex));
 	}		
 	
 	/**
@@ -409,7 +407,7 @@ public class DrawingTree {
 	private void insertNodeAnimation() {		
 		Timeline timeline = new Timeline();
 
-		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - speed.get())),
+		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
 				new KeyValue(newIGraphicNode.getX(), xAnimatedNode.get()),
 				new KeyValue(newIGraphicNode.getY(), yAnimatedNode.get()));
 
@@ -431,7 +429,10 @@ public class DrawingTree {
 
 		timeline.play();
 	}
-
+	
+	/**
+	 * Smazání listu animace
+	 */
 	private void deleteNodeAnimation() {
 		IGraphicNode node = wayList.get(wayList.size() - 1);
 		node.highlightFindNode(); // zvýrazním mazaný node
@@ -440,11 +441,11 @@ public class DrawingTree {
 			indexAnimation++;
 			nextAnimation();
 		} else {			
-			FadeTransition fadeTransitionNode = new FadeTransition(Duration.millis(10 * (FASTANIMATION - speed.get())), node.getNode());
+			FadeTransition fadeTransitionNode = new FadeTransition(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())), node.getStackPaneNode());
 			fadeTransitionNode.setFromValue(1.0);
 			fadeTransitionNode.setToValue(0.0);			
 			
-			FadeTransition fadeTransitionBranch = new FadeTransition(Duration.millis(10 * (FASTANIMATION - speed.get())), node.getBranch());
+			FadeTransition fadeTransitionBranch = new FadeTransition(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())), node.getBranch());
 			fadeTransitionBranch.setFromValue(1.0);
 			fadeTransitionBranch.setToValue(0.0);
 
@@ -454,12 +455,12 @@ public class DrawingTree {
 			fadeTransitionNode.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					nodes.remove(node);
-					paneTree.getChildren().remove(node.getNode());
+					listGraphicNodes.remove(node);
+					paneTree.getChildren().remove(node.getStackPaneNode());
 					paneTree.getChildren().remove(node.getBranch());
 					
 					//musím zviditelnit kvůli viditelnosti pro opakování posledního kroku
-					FadeTransition fadeTransitionNode = new FadeTransition(Duration.millis(1), node.getNode());
+					FadeTransition fadeTransitionNode = new FadeTransition(Duration.millis(1), node.getStackPaneNode());
 					fadeTransitionNode.setFromValue(0.0);
 					fadeTransitionNode.setToValue(1.0);			
 					
@@ -479,6 +480,9 @@ public class DrawingTree {
 		}
 	}
 
+	/**
+	 * Nahradí mazaný list novým listem
+	 */
 	private void moveAnimation() {
 		INode<?> iNodeRemoved = recordOfAnimations.get(indexAnimation).getNode1();
 		INode<?> iNodeMoved = (INode<?>) recordOfAnimations.get(indexAnimation).getObject();
@@ -486,7 +490,7 @@ public class DrawingTree {
 		iNodeMoved.getGraphicNode().highlightNode();
 		Timeline timeline = new Timeline();
 
-		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - speed.get())),
+		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
 				new KeyValue(iNodeMoved.getGraphicNode().getX(), iNodeRemoved.getGraphicNode().getX().get()),
 				new KeyValue(iNodeMoved.getGraphicNode().getY(), iNodeRemoved.getGraphicNode().getY().get()));
 
@@ -499,12 +503,12 @@ public class DrawingTree {
 					iNodeRemoved.getGraphicNode().setValue(iNodeMoved.getGraphicNode().getValue());
 					iNodeRemoved.getGraphicNode().setDefaultColorNode();
 
-					paneTree.getChildren().remove(iNodeMoved.getGraphicNode().getNode());					
+					paneTree.getChildren().remove(iNodeMoved.getGraphicNode().getStackPaneNode());					
 				} else {	
 					if (iNodeRemoved.getParent() == null) {
 						iNodeMoved.getGraphicNode().setX(rootX);
-						nodes.remove(iNodeMoved.getGraphicNode()); //dám roota na první místo
-						nodes.add(0, iNodeMoved.getGraphicNode());
+						listGraphicNodes.remove(iNodeMoved.getGraphicNode()); //dám roota na první místo
+						listGraphicNodes.add(0, iNodeMoved.getGraphicNode());
 					}
 					
 					decreaseLevel(iNodeMoved); //snížím všem potomkům level
@@ -512,10 +516,10 @@ public class DrawingTree {
 					iNodeMoved.getGraphicNode().setLevel(iNodeRemoved.getGraphicNode().getLevel());
 					iNodeMoved.getGraphicNode().setParent(iNodeRemoved.getGraphicNode().getParent());
 					iNodeMoved.getGraphicNode().setDefaultColorNode();
-					iNodeMoved.getGraphicNode().getNode().toFront();					
+					iNodeMoved.getGraphicNode().getStackPaneNode().toFront();					
 
-					paneTree.getChildren().remove(iNodeRemoved.getGraphicNode().getNode());	
-					nodes.remove(iNodeRemoved.getGraphicNode());
+					paneTree.getChildren().remove(iNodeRemoved.getGraphicNode().getStackPaneNode());	
+					listGraphicNodes.remove(iNodeRemoved.getGraphicNode());
 					
 					iNodeRemoved.setGraphicNode(iNodeMoved.getGraphicNode()); //změním INode1 jeho grafický node... 
 				}
@@ -533,7 +537,9 @@ public class DrawingTree {
 		timeline.play();		
 		
 	}
-	
+	/**
+	 * Přesune hodnotu do jiného listu
+	 */
 	private void moveValueAnimation() {
 		IGraphicNode node1 = recordOfAnimations.get(indexAnimation).getNode1().getGraphicNode();
 		IGraphicNode node2 = ((INode<?>) recordOfAnimations.get(indexAnimation).getObject()).getGraphicNode();
@@ -563,13 +569,13 @@ public class DrawingTree {
 		
 		if(node.getBranch() != null) {
 			st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch().getChildren().get(0), Color.BLACK, Color.LIME);
-			pt1 = new PauseTransition(Duration.millis(5 * (FASTANIMATION - speed.get())));
+			pt1 = new PauseTransition(Duration.millis(5 * (FASTANIMATION - animationSpeed.get())));
 			st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch().getChildren().get(0), Color.LIME, Color.BLACK);
 		}
 		
-		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getShape(), Color.WHITE, Color.LIME);
-		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (FASTANIMATION - speed.get())));
-		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getShape(), Color.LIME, Color.WHITE);
+		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.WHITE, Color.LIME);
+		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())));
+		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.LIME, Color.WHITE);
 		
 		if(node.getBranch() != null) {
 			seqT = new SequentialTransition(st1, pt1, st2, st3, pt2, st4);
@@ -580,7 +586,7 @@ public class DrawingTree {
 		seqT.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if (++index < wayList.size()) {
+				if (++wayIndex < wayList.size()) {
 					nextSearchNode();
 				} else {
 					if((boolean)recordOfAnimations.get(indexAnimation).getObject()) {
@@ -600,12 +606,12 @@ public class DrawingTree {
 	 * Zvýrazní nalezený list
 	 */
 	private void highlightFindNode() {
-		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getShape(), Color.WHITE, Color.YELLOW);
-		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (SLOWANIMATION - 50 - speed.get())));
-		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getShape(), Color.YELLOW, Color.WHITE);
-		
-		SequentialTransition seqT = new SequentialTransition(st3, pt2, st4);		
-		
+		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getCircleShape(), Color.WHITE, Color.YELLOW);
+		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (SLOWANIMATION - 50 - animationSpeed.get())));
+		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getCircleShape(), Color.YELLOW, Color.WHITE);
+
+		SequentialTransition seqT = new SequentialTransition(st3, pt2, st4);
+
 		seqT.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -613,9 +619,24 @@ public class DrawingTree {
 				nextAnimation();
 			}
 		});
-		
-		seqT.play();		
+
+		seqT.play();
 	}
+	
+	/********************************************************************************************************
+	 * GETS & SETS
+	 * 
+	 *******************************************************************************************************/
+	
+	public List<IGraphicNode> getListGraphicNodes() {
+		return listGraphicNodes;
+	}
+	
+	public void setListGraphicNodes(List<IGraphicNode> oldGraphicTreeNodes) {
+		listGraphicNodes.clear();
+		listGraphicNodes.addAll(oldGraphicTreeNodes);		
+	}
+	
 	/*private int iterMax(INode<?> node) {
 		if (node.getLeft() != null) {
 			if (node.getRight() != null) {

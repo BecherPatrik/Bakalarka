@@ -13,61 +13,69 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 
 public class BinaryGraphicNode implements IGraphicNode {
-	private final int size = 20;
+	private final int radiusSize = 20;
+
+	private IGraphicNode parent;
+	private Side side;
 	private int level = 0;
+
+	private Text value;
+
 	private DoubleProperty x;
 	private DoubleProperty y;
 
-	private Text value;
-	private StackPane node;
+	private StackPane stackPaneNode;
 	private Circle circle;
 	private Pane branch = null;
-	
-	private IGraphicNode parent;
-	private Side side;
 
 	public BinaryGraphicNode(int value) {
 		this.value = new Text(Integer.toString(value));
-		node = new StackPane();		
-		createNode();
+		stackPaneNode = new StackPane();
+		createStackPaneNode();
 	}
 
 	@Override
-	public void createNode() {
-		circle = new Circle(size);
+	public void createStackPaneNode() {
+		circle = new Circle(radiusSize);
 		circle.setStrokeWidth(1.5);
 		circle.setStroke(Color.WHITE);
 
-	/*	circle.prefWidth(size);
-		circle.prefHeight(size);*/
+		/*
+		 * circle.prefWidth(size); circle.prefHeight(size);
+		 */
 
 		value.setBoundsType(TextBoundsType.VISUAL);
 		value.setFill(Color.WHITE);
 		value.setFont(new Font(value.getFont().toString(), 14));
 
-		node.getChildren().addAll(circle, value);
+		stackPaneNode.getChildren().addAll(circle, value);
 	}
-	
+
 	@Override
-	public Shape getShape(){
-		return this.circle;
+	public void highlightNode() {
+		circle.setStroke(Color.BLUE);
 	}
 
 	@Override
 	public void highlightFindNode() {
 		circle.setStroke(Color.YELLOW);
 	}
-	
+
 	@Override
-	public void highlightNode() {
-		circle.setStroke(Color.BLUE);
-	}
-	
-	@Override
-	public void setDefaultColorNode(){
+	public void setDefaultColorNode() {
 		circle.setStroke(Color.WHITE);
 	}
 	
+	/********************************************************************************************************
+	 * GETS & SETS
+	 * 
+	 *******************************************************************************************************/
+
+	@Override
+	public int getRadiusSize() {
+		return 2 * radiusSize;
+	}
+
 	@Override
 	public IGraphicNode getParent() {
 		return parent;
@@ -79,42 +87,13 @@ public class BinaryGraphicNode implements IGraphicNode {
 	}
 
 	@Override
-	public DoubleProperty getX() {
-		return x;
+	public Side getSide() {
+		return side;
 	}
 
 	@Override
-	public void setX(DoubleProperty x) {
-		this.x = x;		
-		node.layoutXProperty().bind(x);
-	}
-
-	@Override
-	public DoubleProperty getY() {
-		return y;
-	}
-
-	@Override
-	public void setY(DoubleProperty y) {
-		this.y = y;
-		node.layoutYProperty().bind(y);
-	}
-
-	@Override
-	public void setValue(String value) {
-		this.value = new Text(value);
-		Text text = (Text) this.node.getChildren().get(1);
-		text.setText(value);
-	}
-	
-	@Override
-	public String getValue(){
-		return this.value.getText();
-	}
-
-	@Override
-	public StackPane getNode() {
-		return node;
+	public void setSide(Side side) {
+		this.side = side;
 	}
 
 	@Override
@@ -128,12 +107,47 @@ public class BinaryGraphicNode implements IGraphicNode {
 	}
 
 	@Override
-	public int getSize() {
-		return 2 * size;
+	public String getValue() {
+		return this.value.getText();
 	}
 
 	@Override
-	public void setSize() {
+	public void setValue(String value) {
+		this.value = new Text(value);
+		Text text = (Text) this.stackPaneNode.getChildren().get(1);
+		text.setText(value);
+	}
+
+	@Override
+	public DoubleProperty getX() {
+		return x;
+	}
+
+	@Override
+	public void setX(DoubleProperty x) {
+		this.x = x;
+		stackPaneNode.layoutXProperty().bind(x);
+	}
+
+	@Override
+	public DoubleProperty getY() {
+		return y;
+	}
+
+	@Override
+	public void setY(DoubleProperty y) {
+		this.y = y;
+		stackPaneNode.layoutYProperty().bind(y);
+	}
+
+	@Override
+	public Shape getCircleShape() {
+		return this.circle;
+	}
+
+	@Override
+	public StackPane getStackPaneNode() {
+		return stackPaneNode;
 	}
 
 	@Override
@@ -145,45 +159,34 @@ public class BinaryGraphicNode implements IGraphicNode {
 	public void setBranch(Pane branch) {
 		this.branch = branch;
 	}
-	
-	@Override
-	public Side getSide() {
-		return side;
-	}
 
 	@Override
-	public void setSide(Side side) {
-		this.side = side;
-	}
-
-	@Override 
-	public void setBranchEndX(double x) {
+	public double getBranchStartX() {
 		Line l = (Line) branch.getChildren().get(0);
-		l.setEndX(x);
+		return l.getStartX();
 	}
-	
-	@Override 
+
+	@Override
+	public void setBranchStartX(double x) {
+		Line l = (Line) branch.getChildren().get(0);
+		l.setStartX(x);
+	}
+
+	@Override
 	public double getBranchEndX() {
 		Line l = (Line) branch.getChildren().get(0);
 		return l.getEndX();
 	}
-	
+
+	@Override
+	public void setBranchEndX(double x) {
+		Line l = (Line) branch.getChildren().get(0);
+		l.setEndX(x);
+	}
+
 	@Override
 	public void setBranchEndY(double y) {
 		Line l = (Line) branch.getChildren().get(0);
 		l.setEndY(y);
 	}
-	
-	@Override 
-	public void setBranchStartX(double x) {
-		Line l = (Line) branch.getChildren().get(0);
-		l.setStartX(x);
-	}
-	
-	@Override 
-	public double getBranchStartX() {
-		Line l = (Line) branch.getChildren().get(0);
-		return l.getStartX();
-	}
-	
 }

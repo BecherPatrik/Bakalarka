@@ -22,17 +22,17 @@ public class Result<T> {
 		return node;
 	}	
 	
+	public void setNode(INode<T> node) {
+		this.node = node;
+	}
+	
 	public Side getSide(){
 		return side;
 	}	
 	
 	public void setSide(Side side){
 		this.side = side;
-	}
-	
-	public void setNode(INode<T> node) {
-		this.node = node;
-	}	
+	}		
 
 	/**
 	 * Přídá směr do kolekce směrů
@@ -59,6 +59,4 @@ public class Result<T> {
 	public ArrayList<RecordOfAnimation> getRecordOfAnimations() {
 		return recordOfAnimations;
 	}
-	
-	
 }
