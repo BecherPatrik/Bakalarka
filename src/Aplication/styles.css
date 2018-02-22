@@ -34,24 +34,25 @@ VBox {
 }
 
 .slider {
- -fx-background-color: none;  /* Hide the track */
- -fx-background-insets: 1.0 0.0 -1.0 0.0, 0.0, 1.0;
- -fx-background-radius: 2.5, 2.5, 1.5;
- -fx-padding: 2.5; 
- -fx-font-family: "Segoe UI";
- -fx-font-size: 10.5pt;
+	-fx-background-color: none;  /* Hide the track */
+	-fx-background-insets: 1.0 0.0 -1.0 0.0, 0.0, 1.0;
+	-fx-background-radius: 2.5, 2.5, 1.5;
+	-fx-padding: 2.5; 
+	-fx-font-family: "Segoe UI";
+	-fx-font-size: 10.5pt;
 }
 
 .slider .fill {
- -fx-background-color: #00828b;
- -fx-padding: 0.333333em; 
+	-fx-background-color: #00828b;
+	-fx-padding: 0.333333em; 
 }
+
 .slider .fill:hover {
- -fx-background-color: #219297; 
+	-fx-background-color: #219297; 
 }
  
 .button {
-    -fx-padding: 5.0 22.0 5.0 22.0;   
+	-fx-padding: 5.0 22.0 5.0 22.0;   
     -fx-border-color: #e2e2e2;
     -fx-border-width: 2.0; 
     -fx-font-family: "Segoe UI";
@@ -67,8 +68,8 @@ VBox {
 }
 
 .button:pressed, Button:default:hover:pressed {
-  -fx-background-color: white;
-  -fx-text-fill: #1d1d1d;
+	-fx-background-color: white;
+	-fx-text-fill: #1d1d1d;
 }
 
 .button:disabled, Button:default:disabled {
