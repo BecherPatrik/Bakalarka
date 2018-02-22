@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import Graphic.DrawingTree;
+import Graphic.IGraphicNode;
 import Trees.BinaryNode;
 import Trees.BinaryTree;
+import Trees.INode;
 import Trees.ITree;
 import Trees.Result;
+import Trees.AnimatedAction;
 import javafx.animation.FadeTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,7 +22,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -36,154 +43,81 @@ public class WindowController implements Initializable {
 
 	private Stage primaryStage;
 
-	@FXML
+	private @FXML
 	Button btnTrees;
-	@FXML
-	Button btnTreesOld = null;
+	private @FXML
+	Button btnBinary;
+	private @FXML
+	Button btnTreesActual;
 
-	@FXML
+	private @FXML
 	Button btnSearch;
-	@FXML
+	private @FXML
 	Button btnDelete;
-	@FXML
+	private @FXML
 	Button btnInsert;
-	@FXML
+	private @FXML
 	Button btnRepeat;
+	private @FXML
+	Button btnNewTree;
 
-	@FXML
+	private @FXML
 	TextField inputNumber;
-	@FXML
+	private @FXML
 	Slider sliderSpeed;
 
-	@FXML
+	private @FXML
 	HBox hBoxInput;
-	@FXML
+	private @FXML
 	VBox treesMenu;
-/*	@FXML
-	VBox vBox;*/
 
-	@FXML
+	private @FXML
 	BorderPane bpWindow;
-	@FXML
+	private @FXML
 	BorderPane menu;
-	@FXML
+	private @FXML
 	BorderPane borderPaneTree;
-	@FXML
+	private @FXML
 	Pane paneTree;
 
-/*	@FXML
-	ScrollPane scrollPane;
-	@FXML
-	ScrollBar sc;	*/
-
-	ITree<?> actualTree;
-	DrawingTree graphicTree;
+	private ITree<?> tree;
+	private DrawingTree graphicTree;	
+	private List<IGraphicNode> oldGraphicTreeNodes = new ArrayList<>();
 	
-	BinaryTree t = new BinaryTree(5);
-	DrawingTree d;	
+	private final int maxTextLength = 4;	
+	
+	private Result<?> lastResult = null;
+	private AnimatedAction lastAction;
 
+	/**
+	 * Inicializace okna
+	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		btnTreesActual = btnBinary;
+		
 		hideMenu();
 		numberOnly();
 		sliderFormat();
-	}
+		toolTips();
+	}	
 
-	
-
-	private void numberOnly() {
-		inputNumber.setTooltip(new Tooltip("Zadávejte hodnoty od 0 - 1000"));
-		inputNumber.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if (!newValue.matches("(\\d*)")) {					
-					inputNumber.setText(newValue.replaceAll("[^\\d]", ""));	
-					inputNumber.getTooltip().show(primaryStage); //TODO
-					//inputNumber.getTooltip().hid
-				} 
-				if (!inputNumber.getText().isEmpty()) {
-					btnInsert.setDisable(false);
-				} else {
-					btnInsert.setDisable(true);
-				}
-			}
-		});
-	}
-	
-	private void sliderFormat() {
-		sliderSpeed.setSnapToTicks(true);
-		sliderSpeed.setShowTickMarks(true);
-        sliderSpeed.setShowTickLabels(true);
-        sliderSpeed.setMinorTickCount(0);
-        
-        
-		sliderSpeed.setLabelFormatter(new StringConverter<Double>() {
-            @Override
-            public String toString(Double n) {
-                if (n == 0) return "VYP";
-                if (n == 25) return "25%";
-                if (n == 50) return "50%";
-                if (n == 75) return "75%";
-                return "100%";              
-            }
-
-            @Override
-            public Double fromString(String s) {
-                return 0d;                
-            }
-        });
-		
-	}
-
+	/**
+	 * Nastaví Stage
+	 * @param primaryStage
+	 */
 	public void setPrimaryStage(Stage primaryStage) {
 		this.primaryStage = primaryStage;
 		sliderSpeed.setValue(25);
 		
-		d = new DrawingTree(t, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
-		d.insertRoot(t.getRoot().getGraphicNode());	//TODO
-		btnSearch.setDisable(false);
-	}
-
-	@FXML
-	public void insertNumber() {
-		disableButtons();
-		Result<BinaryNode> n = t.insert(Integer.parseInt(inputNumber.getText()));		
-		d.insertNode(n);
+		newEmptyTree();		
 	}
 	
+	/**
+	 * Funkce pro animaci skrytí menu
+	 */
 	@FXML
-	public void searchNumber() {
-		disableButtons();
-		Result<BinaryNode> n = t.search(Integer.parseInt(inputNumber.getText()));		
-		d.searchNode(n);
-	}
-
-	@FXML
-	public void deleteNumber() {
-		disableButtons();
-		Result<BinaryNode> n = t.delete(Integer.parseInt(inputNumber.getText()));		
-		d.deleteNode(n);
-	}
-	
-	@FXML 
-	public void newTree() {
-		//TODO
-	}	
-
-	@FXML
-	public void showMenu() {
-		bpWindow.setLeft(treesMenu);
-		menu.setLeft(null);
-
-		FadeTransition showFileRootTransition = new FadeTransition(Duration.millis(500), treesMenu);
-		showFileRootTransition.setFromValue(0.0);
-		showFileRootTransition.setToValue(1.0);
-
-		showFileRootTransition.play();
-	}
-
-	@FXML
-	public void hideMenu() {
+	private void hideMenu() {
 		FadeTransition hideFileRootTransition = new FadeTransition(Duration.millis(500), treesMenu);
 		hideFileRootTransition.setFromValue(1.0);
 		hideFileRootTransition.setToValue(0.0);
@@ -198,50 +132,315 @@ public class WindowController implements Initializable {
 
 		hideFileRootTransition.play();
 	}
-
+	
+	/**
+	 * Funkce pro animaci zobrazení menu
+	 */
 	@FXML
-	public void textFieldValidator() {
-		
-	}
+	private void showMenu() {
+		bpWindow.setLeft(treesMenu);
+		menu.setLeft(null);
 
-	@FXML
-	public void changeTree(ActionEvent event) throws IOException {
-		Button selectedButton = (Button) event.getTarget();
-		selectedButton.getStyleClass().clear();
-		selectedButton.getStyleClass().add("tree-button-focus");
+		FadeTransition showFileRootTransition = new FadeTransition(Duration.millis(500), treesMenu);
+		showFileRootTransition.setFromValue(0.0);
+		showFileRootTransition.setToValue(1.0);
 
-		if (btnTreesOld != null) {
-			btnTreesOld.getStyleClass().clear();
-			btnTreesOld.getStyleClass().add("tree-button");
-		}
-
-		primaryStage.setTitle("Trees - " + selectedButton.getText());
-
-		btnTreesOld = selectedButton;
-		hideMenu();
-	}
-
-	@FXML
-	public void repeatLastAnimation() {
+		showFileRootTransition.play();
 	}
 	
+	/**
+	 * Nastaví validátor pro textField inputNumber
+	 */
+	private void numberOnly() {
+		inputNumber.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (!newValue.matches("(\\d*)")) {					
+					inputNumber.setText(newValue.replaceAll("[^\\d]", ""));						
+				} 
+				
+				if (newValue.length() > maxTextLength) {		                
+					inputNumber.setText(oldValue);
+				}
+				
+				checkEnableButtons();
+			}
+		});
+	}
+	
+	/**
+	 * Naformátuje Slider
+	 */
+	private void sliderFormat() {
+		sliderSpeed.setSnapToTicks(true);
+		sliderSpeed.setShowTickMarks(true);
+        sliderSpeed.setShowTickLabels(true);
+        sliderSpeed.setMinorTickCount(0);        
+        
+		sliderSpeed.setLabelFormatter(new StringConverter<Double>() {
+            @Override
+            public String toString(Double n) {
+                if (n == 0) return "VYP.";
+                if (n == 25) return "25%";
+                if (n == 50) return "50%";
+                if (n == 75) return "75%";
+                return "100%";              
+            }
+
+            @Override
+            public Double fromString(String s) {
+                return 0d;                
+            }
+        });
+		
+	}
+	
+	/**
+	 * Nastaví toolTips
+	 */
+	private void toolTips() {
+		inputNumber.setTooltip(new Tooltip("Zadávejte pouze hodnoty\nod 0 do 10 000"));
+		btnInsert.setTooltip(new Tooltip("Vloží zadanou hodnotu"));
+		btnSearch.setTooltip(new Tooltip("Vyhledá zadanou hodnotu"));
+		btnDelete.setTooltip(new Tooltip("Smaže zadanou hodnotu"));
+		btnNewTree.setTooltip(new Tooltip("Vytvoøí nový strom..."));
+		btnRepeat.setTooltip(new Tooltip("Zopakuje poslední krok"));
+		sliderSpeed.setTooltip(new Tooltip("Nastavení rychlosti animace"));
+	}
+
+	/**
+	 * Funkce pro vkládání èísla
+	 */
+	@FXML
+	private void insertNumber() {
+		oldGraphicTreeNodes.clear();
+		oldGraphicTreeNodes.addAll(graphicTree.getNodes());
+		lastAction = AnimatedAction.INSERT;
+		
+		disableButtons();		
+		
+		lastResult = tree.insert(Integer.parseInt(inputNumber.getText()));
+		
+		if (lastResult != null) {
+			graphicTree.insertNode(lastResult);			
+		} else {
+			graphicTree.insertRoot((INode<?>)tree.getRoot());
+		}				
+	}
+	
+	/**
+	 * Funkce pro hledání èísla
+	 */
+	@FXML
+	private void searchNumber() {
+		oldGraphicTreeNodes.clear();
+		oldGraphicTreeNodes.addAll(graphicTree.getNodes());
+		lastAction = AnimatedAction.SEARCH;
+		
+		disableButtons();
+		
+		lastResult = tree.search(Integer.parseInt(inputNumber.getText()));		
+		graphicTree.searchNode(lastResult);		
+	}
+
+	/**
+	 * Funkce pro mazání èísla
+	 */
+	@FXML
+	private void deleteNumber() {
+		oldGraphicTreeNodes.clear();
+		oldGraphicTreeNodes.addAll(graphicTree.getNodes());
+		lastAction = AnimatedAction.DELETE;
+		
+		disableButtons();
+		
+		lastResult = tree.delete(Integer.parseInt(inputNumber.getText()));		
+		graphicTree.deleteNode(lastResult);		
+	}
+	
+	/**
+	 * Vytvoøení nového stromu pøes tlaèítko
+	 */
+	@FXML 
+	private void newTree() {
+		//TODO tree
+		graphicTree = new DrawingTree(tree, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
+	//	graphicTree.insertRoot(tree.getRoot().getGraphicNode());	//TODO
+		checkEnableButtons();
+	}
+	
+	/**
+	 * Vytvoøení nového prázdného stromu
+	 */
+	private void newEmptyTree() {
+		oldGraphicTreeNodes = new ArrayList<>();
+		
+		paneTree.getChildren().clear();
+		
+		switch (btnTreesActual.getId()) {
+		case "btnBinary":
+			graphicTree = new DrawingTree(tree, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
+			tree = new BinaryTree();			
+			break;
+			
+		case "btnAVL":
+			graphicTree = new DrawingTree(tree, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
+			tree = new BinaryTree();
+			//tree = new AVLTree();
+			break;
+			
+		case "btnRedBlack":
+			graphicTree = new DrawingTree(tree, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
+			tree = new BinaryTree();
+			//tree = new RedBlackTree();
+			break;
+		default:
+			break;
+		}
+		
+	}	
+	
+	/**
+	 * Vytvoøení nového náhodného stromu 
+	 * @param count
+	 */
+	private void newRandomTree(int count) {
+		//TODO vypnùt animace
+	}
+
+	/**
+	 * Funkce pro volbu stromu z menu
+	 * @param event
+	 * @throws IOException
+	 */
+	@FXML
+	private void changeTree(ActionEvent event) throws IOException {
+		if (btnTreesActual != (Button) event.getTarget() && (tree == null || tree.getRoot() == null || dialogChangeTree())) {
+			Button selectedButton = (Button) event.getTarget();
+			selectedButton.getStyleClass().clear();
+			selectedButton.getStyleClass().add("tree-button-focus");
+			
+			btnTreesActual.getStyleClass().clear();
+			btnTreesActual.getStyleClass().add("tree-button");			
+
+			primaryStage.setTitle("Trees - " + selectedButton.getText());
+
+			btnTreesActual = selectedButton;
+			hideMenu();
+			newEmptyTree();
+		}
+	}
+
+	/**
+	 * Dialog pro zmìnu stromu
+	 * @return
+	 */
+	private boolean dialogChangeTree() {
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Zmìna typu stromu");
+		alert.setHeaderText("Zmìnou typu stromu bude smazán aktuální strom.");
+		alert.setContentText("Smazat aktuální strom?");
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == ButtonType.OK){
+		    return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Zopakuje poslední animaci
+	 */
+	@FXML
+	private void repeatLastAnimation() {
+		graphicTree.setNodes(oldGraphicTreeNodes);
+		
+		paneTree.getChildren().clear();
+		
+		for (IGraphicNode node : graphicTree.getNodes()) {
+			paneTree.getChildren().add(node.getNode());			
+			if (node.getBranch() != null) {								
+				paneTree.getChildren().add(node.getBranch());
+				node.getParent().getNode().toFront();
+				node.getNode().toFront();
+			}			
+		}
+
+		switch (lastAction) {
+		case INSERT:
+			if (lastResult != null) {
+				graphicTree.insertNode(lastResult);			
+			} else {
+				graphicTree.insertRoot((INode<?>)tree.getRoot());
+			}
+			break;
+
+		case DELETE:
+			graphicTree.deleteNode(lastResult);
+			break;
+
+		case SEARCH:
+			graphicTree.searchNode(lastResult);
+			break;
+
+		default:
+			break;
+		}
+	}
+	
+	/**
+	 * Povoluje a ruší povolení používání tlaèítek podle možností co se s daným stromem dá dìlat
+	 */
+	private void checkEnableButtons() {
+		if (!inputNumber.getText().isEmpty()) {
+			btnInsert.setDisable(false);
+		} else {
+			btnInsert.setDisable(true);
+		}
+		
+		if (!inputNumber.getText().isEmpty() && tree != null && tree.getRoot() != null) {
+			btnDelete.setDisable(false);
+			btnSearch.setDisable(false);
+		} else {
+			btnDelete.setDisable(true);
+			btnSearch.setDisable(true);
+		}
+		
+		if (oldGraphicTreeNodes.isEmpty() && paneTree.getChildren().isEmpty()) {
+			btnRepeat.setDisable(true);
+		} else {
+			btnRepeat.setDisable(false);
+		}
+	}
+	
+	/**
+	 * Povolí manipulaci s tlaèítkami po ukonèení animace
+	 */
 	public void enableButtons() {
-		btnInsert.setDisable(false);
-		btnDelete.setDisable(false);
-		btnRepeat.setDisable(false);
-		btnSearch.setDisable(false);
+	//	checkEnableButtons();
+		
 		btnTrees.setDisable(false);
+		btnNewTree.setDisable(false);		
+		
+		sliderSpeed.setDisable(false);
+		
 		inputNumber.setDisable(false);
-		sliderSpeed.setDisable(false); 
 		inputNumber.clear();
 	}
 	
+	/**
+	 * Znemožní používání tlaèítek v prùbìhu animace 
+	 */
 	private void disableButtons() {
 		btnInsert.setDisable(true);
 		btnDelete.setDisable(true);
-		btnRepeat.setDisable(true);
 		btnSearch.setDisable(true);
+		
+		btnRepeat.setDisable(true);		
+		
 		btnTrees.setDisable(true);
+		btnNewTree.setDisable(true);
+		
 		sliderSpeed.setDisable(true);
 		inputNumber.setDisable(true);
 	}

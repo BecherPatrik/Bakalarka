@@ -1,10 +1,10 @@
 package Trees;
 
 public class BinaryTree implements ITree<BinaryNode> {
-    private BinaryNode root;
+    private BinaryNode root = null;
     
-    public BinaryTree(int value) {
-        this.root = new BinaryNode(value);
+    public BinaryTree() {
+        
     }
     
     @Override
@@ -58,13 +58,14 @@ public class BinaryTree implements ITree<BinaryNode> {
             result.addAnimation(AnimatedAction.MOVENODE, result.getNode(), removedNode.getRight());
             
             removedNode.setNode(removedNode.getRight());            
-        } else {
-        	
+        } else {        	
         	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá dìti 
             if (side == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
                 removedNode.getParent().deleteLeft();
-            } else {
-                removedNode.getParent().deleteRight();
+            } else if (removedNode.equals(root)) {
+            	root = null;
+            } else { //pokud ani jedna možnost jedná se o koøen
+            	removedNode.getParent().deleteRight();            	
             }
             return result; //bez animace zmìny koøenu
         } 
@@ -74,6 +75,10 @@ public class BinaryTree implements ITree<BinaryNode> {
     
 	@Override
 	public Result<BinaryNode> insert(int value) {
+		if (root == null) {
+			root = new BinaryNode(value);
+			return null;
+		}
 		Result<BinaryNode> result = search(value);
 	    Side side = result.getSide(); //ovìøíme poslední stranu
 	    BinaryNode parent = (BinaryNode) result.getNode();  // vrátí prvek (side = null) nebo rodièe a místo kam uložit (side = R, L)

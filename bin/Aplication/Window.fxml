@@ -27,12 +27,12 @@
 	<left>
 		<VBox fx:id="treesMenu">
 			<Button fx:id="btnBack" text="Zpět" prefWidth="160" prefHeight="47" onAction="#hideMenu" alignment="CENTER_LEFT" styleClass="tree-button, menu-button" />
-			<Button fx:id="btnBinary" text="Binary tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button fx:id="btnBinary" text="Binary tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button-focus" />
 			<Button fx:id="btnAVL" text="AVL strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
-			<Button fx:id="btnB" text="B-strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
 			<Button fx:id="btnRedBlack" text="Červeno-černý strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
+		<!--<Button fx:id="btnB" text="B-strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />			
 			<Button fx:id="btnRadixSearch" text="Radix Search tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
-			<Button fx:id="btnPatricia" text="Patricia tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button fx:id="btnPatricia" text="Patricia tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />  -->
 		</VBox>
 	</left>
 	<center>
@@ -49,12 +49,12 @@
 						   	</padding>
 							<HBox spacing="4" alignment="CENTER_RIGHT">
 								<Text styleClass="menu-text">Číslo:</Text>
-								<TextField fx:id="inputNumber" prefWidth="100" onInputMethodTextChanged="#textFieldValidator" />
+								<TextField fx:id="inputNumber" prefWidth="100" />
 							</HBox>
-							<Button fx:id="btnInsert" text="Vložit" onAction="#insertNumber" styleClass="action-button" disable="true"/>
-							<Button fx:id="btnSearch" text="Hledat" onAction="#searchNumber" styleClass="action-button" disable="true"/>
-							<Button fx:id="btnDelete" text="Smazat" onAction="#deleteNumber" styleClass="action-button" disable="true"/>							
-							<Button fx:id="btnNewTree" text="Nový" onAction="#newTree" styleClass="action-button" disable="false"/>							
+							<Button fx:id="btnInsert" text="Vložit" onAction="#insertNumber" styleClass="action-button" disable="true" />
+							<Button fx:id="btnSearch" text="Hledat" onAction="#searchNumber" styleClass="action-button" disable="true" />
+							<Button fx:id="btnDelete" text="Smazat" onAction="#deleteNumber" styleClass="action-button" disable="true" />							
+							<Button fx:id="btnNewTree" text="Nový..." onAction="#newTree" styleClass="action-button" disable="false" />							
 						</HBox>
 					</right>
 				</BorderPane>
@@ -75,7 +75,7 @@
 								<HBox spacing="4" alignment="TOP_RIGHT">									
 									<Text styleClass="menu-text">Rychlost:</Text>
 									<Slider fx:id="sliderSpeed" showTickLabels="true" majorTickUnit="25" prefWidth="200" />
-									<Button fx:id="btnRepeat" text="Opakuj poslední krok" onAction="#repeatLastAnimation" styleClass="action-button" />							
+									<Button fx:id="btnRepeat" text="Opakuj poslední krok" onAction="#repeatLastAnimation" styleClass="action-button" disable="true" />							
 								</HBox>
 							</right>
 						</BorderPane>

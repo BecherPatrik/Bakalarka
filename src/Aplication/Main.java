@@ -16,7 +16,7 @@ public class Main extends Application {
 
 		WindowController controller = loader.getController();		
 
-		primaryStage.setTitle("Stromy");
+		primaryStage.setTitle("Stromy - Binární strom");
 		primaryStage.setMinHeight(450);
 		primaryStage.setMinWidth(831);
 		primaryStage.setScene(new Scene(root, 815, 505));
