@@ -27,7 +27,7 @@
 	<left>
 		<VBox fx:id="treesMenu">
 			<Button fx:id="btnBack" text="Zpět" prefWidth="160" prefHeight="47" onAction="#hideMenu" alignment="CENTER_LEFT" styleClass="tree-button, menu-button" />
-			<Button fx:id="btnBinary" text="Binary tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button-focus" />
+			<Button fx:id="btnBinary" text="Binární strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button-focus" />
 			<Button fx:id="btnAVL" text="AVL strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
 			<Button fx:id="btnRedBlack" text="Červeno-černý strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
 		<!--<Button fx:id="btnB" text="B-strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />			
@@ -54,7 +54,7 @@
 							<Button fx:id="btnInsert" text="Vložit" onAction="#insertNumber" styleClass="action-button" disable="true" />
 							<Button fx:id="btnSearch" text="Hledat" onAction="#searchNumber" styleClass="action-button" disable="true" />
 							<Button fx:id="btnDelete" text="Smazat" onAction="#deleteNumber" styleClass="action-button" disable="true" />							
-							<Button fx:id="btnNewTree" text="Nový..." onAction="#newTree" styleClass="action-button" disable="false" />							
+							<Button fx:id="btnNewTree" text="Nový..." onAction="#dialogNewTree" styleClass="action-button" disable="false" />							
 						</HBox>
 					</right>
 				</BorderPane>
