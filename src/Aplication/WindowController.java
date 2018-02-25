@@ -9,9 +9,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
-
-import javax.swing.plaf.synth.SynthSeparatorUI;
-
 import Graphic.DrawingTree;
 import Graphic.IGraphicNode;
 import Trees.AnimatedAction;
@@ -20,8 +17,6 @@ import Trees.INode;
 import Trees.ITree;
 import Trees.Result;
 import javafx.animation.FadeTransition;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -33,10 +28,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
@@ -215,8 +207,7 @@ public class WindowController implements Initializable {
 				
 				checkEnableButtons();
 			}
-		});
-		
+		});		
 	}
 	
 	/**
@@ -379,7 +370,7 @@ public class WindowController implements Initializable {
 		randomValueList = new HashSet<>();
 		Random r = new Random();
 		int low = 1;
-		int high = 100;
+		int high = 1000;
 
 		while (randomValueList.size() != count) {
 			randomValueList.add(r.nextInt(high - low) + low);
@@ -417,7 +408,6 @@ public class WindowController implements Initializable {
 		dialog.getEditor().textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				System.out.println(newValue.replaceAll("[^\\d]", ""));
 				if (!newValue.matches("(\\d*)")) {
 					dialog.getEditor().setText(newValue.replaceAll("[^\\d]", ""));					
 				}
@@ -430,7 +420,7 @@ public class WindowController implements Initializable {
 					} else if (count > 25) {
 						dialog.getEditor().setText("25");
 					}
-				}
+				} 
 			}
 		});
 		
@@ -440,8 +430,8 @@ public class WindowController implements Initializable {
 		
 		Optional<String> result = dialog.showAndWait();
 		
-		if (result.isPresent()){
-		   return Integer.parseInt(result.get());
+		if (result.isPresent() && !result.get().isEmpty()){
+			return Integer.parseInt(result.get());
 		}
 		
 		return 0;		

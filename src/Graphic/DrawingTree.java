@@ -623,8 +623,12 @@ public class DrawingTree {
 	 */
 	private void highlightNode(IGraphicNode node) {
 		if (animationSpeed.get() == 0) { //když nebude animace
-			indexAnimation++;
-			nextAnimation();
+			if((boolean)recordOfAnimations.get(indexAnimation).getObject()) {
+				highlightFindNode();
+			} else {
+				indexAnimation++;
+				nextAnimation();
+			}
 			return;
 		}
 		
@@ -717,54 +721,4 @@ public class DrawingTree {
 		}
 	
 		
-	}*/
-
-	
-	
-	/*private class Level {
-		private int maxLevel;
-		private int countNode;
-		
-		public Level(int maxLevel, int countNode) {
-			this.maxLevel = maxLevel;
-			this.countNode = countNode;
-		}
-		
-		public void deleteMaxNode {
-			countNode--;
-			if (countNode == 0) {
-				
-			}
-		}
-//		
-	}*/
-	/*
-	 * private-method private void iterDraw(double left, double top, U node, int
-	 * numberIter) {
-	 * 
-	 * Grid grind = node.GraphicNode.Grind;
-	 * 
-	 * Canvas.SetLeft(grind, left); Canvas.SetTop(grind, top);
-	 * _canvas.Children.Add(grind); redraw(); Thread.Sleep(500);
-	 * 
-	 * if (node.Left != null) iterDraw(left - (150 - (numberIter * 27)), top +
-	 * 80, node.Left, numberIter + 1); if (node.Right != null) iterDraw(left +
-	 * (150 - (numberIter * 27)), top + 80, node.Right, numberIter + 1); }
-	 * #endregion
-	 * 
-	 * #region public-method public void draw() { iterDraw(_canvasWight / 2, 20,
-	 * _tree.Root, 1); /// => tady je ta chyba...... !!! :D }
-	 * 
-	 * public void draw(INode<T> node, Side side) { Grid grind =
-	 * node.GraphicNode.Grind;
-	 * 
-	 * if (side == Side.Null) { //jedná se o root node.GraphicNode.Level = 0;
-	 * Canvas.SetLeft(grind, _canvasWight / 2); Canvas.SetTop(grind, 10);
-	 * _canvas.Children.Add(grind); Thread.Sleep(500); } else if (side ==
-	 * Side.Left) { //TODO ....
-	 * 
-	 * } }
-	 * 
-	 * public static void redraw() { _canvas.Refresh(); } #endregion
-	 */
-}
+	}*/}
