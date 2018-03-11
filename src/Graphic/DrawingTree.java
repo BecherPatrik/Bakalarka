@@ -83,7 +83,7 @@ public class DrawingTree {
 		DoubleProperty startNodeX = new SimpleDoubleProperty();	
 		DoubleProperty startNodeY = new SimpleDoubleProperty();	
 		
-		startNodeX.bind(paneTreeWeight.subtract(80));	
+		startNodeX.bind(paneTreeWeight.subtract(paneTreeWeight.get()).add(80));	
 		startNodeY.bind(new SimpleDoubleProperty(ROOTBORDER));			
 		
 		paneTree.getChildren().add(root.getStackPaneNode());
@@ -141,7 +141,7 @@ public class DrawingTree {
 		DoubleProperty startNodeX = new SimpleDoubleProperty();	
 		DoubleProperty startNodeY = new SimpleDoubleProperty();	
 		
-		startNodeX.bind(paneTreeWeight.subtract(80));	
+		startNodeX.bind(paneTreeWeight.subtract(paneTreeWeight.get()).add(80));	
 		startNodeY.bind(new SimpleDoubleProperty(ROOTBORDER));	
 		
 		newIGraphicNode = result.getNode().getGraphicNode(); //vkládaný list	
@@ -243,10 +243,17 @@ public class DrawingTree {
 		Line line;
 		//Line line2, line3;
 		
-		if (newIGraphicNode.getSide() == Side.LEFT) {
+	/*	if (newIGraphicNode.getSide() == Side.LEFT) {
 			line = new Line(0, 0, -x, DOWNMARGIN - space);	
 		} else {
 			line = new Line(0, 0, x, DOWNMARGIN - space);	
+		}
+		*/
+		
+		if (newIGraphicNode.getSide() == Side.LEFT) {
+			line = new Line(0, 0, -x, DOWNMARGIN);	
+		} else {
+			line = new Line(0, 0, x, DOWNMARGIN);	
 		}
 		
 		/*line2 = new Line(0, -100, 0,200);
