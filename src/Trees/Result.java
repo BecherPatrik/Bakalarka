@@ -48,9 +48,18 @@ public class Result<T> {
 	
 	/**
 	 * Přidá záznam o animaci do seznamu animací pro provedení
+	 * <p>
+	 * <b>Příklady použití:</b>
+	 * <br>
+	 * (SEARCH, nalezený/rodič, (boolean) nalezen)<br>
+	 * (INSERT, null, null)<br>
+	 * (DELETE, null, (boolean) děti)<br>
+	 * (MOVEVALUE, cíl, (INode) zdroj)<br>
+	 * (MOVENODE, cíl, (INode) zdroj)<br>
+	 * </p>
 	 * @param action
 	 * @param node1
-	 * @param object
+	 * @param object	 
 	 */
 	public void addAnimation(AnimatedAction action, INode<?> node1, Object object) {
 		recordOfAnimations.add(new RecordOfAnimation(action, node1, object));		

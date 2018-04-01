@@ -408,6 +408,10 @@ public class DrawingTree {
 		case SWAP:
 			swapAnimation();
 			break;
+		case MOVEVALUEFINISH:
+			break;
+		default:
+			break;
 		}	
 	}	
 

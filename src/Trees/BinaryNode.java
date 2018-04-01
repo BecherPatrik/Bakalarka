@@ -3,7 +3,8 @@ package Trees;
 import Graphic.BinaryGraphicNode;
 import Graphic.IGraphicNode;
 
-public class BinaryNode implements INode<BinaryNode> {
+public class BinaryNode
+implements INode<BinaryNode> {
 	private int value;
 	private BinaryNode parent = null;
 	private BinaryNode right = null;

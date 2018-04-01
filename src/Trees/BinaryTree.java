@@ -43,20 +43,21 @@ public class BinaryTree implements ITree<BinaryNode> {
         if (side != Side.NONE)  //pokud ho nenajdu TODO
             return null;
 
-        if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { //pokud má dva potomky (bere se nejlevější z pravé větve)
-        	
-        	helpNode = removedNode.getRight(); //dosadím pravého 
+		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud má dva potomnky 
+			helpNode = removedNode.getRight(); // dosadím pravého
 
-            if (helpNode.getLeft() == null) { //pokud pravý potomek nemá levého    
-            	removedNode.setValue(helpNode.getValue());
-            	removedNode.setRight(helpNode.getRight());
-            } else {
-            	while (helpNode.getLeft()!= null) {  //dokud nemám poslední levý
-                    helpNode = helpNode.getLeft();
-                }
-            //	helpNode.setLeft(removedNode.getLeft()); 
-            //	helpNode.setRight(removedNode.getRight());
-            }
+			if (!(helpNode.getLeft() == null && helpNode.getRight() == null)) { //pokud dosazovaný nemá potomka
+
+				if (helpNode.getLeft() == null) { // pokud pravý potomek nemá levého
+					removedNode.setRight(helpNode.getRight());
+				} else {
+					while (helpNode.getLeft() != null) { // dokud nemám poslední levý
+						helpNode = helpNode.getLeft();
+					}
+					// helpNode.setLeft(removedNode.getLeft());
+					// helpNode.setRight(removedNode.getRight());
+				}
+			}
              // uložím levého potomka mazaného do toho co ho nahradí
             
             removedNode.setValue(helpNode.getValue()); //uložím jeho hodnotu do toho co mažu
@@ -71,6 +72,7 @@ public class BinaryTree implements ITree<BinaryNode> {
             	helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadím místo něho jeho pravého
             	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode(), helpNode);
             	result.addAnimation(AnimatedAction.MOVENODE, helpNode, helpNode.getRight());
+            	result.addAnimation(AnimatedAction.MOVEVALUEFINISH, result.getNode(), helpNode);            	
             }
         } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka nemá jeho rodič    
         	result.addAnimation(AnimatedAction.DELETE, null, true);
