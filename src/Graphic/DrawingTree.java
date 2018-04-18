@@ -540,6 +540,13 @@ public class DrawingTree {
 					listGraphicNodes.add(0, iNodeMoved.getGraphicNode());
 				}
 				
+			/*	if (iNodeRemoved.getLeft().equals(iNodeMoved)) {
+					iNodeMoved.getGraphicNode().set
+				} else {
+					
+				}*/
+					
+				
 				decreaseLevel(iNodeMoved); //snížím všem potomkům level
 				
 				iNodeMoved.getGraphicNode().setLevel(iNodeRemoved.getGraphicNode().getLevel());

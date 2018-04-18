@@ -188,5 +188,11 @@ public class BinaryGraphicNode implements IGraphicNode {
 	public void setBranchEndY(double y) {
 		Line l = (Line) branch.getChildren().get(0);
 		l.setEndY(y);
+	}	
+	
+	@Override 
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();		//TODO deep clone
 	}
+	
 }

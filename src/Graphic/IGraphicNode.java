@@ -6,7 +6,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
 
-public interface IGraphicNode {	
+public interface IGraphicNode extends Cloneable{	
 	/**
 	 * Vytvoří Node a uloží ho do StackPane
 	 */
@@ -78,4 +78,6 @@ public interface IGraphicNode {
 	void setBranchEndX(double x);
 	
 	void setBranchEndY(double y);	
+	
+	Object clone() throws CloneNotSupportedException;
 }

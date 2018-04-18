@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
+
+import com.sun.xml.internal.bind.v2.TODO;
+
 import Graphic.DrawingTree;
 import Graphic.IGraphicNode;
 import Trees.AnimatedAction;
@@ -260,11 +263,16 @@ public class WindowController implements Initializable {
 
 	/**
 	 * Funkce pro mazání čísla
+	 * @throws CloneNotSupportedException 
 	 */
 	@FXML
-	private void deleteNumber() {
+	private void deleteNumber() throws CloneNotSupportedException {
 		oldGraphicTreeNodes.clear();
-		oldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+		//oldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+		for (IGraphicNode iGraphicNode : graphicTree.getListGraphicNodes()) {			
+			oldGraphicTreeNodes.add((IGraphicNode) iGraphicNode.clone());		//TODO	
+		}
+		
 		lastAction = AnimatedAction.DELETE;
 		
 		disableButtons();
@@ -358,6 +366,7 @@ public class WindowController implements Initializable {
 			}
 			
 			lastResult = null;
+			oldGraphicTreeNodes.clear();
 			sliderSpeed.setValue(oldSpeed);
 		}		
 	}
