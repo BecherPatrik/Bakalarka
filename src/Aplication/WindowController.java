@@ -10,8 +10,6 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import com.sun.xml.internal.bind.v2.TODO;
-
 import Graphic.DrawingTree;
 import Graphic.IGraphicNode;
 import Trees.AnimatedAction;
@@ -268,10 +266,10 @@ public class WindowController implements Initializable {
 	@FXML
 	private void deleteNumber() throws CloneNotSupportedException {
 		oldGraphicTreeNodes.clear();
-		//oldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
-		for (IGraphicNode iGraphicNode : graphicTree.getListGraphicNodes()) {			
-			oldGraphicTreeNodes.add((IGraphicNode) iGraphicNode.clone());		//TODO	
-		}
+		oldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+	//	for (IGraphicNode iGraphicNode : graphicTree.getListGraphicNodes()) {			
+	//		oldGraphicTreeNodes.add((IGraphicNode) iGraphicNode.clone());		//TODO	
+	//	}
 		
 		lastAction = AnimatedAction.DELETE;
 		
@@ -494,6 +492,7 @@ public class WindowController implements Initializable {
 			break;
 
 		case DELETE:
+			//TODO graphicTree.undeleteNode(lastResult); //vrátí listy na svoje původní místa 
 			graphicTree.deleteNode(lastResult);
 			break;
 

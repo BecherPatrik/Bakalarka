@@ -2,6 +2,7 @@ package Graphic;
 
 import Trees.Side;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -16,6 +17,8 @@ public class BinaryGraphicNode implements IGraphicNode {
 	private final int radiusSize = 20;
 
 	private IGraphicNode parent;
+	private int leftCount = 0;
+	private int rightCount = 0;
 	private Side side;
 	private int level = 0;
 
@@ -191,8 +194,12 @@ public class BinaryGraphicNode implements IGraphicNode {
 	}	
 	
 	@Override 
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();		//TODO deep clone
+	public BinaryGraphicNode clone() {
+		BinaryGraphicNode clone = new BinaryGraphicNode(Integer.parseInt(this.getValue()));		
+		clone.setX(new SimpleDoubleProperty(this.x.doubleValue()));
+		clone.setY(new SimpleDoubleProperty(this.y.doubleValue()));	
+		clone.setBranch(this.branch);
+		return clone;		
 	}
 	
 }

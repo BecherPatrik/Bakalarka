@@ -293,8 +293,7 @@ public class DrawingTree {
 	 * Vypočte hodnoty moreSpace a maxLevel
 	 */
 	private void computeMoreSpace(){
-		int max = maxLevel();
-		//System.out.println(max);
+		int max = maxLevel();		
 		if (max != maxLevel) {						
 			if(max < 3) {
 				moreSpace = 0;
@@ -538,14 +537,7 @@ public class DrawingTree {
 					iNodeMoved.getGraphicNode().setX(rootX);
 					listGraphicNodes.remove(iNodeMoved.getGraphicNode()); //dám roota na první místo
 					listGraphicNodes.add(0, iNodeMoved.getGraphicNode());
-				}
-				
-			/*	if (iNodeRemoved.getLeft().equals(iNodeMoved)) {
-					iNodeMoved.getGraphicNode().set
-				} else {
-					
-				}*/
-					
+				}			
 				
 				decreaseLevel(iNodeMoved); //snížím všem potomkům level
 				
