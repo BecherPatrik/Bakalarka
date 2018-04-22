@@ -29,10 +29,14 @@ public class BinaryGraphicNode implements IGraphicNode {
 
 	private DoubleProperty x;
 	private DoubleProperty y;
+	
+	private DoubleProperty branchX;
 
 	private StackPane stackPaneNode;
 	private Circle circle;
-	private Pane branch = null;
+	//private Pane branch = null;
+	
+	private Line branch = null;
 
 	public BinaryGraphicNode(int value) {
 		this.value = new Text(Integer.toString(value));
@@ -220,7 +224,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 		return stackPaneNode;
 	}
 
-	@Override
+	/*@Override
 	public Pane getBranch() {
 		return branch;
 	}
@@ -258,7 +262,67 @@ public class BinaryGraphicNode implements IGraphicNode {
 	public void setBranchEndY(double y) {
 		Line l = (Line) branch.getChildren().get(0);
 		l.setEndY(y);
-	}	
+	}
+	
+	@Override	
+	public Line getLine() {
+		return line;
+	}
+	
+	@Override
+	public void setLine(Line line) {
+		this.line = line;
+	}*/	
+
+	@Override
+	public Line getBranch() {
+		return branch;
+	}
+
+	@Override
+	public void setBranch(Line branch) {
+		this.branch = branch;
+	}
+
+	@Override
+	public DoubleProperty getBranchStartX() {
+		return branch.startXProperty();
+	}
+
+	@Override
+	public void setBranchStartX(DoubleProperty x) {
+		branch.startXProperty().bind(x);
+	}
+
+	@Override
+	public DoubleProperty getBranchStartY() {
+		return branch.startYProperty();
+	}
+
+	@Override
+	public void setBranchStartY(DoubleProperty y) {
+		branch.startYProperty().bind(y);
+	}
+
+	@Override
+	public DoubleProperty getBranchEndX() {
+		return branch.endXProperty();
+	}
+
+	@Override
+	public void setBranchEndX(DoubleProperty x) {		
+		branch.endXProperty().bind(x);		
+	}
+
+	@Override
+	public DoubleProperty getBranchEndY() {
+		return branch.endYProperty();
+	}
+
+	@Override
+	public void setBranchEndY(DoubleProperty y) {
+		branch.endYProperty().bind(y);
+	}
 	
 	@Override 
 	public BinaryGraphicNode clone() {

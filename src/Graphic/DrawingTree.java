@@ -3,6 +3,8 @@ package Graphic;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+
 import Aplication.WindowController;
 import Trees.INode;
 import Trees.ITree;
@@ -58,8 +60,15 @@ public class DrawingTree {
 	private int indexAnimation = 0;
 	private boolean isRedraw = false;
 	
+	private int balanceRedraw = 0;
+	
 	private DoubleProperty xAnimatedNode = new SimpleDoubleProperty();
 	private DoubleProperty yAnimatedNode = new SimpleDoubleProperty();
+	
+	private DoubleProperty xAnimatedBranch = new SimpleDoubleProperty();
+	private DoubleProperty yAnimatedBranch = new SimpleDoubleProperty();
+	
+	private List<Timeline> listBalanceAnimation = new ArrayList<>();	
 
 	public DrawingTree(ITree<?> tree, Pane paneTree, DoubleProperty speed, ReadOnlyDoubleProperty stageWidthProperty, WindowController windowController) {
 		this.paneTreeWeight = stageWidthProperty;
@@ -171,7 +180,8 @@ public class DrawingTree {
 		startAnimation(result.getRecordOfAnimations());	
 		
 	//	createBranch(computedX); //vložení větve
-		createBranch(rootSize);
+	//	createBranch(rootSize);
+		createBranch2(newIGraphicNode);
 		
 		if(animationSpeed.get() == 0) {
 			insertBranch(); //pokud neni animace vložím větev ihned nečekám na ukončení animace, která má větev vložit
@@ -236,55 +246,85 @@ public class DrawingTree {
 	 * Upraví vzdálenosti listů 
 	 */
 	private void balanceTree() {
-		
 		Timeline timeline;
 		KeyFrame kf;
-		
-		List<Timeline> balanceAnimatioList = new ArrayList<>();
-		
-		listGraphicNodes.get(0).countChildren();
-		for (IGraphicNode iGraphicNode : listGraphicNodes) {
-			if (iGraphicNode.getParent() == null) {
-				continue;
-			}
-			
-			xAnimatedNode = new SimpleDoubleProperty(); 	
-			//yAnimatedNode = new SimpleDoubleProperty();
-			
+		Duration duration;
+
+		listBalanceAnimation = new ArrayList<>();
+
+		listGraphicNodes.get(0).countChildren(); // nechám rekurzivně vypočítat
+													// děti
+
+		for (IGraphicNode iGraphicNode : listGraphicNodes.subList(1, listGraphicNodes.size())) {
+			xAnimatedNode = new SimpleDoubleProperty();
+			xAnimatedBranch = new SimpleDoubleProperty();
+
 			if (iGraphicNode.getSide() == Side.LEFT) {
-				xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));	
+				xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));
 			} else {
-				xAnimatedNode.bind(iGraphicNode.getParent().getX().add(rootSize).add(rootSize * iGraphicNode.getLeftChildrenCount()));	
-			}
-			System.out.println(iGraphicNode.getValue() +" = " +iGraphicNode.getLeftChildrenCount() +" "+ iGraphicNode.getRightChildrenCount());
-			
-			if (iGraphicNode.getX().get() != xAnimatedNode.get()) {
-				if (animationSpeed.get() == 0) {			
-					iGraphicNode.setX(xAnimatedNode);
-				} else {
-					timeline = new Timeline();
-
-					kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
-							new KeyValue(iGraphicNode.getX(), xAnimatedNode.get()));
-					
-					timeline.getKeyFrames().add(kf);
-
-					timeline.setOnFinished(new EventHandler<ActionEvent>() {
-						@Override
-						public void handle(ActionEvent event) {
-							iGraphicNode.setX(xAnimatedNode);
-							windowController.enableButtons();
-						}
-					});
-					iGraphicNode.getX().unbind();
-					balanceAnimatioList.add(timeline);					
-				}				
+				xAnimatedNode.bind(iGraphicNode.getParent().getX().add(rootSize).add(rootSize * iGraphicNode.getLeftChildrenCount()));
 			}			
+
+			if (iGraphicNode.getX().get() != xAnimatedNode.get()) {
+
+				if (iGraphicNode.getSide() == Side.LEFT) { // vypočítám nový x pro větev
+					xAnimatedBranch.bind(iGraphicNode.getParent().getX().subtract(rootSize / 2).subtract(rootSize * iGraphicNode.getRightChildrenCount()));
+				} else {
+					xAnimatedBranch.bind(iGraphicNode.getParent().getX().add(rootSize * 1.5).add(rootSize * iGraphicNode.getLeftChildrenCount()));
+				}
+
+				if (animationSpeed.get() == 0) {
+					duration = Duration.millis(1);
+				} else {
+					duration = Duration.millis(10 * (FASTANIMATION - animationSpeed.get()));
+				}
+				timeline = new Timeline();
+
+				kf = new KeyFrame(duration,
+						new KeyValue(iGraphicNode.getX(), xAnimatedNode.get())
+						//,	new KeyValue(iGraphicNode.getBranchEndX(), xAnimatedBranch.get())
+						);
+
+				timeline.getKeyFrames().add(kf);
+
+				timeline.setOnFinished(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						xAnimatedNode = new SimpleDoubleProperty();
+						xAnimatedBranch = new SimpleDoubleProperty();
+						if (iGraphicNode.getSide() == Side.LEFT) {
+							xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));
+							xAnimatedBranch.bind(iGraphicNode.getParent().getX().subtract(rootSize / 2).subtract(rootSize * iGraphicNode.getRightChildrenCount()));
+						} else {
+							xAnimatedNode.bind(iGraphicNode.getParent().getX().add(rootSize).add(rootSize * iGraphicNode.getLeftChildrenCount()));
+							xAnimatedBranch.bind(iGraphicNode.getParent().getX().add(rootSize * 1.5).add(rootSize * iGraphicNode.getLeftChildrenCount()));
+						}
+
+						iGraphicNode.setX(xAnimatedNode);
+						iGraphicNode.setBranchEndX(xAnimatedBranch);
+
+						if (iGraphicNode.getLeft() != null) {
+							iGraphicNode.getLeft().getBranchStartX().bind(xAnimatedBranch);
+						}
+
+						if (iGraphicNode.getRight() != null) {
+							iGraphicNode.getRight().getBranchStartX().bind(xAnimatedBranch);
+						}
+
+						balanceRedraw();
+					}
+				});
+
+				iGraphicNode.getX().unbind();
+				iGraphicNode.getBranchEndX().unbind();
+				listBalanceAnimation.add(timeline);
+			}
 		}
-		if (balanceAnimatioList.isEmpty()) {
+
+		if (listBalanceAnimation.isEmpty()) {
 			windowController.enableButtons();
 		} else {
-			for (Timeline t : balanceAnimatioList) {
+			for (Timeline t : listBalanceAnimation) {
 				t.play();
 			}
 		}
@@ -323,30 +363,47 @@ public class DrawingTree {
 		branch.translateYProperty().bind(newIGraphicNode.getParent().getY().add(rootSize / 2));		
 		
 		branch.getChildren().add(line);
-		//branch.getChildren().addAll(line,line2,line3);
-		newIGraphicNode.setBranch(branch);		
+		//***branch.getChildren().addAll(line,line2,line3);
+	//	newIGraphicNode.setBranch(branch);		
+	} 
+	
+	private void createBranch2(IGraphicNode node) {		
+		Line line = new Line();
+		line.startXProperty().bind(node.getParent().getX().add(rootSize / 2));
+		line.startYProperty().bind(node.getParent().getY().add(rootSize / 2));
+		
+		if (node.getSide() == Side.LEFT) {
+			line.endXProperty().bind(node.getParent().getX().subtract(rootSize / 2));	
+		} else {
+			line.endXProperty().bind(node.getParent().getX().add(rootSize * 1.5));	
+		}
+		
+		line.endYProperty().bind(node.getY().add(rootSize / 2));		
+		
+		node.setBranch(line);
 	}  
 	
 	/**
 	 * Přemístí list 
 	 * @param node - list kam se má větev přesunůt
 	 */
+	@SuppressWarnings("unused")
 	private void relocateNodeAndBranch(IGraphicNode node) {
 		double computedX = computeX(node);
 		int space = node.getParent().getRadiusSize() / 2;
 		DoubleProperty newX = new SimpleDoubleProperty();
 	
 		if (node.getSide() == Side.LEFT) {
-			 node.setBranchEndX(-computedX);	
+	//		 node.setBranchEndX(-computedX);	
 			 newX.bind(node.getParent().getX().subtract(computedX));				 
 		} else {
 			newX.bind(node.getParent().getX().add(computedX));
-			node.setBranchEndX(computedX);	
+	//		node.setBranchEndX(computedX);	
 		}
 		node.setX(newX);
 		
 		node.getBranch().translateXProperty().bind(node.getParent().getX().add(space));
-		//branch.translateYProperty().bind(new SimpleDoubleProperty(newIGraphicNode.getParent().getY() + space));			
+		//**branch.translateYProperty().bind(new SimpleDoubleProperty(newIGraphicNode.getParent().getY() + space));			
 	}	
 	
 	/**
@@ -380,14 +437,46 @@ public class DrawingTree {
 	}
 	
 	/**
+	 * 
+	 */
+	private void balanceRedraw() {
+		if (++balanceRedraw == listBalanceAnimation.size()) {
+			redraw();
+			balanceRedraw = 0;
+		}		
+	}
+	
+	/**
 	 * Překreslí celý strom 
 	 * TODO: listy nejsů nabindované + neposunujů se + první větve upravit
 	 */
 	private void redraw() {	
-		isRedraw = false;		
+		isRedraw = false;	
 		for (IGraphicNode iGraphicNode : listGraphicNodes.subList(1, listGraphicNodes.size())) {
-			relocateNodeAndBranch(iGraphicNode);
+			xAnimatedNode = new SimpleDoubleProperty(); 	
+			xAnimatedBranch = new SimpleDoubleProperty();
+			
+			if (iGraphicNode.getSide() == Side.LEFT) {
+				xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));	
+				xAnimatedBranch.bind(iGraphicNode.getParent().getX().subtract(rootSize / 2).subtract(rootSize * iGraphicNode.getRightChildrenCount()));	
+			} else {
+				xAnimatedNode.bind(iGraphicNode.getParent().getX().add(rootSize).add(rootSize * iGraphicNode.getLeftChildrenCount()));	
+				xAnimatedBranch.bind(iGraphicNode.getParent().getX().add(rootSize * 1.5).add(rootSize * iGraphicNode.getLeftChildrenCount()));	
+			}
+			
+			iGraphicNode.setX(xAnimatedNode);			
+			iGraphicNode.setBranchEndX(xAnimatedBranch);
+			
+			if (iGraphicNode.getLeft() != null) {							
+				iGraphicNode.getLeft().getBranchStartX().bind(xAnimatedBranch);
+			}
+			
+			if (iGraphicNode.getRight() != null) {								
+				iGraphicNode.getRight().getBranchStartX().bind(xAnimatedBranch);
+			}
 		}
+		
+		windowController.enableButtons();
 		/*for (IGraphicNode iGraphicNode : nodes.subList(1, nodes.size())) {
 			level = iGraphicNode.getLevel();
 			if(iGraphicNode.getSide() == Side.LEFT) {				
@@ -714,9 +803,11 @@ public class DrawingTree {
 		SequentialTransition seqT;
 		
 		if(node.getBranch() != null) {
-			st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch().getChildren().get(0), Color.BLACK, Color.LIME);
+	//		st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch().getChildren().get(0), Color.BLACK, Color.LIME);
+			st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch(), Color.BLACK, Color.LIME);
 			pt1 = new PauseTransition(Duration.millis(5 * (FASTANIMATION - animationSpeed.get())));
-			st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch().getChildren().get(0), Color.LIME, Color.BLACK);
+	//		st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch().getChildren().get(0), Color.LIME, Color.BLACK);
+			st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch(), Color.LIME, Color.BLACK);
 		}
 		
 		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.WHITE, Color.LIME);

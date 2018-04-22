@@ -4,6 +4,7 @@ import Trees.Side;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 
 public interface IGraphicNode {	
@@ -90,16 +91,20 @@ public interface IGraphicNode {
 	 */
 	StackPane getStackPaneNode();
 	
-	Pane getBranch();
-	void setBranch(Pane branch);
+	Line getBranch();
+	void setBranch(Line branch);
 	
-	double getBranchStartX();
-	void setBranchStartX(double x);
+	DoubleProperty getBranchStartX();
+	void setBranchStartX(DoubleProperty x);
 	
-	double getBranchEndX();
-	void setBranchEndX(double x);
+	DoubleProperty getBranchStartY();
+	void setBranchStartY(DoubleProperty y);
 	
-	void setBranchEndY(double y);	
+	DoubleProperty getBranchEndX();
+	void setBranchEndX(DoubleProperty x);
+	
+	DoubleProperty getBranchEndY();
+	void setBranchEndY(DoubleProperty y);	
 	
 	IGraphicNode clone();
 }
