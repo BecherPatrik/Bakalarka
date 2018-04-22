@@ -179,7 +179,7 @@ public class DrawingTree {
 		
 		listGraphicNodes.add(newIGraphicNode);	
 		
-		balanceTree();
+		//balanceTree();
 		//computeMoreSpace();		
 	}
 	
@@ -249,13 +249,14 @@ public class DrawingTree {
 			}
 			
 			xAnimatedNode = new SimpleDoubleProperty(); 	
-			yAnimatedNode = new SimpleDoubleProperty();
+			//yAnimatedNode = new SimpleDoubleProperty();
 			
 			if (iGraphicNode.getSide() == Side.LEFT) {
 				xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));	
 			} else {
 				xAnimatedNode.bind(iGraphicNode.getParent().getX().add(rootSize).add(rootSize * iGraphicNode.getLeftChildrenCount()));	
 			}
+			System.out.println(iGraphicNode.getValue() +" = " +iGraphicNode.getLeftChildrenCount() +" "+ iGraphicNode.getRightChildrenCount());
 			
 			if (iGraphicNode.getX().get() != xAnimatedNode.get()) {
 				if (animationSpeed.get() == 0) {			
@@ -264,7 +265,7 @@ public class DrawingTree {
 					timeline = new Timeline();
 
 					kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
-							new KeyValue(iGraphicNode.getX(), iGraphicNode.getX().get()));
+							new KeyValue(iGraphicNode.getX(), xAnimatedNode.get()));
 					
 					timeline.getKeyFrames().add(kf);
 
@@ -275,13 +276,17 @@ public class DrawingTree {
 							windowController.enableButtons();
 						}
 					});
+					iGraphicNode.getX().unbind();
 					balanceAnimatioList.add(timeline);					
 				}				
 			}			
 		}
-		
-		for (Timeline t : balanceAnimatioList) {
-			t.play();
+		if (balanceAnimatioList.isEmpty()) {
+			windowController.enableButtons();
+		} else {
+			for (Timeline t : balanceAnimatioList) {
+				t.play();
+			}
 		}
 	}
 
@@ -439,7 +444,8 @@ public class DrawingTree {
 			if (isRedraw) {				
 				redraw();
 			}
-			windowController.enableButtons();
+			balanceTree();
+			//windowController.enableButtons();
 			return;
 		}
 		
@@ -532,7 +538,7 @@ public class DrawingTree {
 				
 				indexAnimation++;
 			//	computeMoreSpace();
-				balanceTree();
+			//	balanceTree();
 				nextAnimation();
 				return;
 			}
@@ -569,7 +575,7 @@ public class DrawingTree {
 					node.setDefaultColorNode();
 					
 					indexAnimation++;
-					balanceTree();
+					//balanceTree();
 					//computeMoreSpace();
 					nextAnimation();					
 				}
@@ -610,7 +616,7 @@ public class DrawingTree {
 			}
 			
 			//computeMoreSpace();
-			balanceTree();
+			//balanceTree();
 			indexAnimation++;
 			nextAnimation();
 			return;
@@ -654,7 +660,7 @@ public class DrawingTree {
 				}
 				
 			//	computeMoreSpace();
-				balanceTree();
+			//	balanceTree();
 				indexAnimation++;
 				nextAnimation();
 			}
