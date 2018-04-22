@@ -274,7 +274,7 @@ public class DrawingTree {
 				}
 
 				if (animationSpeed.get() == 0) {
-					duration = Duration.millis(1);
+					duration = Duration.millis(0.5);
 				} else {
 					duration = Duration.millis(10 * (FASTANIMATION - animationSpeed.get()));
 				}
@@ -304,11 +304,11 @@ public class DrawingTree {
 						iGraphicNode.setBranchEndX(xAnimatedBranch);
 
 						if (iGraphicNode.getLeft() != null) {
-							iGraphicNode.getLeft().getBranchStartX().bind(xAnimatedBranch);
+							 iGraphicNode.getLeft().getBranchStartX().bind(xAnimatedBranch);
 						}
 
 						if (iGraphicNode.getRight() != null) {
-							iGraphicNode.getRight().getBranchStartX().bind(xAnimatedBranch);
+							 iGraphicNode.getRight().getBranchStartX().bind(xAnimatedBranch);
 						}
 
 						balanceRedraw();

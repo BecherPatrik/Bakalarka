@@ -534,6 +534,8 @@ public class WindowController implements Initializable {
 	 * Povolí manipulaci s tlačítkami po ukončení animace
 	 */
 	public void enableButtons() {
+		primaryStage.setResizable(true);
+		
 		checkEnableButtons();
 		
 		btnTrees.setDisable(false);
@@ -548,7 +550,9 @@ public class WindowController implements Initializable {
 	/**
 	 * Znemožní používání tlačítek v průběhu animace 
 	 */
-	private void disableButtons() {
+	private void disableButtons() {			
+		primaryStage.setResizable(false); 
+		
 		btnInsert.setDisable(true);
 		btnDelete.setDisable(true);
 		btnSearch.setDisable(true);
