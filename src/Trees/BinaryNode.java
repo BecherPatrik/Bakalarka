@@ -11,10 +11,11 @@ implements INode<BinaryNode> {
 	private BinaryNode left = null;
 	private BinaryGraphicNode graphicNode;
 
-	public BinaryNode(int value, BinaryNode parent) {
+	public BinaryNode(int value, BinaryNode parent, Side side) {
 		this.value = value;
 		this.parent = parent;
 		this.graphicNode = new BinaryGraphicNode(value);
+		this.graphicNode.setSide(side);
 	}
 	
 	public BinaryNode(int value) {
@@ -62,6 +63,7 @@ implements INode<BinaryNode> {
 	@Override
 	public void setParent(BinaryNode node) {
 		parent = node;
+		graphicNode.setParent(node.getGraphicNode());
 	}
 	
 	@Override
@@ -72,6 +74,7 @@ implements INode<BinaryNode> {
 	@Override
 	public void setRight(BinaryNode node) {
 		right = node;
+		graphicNode.setRight(node.getGraphicNode());
 		node.setParent(this);
 	}
 	
@@ -83,6 +86,7 @@ implements INode<BinaryNode> {
 	@Override
 	public void setLeft(BinaryNode node) {
 		left = node;
+		graphicNode.setLeft(node.getGraphicNode());
 		node.setParent(this);	
 	}
 

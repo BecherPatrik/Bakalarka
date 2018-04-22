@@ -17,10 +17,13 @@ public class BinaryGraphicNode implements IGraphicNode {
 	private final int radiusSize = 20;
 
 	private IGraphicNode parent;
-	private int leftCount = 0;
-	private int rightCount = 0;
+	private IGraphicNode left = null;
+	private IGraphicNode right = null;
+	
+	private int leftChildrenCount = 0;
+	private int rightChildrenCount = 0;
 	private Side side;
-	private int level = 0;
+	private int level = 0;	
 
 	private Text value;
 
@@ -69,6 +72,40 @@ public class BinaryGraphicNode implements IGraphicNode {
 		circle.setStroke(Color.WHITE);
 	}
 	
+
+	@Override
+	public int countChildren() {
+		if (left != null) {
+			leftChildrenCount = 1 + left.countChildren();
+		}
+
+		if (right != null) {
+			rightChildrenCount = 1 + right.countChildren();
+		}
+		
+		return leftChildrenCount + rightChildrenCount;
+	}	
+
+	@Override
+	public void subtractLeftChild() {
+		leftChildrenCount--;		
+	}
+
+	@Override
+	public void subtractRightChild() {
+		rightChildrenCount--;		
+	}
+
+	@Override
+	public void addLeftChild() {
+		leftChildrenCount++;		
+	}
+
+	@Override
+	public void addRightChild() {
+		rightChildrenCount++;	
+	}
+	
 	/********************************************************************************************************
 	 * GETS & SETS
 	 * 
@@ -90,6 +127,26 @@ public class BinaryGraphicNode implements IGraphicNode {
 	}
 
 	@Override
+	public IGraphicNode getLeft() {
+		return left;
+	}
+
+	@Override
+	public void setLeft(IGraphicNode left) {
+		this.left = left;
+	}
+
+	@Override
+	public IGraphicNode getRight() {
+		return right;
+	}
+
+	@Override
+	public void setRight(IGraphicNode right) {
+		this.right = right;
+	}
+
+	@Override
 	public Side getSide() {
 		return side;
 	}
@@ -97,6 +154,16 @@ public class BinaryGraphicNode implements IGraphicNode {
 	@Override
 	public void setSide(Side side) {
 		this.side = side;
+	}
+	
+	@Override
+	public int getRightChildrenCount() {
+		return rightChildrenCount;
+	}
+
+	@Override
+	public int getLeftChildrenCount() {
+		return leftChildrenCount;
 	}
 
 	@Override
@@ -112,7 +179,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 	@Override
 	public String getValue() {
 		return this.value.getText();
-	}
+	}		
 
 	@Override
 	public void setValue(String value) {
@@ -201,5 +268,4 @@ public class BinaryGraphicNode implements IGraphicNode {
 		clone.setBranch(this.branch);
 		return clone;		
 	}
-	
 }

@@ -28,7 +28,7 @@ import javafx.util.Duration;
 
 public class DrawingTree {
 	private WindowController windowController;
-	private List<IGraphicNode> listGraphicNodes = new ArrayList<>();	
+	private List<IGraphicNode> listGraphicNodes = new ArrayList<>(); //root je na místě 0
 
 	private ReadOnlyDoubleProperty paneTreeWeight;
 	private Pane paneTree;
@@ -37,8 +37,10 @@ public class DrawingTree {
 	private final static double ROOTBORDER = 20;	
 	private final static double DOWNMARGIN = 40;	
 	
+	private double rootSize = 0;
+	
 	private int maxLevel;
-	private double moreSpace = 0;
+	private double moreSpace = 0; 
 	
 	private DoubleProperty rootY = new SimpleDoubleProperty();;
 	private DoubleProperty rootX = new SimpleDoubleProperty();	
@@ -75,6 +77,7 @@ public class DrawingTree {
 	 */
 	public void insertRoot(INode<?> rootNode){
 		IGraphicNode root = rootNode.getGraphicNode();
+		rootSize = root.getRadiusSize();
 		root.setLevel(0);
 		
 		rootY.bind(new SimpleDoubleProperty(ROOTBORDER));		
@@ -137,7 +140,7 @@ public class DrawingTree {
 		
 		xAnimatedNode = new SimpleDoubleProperty(); //souřadnice x listu	
 		yAnimatedNode = new SimpleDoubleProperty();
-		double computedX;	
+		//double computedX;	
 		DoubleProperty startNodeX = new SimpleDoubleProperty();	
 		DoubleProperty startNodeY = new SimpleDoubleProperty();	
 		
@@ -146,28 +149,29 @@ public class DrawingTree {
 		
 		newIGraphicNode = result.getNode().getGraphicNode(); //vkládaný list	
 		
-		newIGraphicNode.setParent(((INode<?>) result.getNode().getParent()).getGraphicNode());
+	//	newIGraphicNode.setParent(((INode<?>) result.getNode().getParent()).getGraphicNode());
 		newIGraphicNode.setLevel(result.getWay().size());
-		newIGraphicNode.setSide(result.getSide());
+	//	newIGraphicNode.setSide(result.getSide());
 		
 		paneTree.getChildren().add(newIGraphicNode.getStackPaneNode()); //přidám list 		
 		
 		newIGraphicNode.setX(startNodeX); // vložím počáteční souřadnice
 		newIGraphicNode.setY(startNodeY);		
 		
-		computedX = computeX(newIGraphicNode); //vypočítám posunutí od rodiče
+	//	computedX = computeX(newIGraphicNode); //vypočítám posunutí od rodiče
 		
 		if (result.getSide() == Side.LEFT) {
-			xAnimatedNode.bind(newIGraphicNode.getParent().getX().subtract(computedX));	
+			xAnimatedNode.bind(newIGraphicNode.getParent().getX().subtract(rootSize));	
 		} else {
-			xAnimatedNode.bind(newIGraphicNode.getParent().getX().add(computedX));	
+			xAnimatedNode.bind(newIGraphicNode.getParent().getX().add(rootSize));	
 		}
 		yAnimatedNode.bind(newIGraphicNode.getParent().getY().add(DOWNMARGIN));
 		
 		//zavolám animaci
 		startAnimation(result.getRecordOfAnimations());	
 		
-		createBranch(computedX); //vložení větve
+	//	createBranch(computedX); //vložení větve
+		createBranch(rootSize);
 		
 		if(animationSpeed.get() == 0) {
 			insertBranch(); //pokud neni animace vložím větev ihned nečekám na ukončení animace, která má větev vložit
@@ -175,7 +179,8 @@ public class DrawingTree {
 		
 		listGraphicNodes.add(newIGraphicNode);	
 		
-		computeMoreSpace();		
+		balanceTree();
+		//computeMoreSpace();		
 	}
 	
 	/**
@@ -184,7 +189,8 @@ public class DrawingTree {
 	 * @return
 	 */
 	private double computeX(IGraphicNode node) {
-		return (newIGraphicNode.getParent().getRadiusSize() / 2) * (5 - (node.getLevel() * 1.1)) + moreSpace;
+		//return (newIGraphicNode.getParent().getRadiusSize() / 2) * (5 - (node.getLevel() * 1.1)) + moreSpace;
+		return newIGraphicNode.getParent().getRadiusSize();
 	}
 	
 	/**
@@ -225,11 +231,60 @@ public class DrawingTree {
 			startAnimation(result.getRecordOfAnimations());			
 		}
 	}
-
-	public void balanceTree() {
-		
-	}
 	
+	/**
+	 * Upraví vzdálenosti listů 
+	 */
+	private void balanceTree() {
+		
+		Timeline timeline;
+		KeyFrame kf;
+		
+		List<Timeline> balanceAnimatioList = new ArrayList<>();
+		
+		listGraphicNodes.get(0).countChildren();
+		for (IGraphicNode iGraphicNode : listGraphicNodes) {
+			if (iGraphicNode.getParent() == null) {
+				continue;
+			}
+			
+			xAnimatedNode = new SimpleDoubleProperty(); 	
+			yAnimatedNode = new SimpleDoubleProperty();
+			
+			if (iGraphicNode.getSide() == Side.LEFT) {
+				xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));	
+			} else {
+				xAnimatedNode.bind(iGraphicNode.getParent().getX().add(rootSize).add(rootSize * iGraphicNode.getLeftChildrenCount()));	
+			}
+			
+			if (iGraphicNode.getX().get() != xAnimatedNode.get()) {
+				if (animationSpeed.get() == 0) {			
+					iGraphicNode.setX(xAnimatedNode);
+				} else {
+					timeline = new Timeline();
+
+					kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
+							new KeyValue(iGraphicNode.getX(), iGraphicNode.getX().get()));
+					
+					timeline.getKeyFrames().add(kf);
+
+					timeline.setOnFinished(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent event) {
+							iGraphicNode.setX(xAnimatedNode);
+							windowController.enableButtons();
+						}
+					});
+					balanceAnimatioList.add(timeline);					
+				}				
+			}			
+		}
+		
+		for (Timeline t : balanceAnimatioList) {
+			t.play();
+		}
+	}
+
 	/**
 	 * Vložení větve
 	 * @param parent
@@ -239,7 +294,7 @@ public class DrawingTree {
 	 */
 	private void createBranch(double x) {
 		Pane branch = new Pane();
-		int space = newIGraphicNode.getParent().getRadiusSize() / 2;
+		//int space = newIGraphicNode.getParent().getRadiusSize() / 2;
 		Line line;
 		//Line line2, line3;
 		
@@ -251,7 +306,7 @@ public class DrawingTree {
 		*/
 		
 		if (newIGraphicNode.getSide() == Side.LEFT) {
-			line = new Line(0, 0, -x, DOWNMARGIN);	
+			line = new Line(0, 0, -x, DOWNMARGIN); //TODO?? -rootSize? 	
 		} else {
 			line = new Line(0, 0, x, DOWNMARGIN);	
 		}
@@ -259,8 +314,8 @@ public class DrawingTree {
 		/*line2 = new Line(0, -100, 0,200);
 		line3 = new Line(-100, 0, 200, 0);*/
 		
-		branch.translateXProperty().bind(newIGraphicNode.getParent().getX().add(space));
-		branch.translateYProperty().bind(newIGraphicNode.getParent().getY().add(space));		
+		branch.translateXProperty().bind(newIGraphicNode.getParent().getX().add(rootSize / 2));
+		branch.translateYProperty().bind(newIGraphicNode.getParent().getY().add(rootSize / 2));		
 		
 		branch.getChildren().add(line);
 		//branch.getChildren().addAll(line,line2,line3);
@@ -292,6 +347,7 @@ public class DrawingTree {
 	/**
 	 * Vypočte hodnoty moreSpace a maxLevel
 	 */
+	@SuppressWarnings("unused")
 	private void computeMoreSpace(){
 		int max = maxLevel();		
 		if (max != maxLevel) {						
@@ -475,7 +531,8 @@ public class DrawingTree {
 				paneTree.getChildren().remove(node.getBranch());
 				
 				indexAnimation++;
-				computeMoreSpace();
+			//	computeMoreSpace();
+				balanceTree();
 				nextAnimation();
 				return;
 			}
@@ -512,7 +569,8 @@ public class DrawingTree {
 					node.setDefaultColorNode();
 					
 					indexAnimation++;
-					computeMoreSpace();
+					balanceTree();
+					//computeMoreSpace();
 					nextAnimation();					
 				}
 			});
@@ -551,7 +609,8 @@ public class DrawingTree {
 				iNodeRemoved.setGraphicNode(iNodeMoved.getGraphicNode()); //změním INode1 jeho grafický node... 
 			}
 			
-			computeMoreSpace();
+			//computeMoreSpace();
+			balanceTree();
 			indexAnimation++;
 			nextAnimation();
 			return;
@@ -594,7 +653,8 @@ public class DrawingTree {
 					iNodeRemoved.setGraphicNode(iNodeMoved.getGraphicNode()); //změním INode1 jeho grafický node... 
 				}
 				
-				computeMoreSpace();
+			//	computeMoreSpace();
+				balanceTree();
 				indexAnimation++;
 				nextAnimation();
 			}

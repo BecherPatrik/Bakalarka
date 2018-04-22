@@ -523,7 +523,7 @@ public class WindowController implements Initializable {
 			btnSearch.setDisable(true);
 		}
 		
-		if (isAnimationDisable || (oldGraphicTreeNodes.isEmpty() && paneTree.getChildren().isEmpty())) {
+		if (isAnimationDisable || (oldGraphicTreeNodes.isEmpty() && paneTree.getChildren().isEmpty()) || oldGraphicTreeNodes.isEmpty())  {
 			btnRepeat.setDisable(true);
 		} else {
 			btnRepeat.setDisable(false);

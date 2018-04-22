@@ -18,10 +18,10 @@ public class BinaryTree implements ITree<BinaryNode> {
 	    BinaryNode parent = (BinaryNode) result.getNode();  // vrátí prvek (side = null) nebo rodiče a místo kam uložit (side = R, L)
 	    
 	    if (side == Side.LEFT) {
-	    	parent.setLeft(new BinaryNode(value, parent));
+	    	parent.setLeft(new BinaryNode(value, parent, side));
 	    	result.setNode(parent.getLeft()); //změním výsledek z rodiče na nový node
 	    } else if (side == Side.RIGHT) {
-	    	parent.setRight(new BinaryNode(value, parent));
+	    	parent.setRight(new BinaryNode(value, parent, side));
 	    	result.setNode(parent.getRight());
 	    } else {
 	    	result.setNode(null); //už je obsažen  

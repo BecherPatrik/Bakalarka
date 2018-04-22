@@ -27,6 +27,19 @@ public interface IGraphicNode {
 	 */
 	void setDefaultColorNode();
 	
+	/**
+	 * Sečte všechny své děti
+	 */
+	int countChildren();
+	
+	void subtractLeftChild();
+	
+	void subtractRightChild();
+	
+	void addLeftChild();
+	
+	void addRightChild();
+	
 	/********************************************************************************************************
 	 * GETS & SETS
 	 * 
@@ -39,10 +52,19 @@ public interface IGraphicNode {
 	int getRadiusSize();
 	
 	IGraphicNode getParent();
-	void setParent(IGraphicNode parent);
+	void setParent(IGraphicNode parent);	
+	
+	IGraphicNode getLeft();
+	void setLeft(IGraphicNode left);
+	
+	IGraphicNode getRight();
+	void setRight(IGraphicNode right);
 	
 	Side getSide();
 	void setSide(Side side);	
+	
+	int getRightChildrenCount();
+	int getLeftChildrenCount();
 	
 	int getLevel();	
 	void setLevel(int level);
