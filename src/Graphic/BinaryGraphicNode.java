@@ -3,7 +3,6 @@ package Graphic;
 import Trees.Side;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -16,7 +15,7 @@ import javafx.scene.text.TextBoundsType;
 public class BinaryGraphicNode implements IGraphicNode {
 	private final int radiusSize = 20;
 
-	private IGraphicNode parent;
+	private IGraphicNode parent = null;
 	private IGraphicNode left = null;
 	private IGraphicNode right = null;
 	
@@ -26,15 +25,15 @@ public class BinaryGraphicNode implements IGraphicNode {
 	private int level = 0;	
 
 	private Text value;
+	private String oldValue;
 
 	private DoubleProperty x;
 	private DoubleProperty y;
+	private double oldX;
+	private double oldY;
 	
-	private DoubleProperty branchX;
-
 	private StackPane stackPaneNode;
 	private Circle circle;
-	//private Pane branch = null;
 	
 	private Line branch = null;
 
@@ -49,10 +48,6 @@ public class BinaryGraphicNode implements IGraphicNode {
 		circle = new Circle(radiusSize);
 		circle.setStrokeWidth(1.5);
 		circle.setStroke(Color.WHITE);
-
-		/*
-		 * circle.prefWidth(size); circle.prefHeight(size);
-		 */
 
 		value.setBoundsType(TextBoundsType.VISUAL);
 		value.setFill(Color.WHITE);
@@ -108,6 +103,37 @@ public class BinaryGraphicNode implements IGraphicNode {
 	@Override
 	public void addRightChild() {
 		rightChildrenCount++;	
+	}
+	
+	@Override
+	public void createBackUp() {
+		System.out.println(value);
+		System.out.println(x.get());
+		System.out.println(y.get());
+		System.out.println("************zaloha*****************");
+		oldValue = value.getText();
+		oldX = x.get();
+		oldY = y.get();
+	}
+	
+	@Override
+	public void useBackUp() {
+		if (oldValue == null) {
+			return;
+		}
+		System.out.println(value + " - " + oldValue);
+		System.out.println(x.get() + " - " + oldX);
+		System.out.println(y.get() + " - " + oldY);
+		System.out.println("*****************************");
+		value = new Text(oldValue);
+		x = new SimpleDoubleProperty(oldX);
+		y = new SimpleDoubleProperty(oldY);
+		deleteBackUp();
+	}
+	
+	@Override
+	public void deleteBackUp() {
+		oldValue = null;
 	}
 	
 	/********************************************************************************************************
@@ -223,56 +249,6 @@ public class BinaryGraphicNode implements IGraphicNode {
 	public StackPane getStackPaneNode() {
 		return stackPaneNode;
 	}
-
-	/*@Override
-	public Pane getBranch() {
-		return branch;
-	}
-
-	@Override
-	public void setBranch(Pane branch) {
-		this.branch = branch;
-	}
-
-	@Override
-	public double getBranchStartX() {
-		Line l = (Line) branch.getChildren().get(0);
-		return l.getStartX();
-	}
-
-	@Override
-	public void setBranchStartX(double x) {
-		Line l = (Line) branch.getChildren().get(0);
-		l.setStartX(x);
-	}
-
-	@Override
-	public double getBranchEndX() {
-		Line l = (Line) branch.getChildren().get(0);
-		return l.getEndX();
-	}
-
-	@Override
-	public void setBranchEndX(double x) {
-		Line l = (Line) branch.getChildren().get(0);
-		l.setEndX(x);
-	}
-
-	@Override
-	public void setBranchEndY(double y) {
-		Line l = (Line) branch.getChildren().get(0);
-		l.setEndY(y);
-	}
-	
-	@Override	
-	public Line getLine() {
-		return line;
-	}
-	
-	@Override
-	public void setLine(Line line) {
-		this.line = line;
-	}*/	
 
 	@Override
 	public Line getBranch() {

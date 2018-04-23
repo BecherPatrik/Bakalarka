@@ -26,11 +26,13 @@ implements INode<BinaryNode> {
 	@Override
 	public void deleteLeft() {
 		this.left = null;
+		graphicNode.setLeft(null);
 	}
 
 	@Override
 	public void deleteRight() {
 		this.right = null;
+		graphicNode.setRight(null);
 	}
 	
 	@Override

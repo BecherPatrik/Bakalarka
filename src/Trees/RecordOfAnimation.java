@@ -1,11 +1,13 @@
 package Trees;
 
+import Graphic.IGraphicNode;
+
 public class RecordOfAnimation {
 	private AnimatedAction action;
-	private INode<?> node;
+	private IGraphicNode node;
 	private Object object; //objekt k animaci pokud je potřeba
 	
-	public RecordOfAnimation(AnimatedAction action, INode<?> node, Object object) {
+	public RecordOfAnimation(AnimatedAction action, IGraphicNode node, Object object) {
 		super();
 		this.action = action;
 		this.node = node;
@@ -16,7 +18,7 @@ public class RecordOfAnimation {
 		return action;
 	}
 
-	public INode<?> getNode1() {
+	public IGraphicNode getNode1() {
 		return node;
 	}
 

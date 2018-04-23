@@ -1,5 +1,7 @@
 package Trees;
 
+import com.sun.corba.se.impl.orbutil.RepositoryIdUtility;
+
 public class BinaryTree implements ITree<BinaryNode> {
     private BinaryNode root = null;
     
@@ -43,49 +45,69 @@ public class BinaryTree implements ITree<BinaryNode> {
         if (side != Side.NONE)  //pokud ho nenajdu TODO
             return null;
 
-		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud má dva potomnky 
+		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud má dva potomnky 1.
 			helpNode = removedNode.getRight(); // dosadím pravého
 
-			if (!(helpNode.getLeft() == null && helpNode.getRight() == null)) { //pokud dosazovaný nemá potomka
+			if (!(helpNode.getLeft() == null && helpNode.getRight() == null)) { //pokud dosazovaný má potomky 1.1
 
-				if (helpNode.getLeft() == null) { // pokud pravý potomek nemá levého
-					removedNode.setRight(helpNode.getRight());
+				/*if (helpNode.getLeft() == null) { // pokud pravý potomek nemá levého 1.2
+					removedNode.setRight(helpNode.getRight()); 
 				} else {
-					while (helpNode.getLeft() != null) { // dokud nemám poslední levý
+					while (helpNode.getLeft() != null) { // dokud nemám poslední levý 1.3
 						helpNode = helpNode.getLeft();
-					}
-					// helpNode.setLeft(removedNode.getLeft());
-					// helpNode.setRight(removedNode.getRight());
+					}					
+				}*/
+				if (helpNode.getLeft() != null) { // pokud pravý potomek nemá levého 1.2
+					while (helpNode.getLeft() != null) { // dokud nemám poslední levý 1.3
+						helpNode = helpNode.getLeft();
+					}					
 				}
-			}
-             // uložím levého potomka mazaného do toho co ho nahradí
+			}             
             
             removedNode.setValue(helpNode.getValue()); //uložím jeho hodnotu do toho co mažu
             
             
             result.addAnimation(AnimatedAction.DELETE, null, true);            
             
-            if (helpNode.getRight() == null) {
-                helpNode.getParent().deleteLeft();  //smažu nejlevějšího  
-                result.addAnimation(AnimatedAction.MOVENODE, result.getNode(), helpNode);
-            } else {
-            	helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadím místo něho jeho pravého
-            	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode(), helpNode);
-            	result.addAnimation(AnimatedAction.MOVENODE, helpNode, helpNode.getRight());
-            	result.addAnimation(AnimatedAction.MOVEVALUEFINISH, result.getNode(), helpNode);            	
+            if (helpNode.getRight() == null) { //0.1
+            	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.1.1
+            		helpNode.getParent().deleteRight();
+            	} else { //0.1.2
+            		helpNode.getParent().deleteLeft(); 
+            	}
+                
+                result.addAnimation(AnimatedAction.MOVENODE, removedNode.getGraphicNode(), helpNode.getGraphicNode()); 
+                removedNode.setGraphicNode(helpNode.getGraphicNode());
+                
+            } else { //0.2
+            	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.2.1
+            		helpNode.getParent().setRight(helpNode.getRight());
+            	} else { //0.2.2
+            		helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadím místo něho jeho pravého
+            	}
+            	
+            	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
+            	result.addAnimation(AnimatedAction.MOVENODE, helpNode.getGraphicNode(), helpNode.getRight().getGraphicNode());
+            	//result.addAnimation(AnimatedAction.MOVEVALUEFINISH, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
+            	
+            	helpNode.setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
             }
-        } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka nemá jeho rodič    
+        } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka nemá mazaný  2.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
-            result.addAnimation(AnimatedAction.MOVENODE, result.getNode(), removedNode.getLeft());
+            result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getLeft().getGraphicNode());
+            
+            result.getNode().setGraphicNode(removedNode.getLeft().getGraphicNode()); /******nové******/
             
             removedNode.setNode(removedNode.getLeft());
             
-        } else if (removedNode.getRight() != null) {
+        } else if (removedNode.getRight() != null) { // 3.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
-            result.addAnimation(AnimatedAction.MOVENODE, result.getNode(), removedNode.getRight());
+            result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getRight().getGraphicNode());
+            
+            result.getNode().setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
             
             removedNode.setNode(removedNode.getRight());            
-        } else {        	
+        } else { // 4.       	
         	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá děti 
             if (side == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
                 removedNode.getParent().deleteLeft();
@@ -94,7 +116,7 @@ public class BinaryTree implements ITree<BinaryNode> {
             } else {
             	removedNode.getParent().deleteRight();            	
             }
-            return result; //bez animace změny kořenu
+            return result; 
         } 
         
         return result;
@@ -132,10 +154,10 @@ public class BinaryTree implements ITree<BinaryNode> {
         }
       
         if (resultNode.getSide() == Side.NONE) {
-        	resultNode.addAnimation(AnimatedAction.SEARCH, result, true);
+        	resultNode.addAnimation(AnimatedAction.SEARCH, result.getGraphicNode(), true);
         	resultNode.setNode(result);
         } else {
-        	resultNode.addAnimation(AnimatedAction.SEARCH, parent, false);
+        	resultNode.addAnimation(AnimatedAction.SEARCH, parent.getGraphicNode(), false);
         	resultNode.setNode(parent);
         }
         return resultNode;

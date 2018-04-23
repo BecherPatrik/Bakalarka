@@ -2,7 +2,6 @@ package Graphic;
 
 import Trees.Side;
 import javafx.beans.property.DoubleProperty;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
@@ -39,7 +38,19 @@ public interface IGraphicNode {
 	
 	void addLeftChild();
 	
-	void addRightChild();
+	void addRightChild();	
+
+	/**
+	 * Vytvoří zálohu x, y a value
+	 */
+	void createBackUp();
+
+	/**
+	 * Použije zálohu a odstraní ji
+	 */
+	void useBackUp();
+
+	void deleteBackUp();
 	
 	/********************************************************************************************************
 	 * GETS & SETS
@@ -107,4 +118,5 @@ public interface IGraphicNode {
 	void setBranchEndY(DoubleProperty y);	
 	
 	IGraphicNode clone();
+
 }

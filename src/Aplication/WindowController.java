@@ -84,7 +84,7 @@ public class WindowController implements Initializable {
 
 	private ITree<?> tree;
 	private DrawingTree graphicTree;	
-	private List<IGraphicNode> oldGraphicTreeNodes = new ArrayList<>();
+	private List<IGraphicNode> listOldGraphicTreeNodes = new ArrayList<>();
 	
 	private final int maxTextLength = 4;
 	boolean isAnimationDisable = false;
@@ -229,8 +229,8 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void insertNumber() {
-		oldGraphicTreeNodes.clear();
-		oldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+		listOldGraphicTreeNodes.clear();
+		listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		lastAction = AnimatedAction.INSERT;
 		
 		disableButtons();		
@@ -249,8 +249,8 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void searchNumber() {
-		oldGraphicTreeNodes.clear();
-		oldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+		listOldGraphicTreeNodes.clear();
+		listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		lastAction = AnimatedAction.SEARCH;
 		
 		disableButtons();
@@ -261,12 +261,12 @@ public class WindowController implements Initializable {
 
 	/**
 	 * Funkce pro mazání čísla
-	 * @throws CloneNotSupportedException 
 	 */
 	@FXML
-	private void deleteNumber() throws CloneNotSupportedException {
-		oldGraphicTreeNodes.clear();
-		oldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+	private void deleteNumber() {
+		graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp()); //smažu zálohy 
+		listOldGraphicTreeNodes.clear();
+		listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 	//	for (IGraphicNode iGraphicNode : graphicTree.getListGraphicNodes()) {			
 	//		oldGraphicTreeNodes.add((IGraphicNode) iGraphicNode.clone());		//TODO	
 	//	}
@@ -310,7 +310,7 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového prázdného stromu
 	 */
 	private void newEmptyTree() {
-		oldGraphicTreeNodes = new ArrayList<>();
+		listOldGraphicTreeNodes = new ArrayList<>();
 		lastResult = null;
 		
 		paneTree.getChildren().clear();
@@ -364,7 +364,7 @@ public class WindowController implements Initializable {
 			}
 			
 			lastResult = null;
-			oldGraphicTreeNodes.clear();
+			listOldGraphicTreeNodes.clear();
 			sliderSpeed.setValue(oldSpeed);
 		}		
 	}
@@ -465,25 +465,12 @@ public class WindowController implements Initializable {
 	 * Zopakuje poslední animaci
 	 */
 	@FXML
-	private void repeatLastAnimation() {
-		graphicTree.setListGraphicNodes(oldGraphicTreeNodes);
-		
-		paneTree.getChildren().clear();
-		
-		for (IGraphicNode node : graphicTree.getListGraphicNodes()) {
-			paneTree.getChildren().add(node.getStackPaneNode());	
-			
-			if (node.getBranch() != null) {								
-				paneTree.getChildren().add(node.getBranch());
-				node.getParent().getStackPaneNode().toFront();
-				node.getStackPaneNode().toFront();
-			}			
-		}
-		
+	private void repeatLastAnimation() {		
 		disableButtons();
 		
 		switch (lastAction) {
 		case INSERT:
+			updatePaneTree();
 			if (lastResult != null) {
 				graphicTree.insertNode(lastResult);			
 			} else {
@@ -492,16 +479,34 @@ public class WindowController implements Initializable {
 			break;
 
 		case DELETE:
-			//TODO graphicTree.undeleteNode(lastResult); //vrátí listy na svoje původní místa 
+			listOldGraphicTreeNodes.forEach(x -> x.useBackUp()); //použiju zálohu
+			updatePaneTree();
 			graphicTree.deleteNode(lastResult);
 			break;
 
 		case SEARCH:
+			updatePaneTree();
 			graphicTree.searchNode(lastResult);
 			break;
 
 		default:
 			break;
+		}
+	}
+	
+	private void updatePaneTree() {
+		graphicTree.setListGraphicNodes(listOldGraphicTreeNodes);
+
+		paneTree.getChildren().clear();
+
+		for (IGraphicNode node : graphicTree.getListGraphicNodes()) {
+			paneTree.getChildren().add(node.getStackPaneNode());
+
+			if (node.getBranch() != null) {
+				paneTree.getChildren().add(node.getBranch());
+				node.getParent().getStackPaneNode().toFront();
+				node.getStackPaneNode().toFront();
+			}
 		}
 	}
 	
@@ -523,7 +528,7 @@ public class WindowController implements Initializable {
 			btnSearch.setDisable(true);
 		}
 		
-		if (isAnimationDisable || (oldGraphicTreeNodes.isEmpty() && paneTree.getChildren().isEmpty()) || oldGraphicTreeNodes.isEmpty())  {
+		if (isAnimationDisable || (listOldGraphicTreeNodes.isEmpty() && paneTree.getChildren().isEmpty()) || listOldGraphicTreeNodes.isEmpty())  {
 			btnRepeat.setDisable(true);
 		} else {
 			btnRepeat.setDisable(false);

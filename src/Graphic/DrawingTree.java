@@ -3,8 +3,6 @@ package Graphic;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
-
 import Aplication.WindowController;
 import Trees.INode;
 import Trees.ITree;
@@ -252,12 +250,13 @@ public class DrawingTree {
 
 		listBalanceAnimation = new ArrayList<>();
 
-		listGraphicNodes.get(0).countChildren(); // nechám rekurzivně vypočítat
-													// děti
+		listGraphicNodes.get(0).countChildren(); // nechám rekurzivně vypočítat děti
 
 		for (IGraphicNode iGraphicNode : listGraphicNodes.subList(1, listGraphicNodes.size())) {
 			xAnimatedNode = new SimpleDoubleProperty();
 			xAnimatedBranch = new SimpleDoubleProperty();
+			
+			System.out.println(iGraphicNode.getLeftChildrenCount() + " - " + iGraphicNode.getValue() + " - " + iGraphicNode.getRightChildrenCount());
 
 			if (iGraphicNode.getSide() == Side.LEFT) {
 				xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));
@@ -351,7 +350,7 @@ public class DrawingTree {
 		*/
 		
 		if (newIGraphicNode.getSide() == Side.LEFT) {
-			line = new Line(0, 0, -x, DOWNMARGIN); //TODO?? -rootSize? 	
+			line = new Line(0, 0, -x, DOWNMARGIN); 
 		} else {
 			line = new Line(0, 0, x, DOWNMARGIN);	
 		}
@@ -387,7 +386,6 @@ public class DrawingTree {
 	 * Přemístí list 
 	 * @param node - list kam se má větev přesunůt
 	 */
-	@SuppressWarnings("unused")
 	private void relocateNodeAndBranch(IGraphicNode node) {
 		double computedX = computeX(node);
 		int space = node.getParent().getRadiusSize() / 2;
@@ -409,7 +407,6 @@ public class DrawingTree {
 	/**
 	 * Vypočte hodnoty moreSpace a maxLevel
 	 */
-	@SuppressWarnings("unused")
 	private void computeMoreSpace(){
 		int max = maxLevel();		
 		if (max != maxLevel) {						
@@ -437,7 +434,7 @@ public class DrawingTree {
 	}
 	
 	/**
-	 * 
+	 * Zjistí jestli se ukončily všechny animace balance a zavolá překleslení
 	 */
 	private void balanceRedraw() {
 		if (++balanceRedraw == listBalanceAnimation.size()) {
@@ -448,7 +445,7 @@ public class DrawingTree {
 	
 	/**
 	 * Překreslí celý strom 
-	 * TODO: listy nejsů nabindované + neposunujů se + první větve upravit
+	 * 
 	 */
 	private void redraw() {	
 		isRedraw = false;	
@@ -476,37 +473,25 @@ public class DrawingTree {
 			}
 		}
 		
-		windowController.enableButtons();
-		/*for (IGraphicNode iGraphicNode : nodes.subList(1, nodes.size())) {
-			level = iGraphicNode.getLevel();
-			if(iGraphicNode.getSide() == Side.LEFT) {				
-				iGraphicNode.setX(new SimpleDoubleProperty(iGraphicNode.getX().get() - moreSpace * level));
-				iGraphicNode.setBranchEndX(iGraphicNode.getBranchEndX() - moreSpace * level);
-				iGraphicNode.setBranchStartX(iGraphicNode.getBranchStartX() - moreSpace * level);
-			} else {
-				iGraphicNode.setX(new SimpleDoubleProperty(iGraphicNode.getX().get() + moreSpace * level));
-				iGraphicNode.setBranchEndX(iGraphicNode.getBranchEndX() + moreSpace * level);
-				iGraphicNode.setBranchStartX(iGraphicNode.getBranchStartX() + moreSpace * level);
-			}
-		}*/
+		windowController.enableButtons();		
 	}
 	
 	/**
 	 * Sníží všem potomkům level
 	 * @param iNode
 	 */
-	private void decreaseLevel(INode<?> iNode) {
+	private void decreaseLevel(IGraphicNode node) {
 		IGraphicNode iGraphicNode;
-		if (iNode.getLeft() != null) {
-			iGraphicNode = ((INode<?>)iNode.getLeft()).getGraphicNode();
+		if (node.getLeft() != null) {
+			iGraphicNode = node.getLeft();
 			iGraphicNode.setLevel(iGraphicNode.getLevel() - 1);
-			decreaseLevel((INode<?>)iNode.getLeft());
+			decreaseLevel(node.getLeft());
 		}
 		
-		if (iNode.getRight() != null) {
-			iGraphicNode = ((INode<?>)iNode.getRight()).getGraphicNode();
+		if (node.getRight() != null) {
+			iGraphicNode = node.getRight();
 			iGraphicNode.setLevel(iGraphicNode.getLevel() - 1);
-			decreaseLevel((INode<?>)iNode.getRight());
+			decreaseLevel(node.getRight());
 		}
 	}
 	
@@ -534,7 +519,6 @@ public class DrawingTree {
 				redraw();
 			}
 			balanceTree();
-			//windowController.enableButtons();
 			return;
 		}
 		
@@ -614,6 +598,8 @@ public class DrawingTree {
 	 */
 	private void deleteNodeAnimation() {
 		IGraphicNode node = wayList.get(wayList.size() - 1);
+		node.createBackUp(); // vytvořím zálohu mazaného
+		
 		node.highlightFindNode(); // zvýrazním mazaný node
 		if ((boolean) recordOfAnimations.get(indexAnimation).getObject()) { //pokud má děti
 			node.setValue("");
@@ -625,9 +611,7 @@ public class DrawingTree {
 				paneTree.getChildren().remove(node.getStackPaneNode());
 				paneTree.getChildren().remove(node.getBranch());
 				
-				indexAnimation++;
-			//	computeMoreSpace();
-			//	balanceTree();
+				indexAnimation++;			
 				nextAnimation();
 				return;
 			}
@@ -663,9 +647,7 @@ public class DrawingTree {
 					fadeTransitionNode.play();
 					node.setDefaultColorNode();
 					
-					indexAnimation++;
-					//balanceTree();
-					//computeMoreSpace();
+					indexAnimation++;					
 					nextAnimation();					
 				}
 			});
@@ -676,88 +658,87 @@ public class DrawingTree {
 	 * Nahradí mazaný list novým listem
 	 */
 	private void moveAnimation() {
-		INode<?> iNodeRemoved = recordOfAnimations.get(indexAnimation).getNode1();
-		INode<?> iNodeMoved = (INode<?>) recordOfAnimations.get(indexAnimation).getObject();
+		IGraphicNode graphicNodeRemoved = recordOfAnimations.get(indexAnimation).getNode1(); //zaloha už je 
+		IGraphicNode graphicNodeMoved = (IGraphicNode) recordOfAnimations.get(indexAnimation).getObject();
+		
+		graphicNodeMoved.createBackUp();
 		
 		if (animationSpeed.get() == 0) {
-			if (iNodeMoved.getLeft() == null && iNodeMoved.getRight() == null) {
-				iNodeRemoved.getGraphicNode().setValue(iNodeMoved.getGraphicNode().getValue());
-				iNodeRemoved.getGraphicNode().setDefaultColorNode();
+			if (graphicNodeMoved.getLeft() == null && graphicNodeMoved.getRight() == null) { // pokud nemá děti
+				graphicNodeRemoved.setValue(graphicNodeMoved.getValue());
+				graphicNodeRemoved.setDefaultColorNode();
 
-				paneTree.getChildren().remove(iNodeMoved.getGraphicNode().getStackPaneNode());					
+				paneTree.getChildren().remove(graphicNodeMoved.getStackPaneNode());					
 			} else {	
-				if (iNodeRemoved.getParent() == null) {
-					iNodeMoved.getGraphicNode().setX(rootX);
-					listGraphicNodes.remove(iNodeMoved.getGraphicNode()); //dám roota na první místo
-					listGraphicNodes.add(0, iNodeMoved.getGraphicNode());
+				if (graphicNodeRemoved.getParent() == null) {
+					graphicNodeMoved.setX(rootX);
+					listGraphicNodes.remove(graphicNodeMoved); //dám roota na první místo
+					listGraphicNodes.add(0, graphicNodeMoved);
 				}			
 				
-				decreaseLevel(iNodeMoved); //snížím všem potomkům level
+				decreaseLevel(graphicNodeMoved); //snížím všem potomkům level
 				
-				iNodeMoved.getGraphicNode().setLevel(iNodeRemoved.getGraphicNode().getLevel());
-				iNodeMoved.getGraphicNode().setParent(iNodeRemoved.getGraphicNode().getParent());
-				iNodeMoved.getGraphicNode().getStackPaneNode().toFront();					
+				graphicNodeMoved.setLevel(graphicNodeRemoved.getLevel());
+				graphicNodeMoved.setParent(graphicNodeRemoved.getParent());
+				graphicNodeMoved.getStackPaneNode().toFront();					
 
-				paneTree.getChildren().remove(iNodeRemoved.getGraphicNode().getStackPaneNode());	
-				listGraphicNodes.remove(iNodeRemoved.getGraphicNode());
+				paneTree.getChildren().remove(graphicNodeRemoved.getStackPaneNode());	
+				listGraphicNodes.remove(graphicNodeRemoved);
 				
-				iNodeRemoved.setGraphicNode(iNodeMoved.getGraphicNode()); //změním INode1 jeho grafický node... 
-			}
+				/**graphicNodeRemoved.setGraphicNode(graphicNodeMoved); //změním INode1 jeho grafický node... **/
+			}			
 			
-			//computeMoreSpace();
-			//balanceTree();
 			indexAnimation++;
 			nextAnimation();
 			return;
 		}		
 		
-		iNodeMoved.getGraphicNode().highlightNode();
+		graphicNodeMoved.highlightNode();
 		Timeline timeline = new Timeline();
 
 		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
-				new KeyValue(iNodeMoved.getGraphicNode().getX(), iNodeRemoved.getGraphicNode().getX().get()),
-				new KeyValue(iNodeMoved.getGraphicNode().getY(), iNodeRemoved.getGraphicNode().getY().get()));
+				new KeyValue(graphicNodeMoved.getX(), graphicNodeRemoved.getX().get()),
+				new KeyValue(graphicNodeMoved.getY(), graphicNodeRemoved.getY().get()));
 
 		timeline.getKeyFrames().add(kf);
 
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if (iNodeMoved.getLeft() == null && iNodeMoved.getRight() == null) {
-					iNodeRemoved.getGraphicNode().setValue(iNodeMoved.getGraphicNode().getValue());
-					iNodeRemoved.getGraphicNode().setDefaultColorNode();
+				if (graphicNodeMoved.getLeft() == null && graphicNodeMoved.getRight() == null) {
+					graphicNodeRemoved.setValue(graphicNodeMoved.getValue());
+					graphicNodeRemoved.setDefaultColorNode();
 
-					paneTree.getChildren().remove(iNodeMoved.getGraphicNode().getStackPaneNode());					
+					paneTree.getChildren().remove(graphicNodeMoved.getStackPaneNode());					
 				} else {	
-					if (iNodeRemoved.getParent() == null) {
-						iNodeMoved.getGraphicNode().setX(rootX);
-						listGraphicNodes.remove(iNodeMoved.getGraphicNode()); //dám roota na první místo
-						listGraphicNodes.add(0, iNodeMoved.getGraphicNode());
+					if (graphicNodeRemoved.getParent() == null) {
+						graphicNodeMoved.setX(rootX);
+						listGraphicNodes.remove(graphicNodeMoved); //dám roota na první místo
+						listGraphicNodes.add(0, graphicNodeMoved);
 					}
 					
-					decreaseLevel(iNodeMoved); //snížím všem potomkům level
+					decreaseLevel(graphicNodeMoved); //snížím všem potomkům level
 					
-					iNodeMoved.getGraphicNode().setLevel(iNodeRemoved.getGraphicNode().getLevel());
-					iNodeMoved.getGraphicNode().setParent(iNodeRemoved.getGraphicNode().getParent());
-					iNodeMoved.getGraphicNode().setDefaultColorNode();
-					iNodeMoved.getGraphicNode().getStackPaneNode().toFront();					
+					graphicNodeMoved.setLevel(graphicNodeRemoved.getLevel());
+					graphicNodeMoved.setParent(graphicNodeRemoved.getParent());
+					graphicNodeMoved.setDefaultColorNode();
+					graphicNodeMoved.getStackPaneNode().toFront();					
 
-					paneTree.getChildren().remove(iNodeRemoved.getGraphicNode().getStackPaneNode());	
-					listGraphicNodes.remove(iNodeRemoved.getGraphicNode());
+					paneTree.getChildren().remove(graphicNodeRemoved.getStackPaneNode());	
+					listGraphicNodes.remove(graphicNodeRemoved);
 					
-					iNodeRemoved.setGraphicNode(iNodeMoved.getGraphicNode()); //změním INode1 jeho grafický node... 
+					
+					/**graphicNodeRemoved.setGraphicNode(graphicNodeMoved); //změním INode1 jeho grafický node... **/
 				}
 				
-			//	computeMoreSpace();
-			//	balanceTree();
 				indexAnimation++;
 				nextAnimation();
 			}
 		});
 
-		iNodeMoved.getGraphicNode().getX().unbind();
-		iNodeMoved.getGraphicNode().getY().unbind();		
-		paneTree.getChildren().remove(iNodeMoved.getGraphicNode().getBranch());
+		graphicNodeMoved.getX().unbind();
+		graphicNodeMoved.getY().unbind();		
+		paneTree.getChildren().remove(graphicNodeMoved.getBranch());
 
 		timeline.play();		
 		
@@ -766,8 +747,11 @@ public class DrawingTree {
 	 * Přesune hodnotu do jiného listu
 	 */
 	private void moveValueAnimation() {
-		IGraphicNode node1 = recordOfAnimations.get(indexAnimation).getNode1().getGraphicNode();
-		IGraphicNode node2 = ((INode<?>) recordOfAnimations.get(indexAnimation).getObject()).getGraphicNode();
+		IGraphicNode node1 = recordOfAnimations.get(indexAnimation).getNode1();
+		IGraphicNode node2 = ((IGraphicNode) recordOfAnimations.get(indexAnimation).getObject());
+		
+		node1.createBackUp();
+		node2.createBackUp();
 		
 		node1.setValue(node2.getValue());
 		node2.setValue("");
@@ -779,6 +763,7 @@ public class DrawingTree {
 	}
 	
 	private void swapAnimation(){
+		//createBackUp();
 		//TODO
 	}
 
@@ -803,10 +788,8 @@ public class DrawingTree {
 		SequentialTransition seqT;
 		
 		if(node.getBranch() != null) {
-	//		st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch().getChildren().get(0), Color.BLACK, Color.LIME);
 			st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch(), Color.BLACK, Color.LIME);
 			pt1 = new PauseTransition(Duration.millis(5 * (FASTANIMATION - animationSpeed.get())));
-	//		st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch().getChildren().get(0), Color.LIME, Color.BLACK);
 			st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch(), Color.LIME, Color.BLACK);
 		}
 		

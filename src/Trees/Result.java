@@ -61,7 +61,7 @@ public class Result<T> {
 	 * @param node1
 	 * @param object	 
 	 */
-	public void addAnimation(AnimatedAction action, INode<?> node1, Object object) {
+	public void addAnimation(AnimatedAction action, IGraphicNode node1, Object object) {
 		recordOfAnimations.add(new RecordOfAnimation(action, node1, object));		
 	}
 	
