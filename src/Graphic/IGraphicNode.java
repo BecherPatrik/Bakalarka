@@ -43,7 +43,9 @@ public interface IGraphicNode {
 	/**
 	 * Vytvoří zálohu x, y a value
 	 */
-	void createBackUp();
+	void createBackUp();	
+
+	void createBackUpBranch();
 
 	/**
 	 * Použije zálohu a odstraní ji
@@ -118,5 +120,4 @@ public interface IGraphicNode {
 	void setBranchEndY(DoubleProperty y);	
 	
 	IGraphicNode clone();
-
 }

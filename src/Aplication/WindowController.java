@@ -500,7 +500,8 @@ public class WindowController implements Initializable {
 	private void repeatLastAnimation() {		
 		disableButtons();		
 		updatePaneTree();
-		//graphicTree.setRedraw(); //zapnu vynucené překreslování
+		
+		graphicTree.setRedraw(); //zapnu vynucené překreslování
 		
 		switch (lastAction) {
 		case INSERT:			
@@ -527,7 +528,7 @@ public class WindowController implements Initializable {
 	private void updatePaneTree() {
 		listOldGraphicTreeNodes.forEach(x -> x.useBackUp());		
 		
-		graphicTree.setListGraphicNodes(listOldGraphicTreeNodes);
+		graphicTree.setListGraphicNodes(listOldGraphicTreeNodes);		
 
 		paneTree.getChildren().clear();
 

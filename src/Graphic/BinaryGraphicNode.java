@@ -24,18 +24,28 @@ public class BinaryGraphicNode implements IGraphicNode {
 	private Side side;
 	private int level = 0;	
 
-	private Text value;
-	private String oldValue;
+	private Text value;	
 
 	private DoubleProperty x;
 	private DoubleProperty y;
-	private double oldX;
-	private double oldY;
 	
 	private StackPane stackPaneNode;
 	private Circle circle;
 	
 	private Line branch = null;
+	
+	/** Zálohy **/
+	private IGraphicNode Oldleft = null;
+	private IGraphicNode Oldright = null;
+	
+	private String oldValue;
+	
+	private double oldX;
+	private double oldY;
+	
+	private double oldXBranch;
+	private double oldYBranch;
+	
 	private Line OldBranch = null;
 
 	public BinaryGraphicNode(int value) {
@@ -114,36 +124,57 @@ public class BinaryGraphicNode implements IGraphicNode {
 	public void createBackUp() {
 		oldValue = value.getText();
 		oldX = x.get();
-		oldY = y.get();
-		
+		oldY = y.get();			
+	}
+	
+	@Override 
+	public void createBackUpBranch() {		
 		DoubleProperty x = new SimpleDoubleProperty(getBranchStartX().get());
 		DoubleProperty y = new SimpleDoubleProperty(getBranchStartY().get());
 		DoubleProperty x2 = new SimpleDoubleProperty(getBranchEndX().get());
 		DoubleProperty y2 = new SimpleDoubleProperty(getBranchEndY().get());
-		OldBranch = new Line();		
+		
+		OldBranch = new Line();	
+		
 		OldBranch.startXProperty().bind(x);
 		OldBranch.startYProperty().bind(y);
 		OldBranch.endXProperty().bind(x2);
-		OldBranch.endYProperty().bind(y2);		
+		OldBranch.endYProperty().bind(y2);
+		
+		oldXBranch = this.x.get();
+		oldYBranch = this.y.get();	
 	}
 	
 	@Override
 	public void useBackUp() {
-		if (oldValue == null) {
-			return;
+		DoubleProperty x;
+		DoubleProperty y;
+		if (oldValue != null) {
+			value = new Text(oldValue);
+			stackPaneNode.getChildren().clear();
+			createStackPaneNode();
 		}	
 		
-		value = new Text(oldValue);
-		DoubleProperty x = new SimpleDoubleProperty(oldX);
-		DoubleProperty y = new SimpleDoubleProperty(oldY);
+		if (oldX != 0) {
+			x = new SimpleDoubleProperty(oldX);
+			y = new SimpleDoubleProperty(oldY);
+			
+			this.x.bind(x);
+			this.y.bind(y);			
+		} else if (oldXBranch != 0) {
+			x = new SimpleDoubleProperty(oldXBranch);
+			y = new SimpleDoubleProperty(oldYBranch);
+			
+			this.x.bind(x);
+			this.y.bind(y);	
+		}
 		
-		stackPaneNode.getChildren().clear();
-		createStackPaneNode();
+		if (OldBranch != null) {
+			branch = OldBranch;	
+		}
 		
-		branch = OldBranch;		
-		
-		this.x.bind(x);
-		this.y.bind(y);
+		right = Oldright;
+		left = Oldleft;
 		
 		deleteBackUp();
 	}
@@ -153,7 +184,11 @@ public class BinaryGraphicNode implements IGraphicNode {
 		oldValue = null;
 		oldX = 0;
 		oldY = 0;
+		oldXBranch = 0;
+		oldYBranch = 0;
 		OldBranch = null;
+		Oldright = null;
+		Oldleft = null;
 	}
 	
 	/********************************************************************************************************
