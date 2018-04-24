@@ -36,15 +36,16 @@ public class BinaryGraphicNode implements IGraphicNode {
 	private Circle circle;
 	
 	private Line branch = null;
+	private Line OldBranch = null;
 
 	public BinaryGraphicNode(int value) {
 		this.value = new Text(Integer.toString(value));
 		stackPaneNode = new StackPane();
-		createStackPaneNode();
+		createStackPaneNode();		
 	}
 
 	@Override
-	public void createStackPaneNode() {
+	public void createStackPaneNode() {		
 		circle = new Circle(radiusSize);
 		circle.setStrokeWidth(1.5);
 		circle.setStroke(Color.WHITE);
@@ -76,10 +77,14 @@ public class BinaryGraphicNode implements IGraphicNode {
 	public int countChildren() {
 		if (left != null) {
 			leftChildrenCount = 1 + left.countChildren();
+		} else {
+			leftChildrenCount = 0;
 		}
 
 		if (right != null) {
 			rightChildrenCount = 1 + right.countChildren();
+		} else {
+			rightChildrenCount = 0;
 		}
 		
 		return leftChildrenCount + rightChildrenCount;
@@ -107,33 +112,48 @@ public class BinaryGraphicNode implements IGraphicNode {
 	
 	@Override
 	public void createBackUp() {
-		System.out.println(value);
-		System.out.println(x.get());
-		System.out.println(y.get());
-		System.out.println("************zaloha*****************");
 		oldValue = value.getText();
 		oldX = x.get();
 		oldY = y.get();
+		
+		DoubleProperty x = new SimpleDoubleProperty(getBranchStartX().get());
+		DoubleProperty y = new SimpleDoubleProperty(getBranchStartY().get());
+		DoubleProperty x2 = new SimpleDoubleProperty(getBranchEndX().get());
+		DoubleProperty y2 = new SimpleDoubleProperty(getBranchEndY().get());
+		OldBranch = new Line();		
+		OldBranch.startXProperty().bind(x);
+		OldBranch.startYProperty().bind(y);
+		OldBranch.endXProperty().bind(x2);
+		OldBranch.endYProperty().bind(y2);		
 	}
 	
 	@Override
 	public void useBackUp() {
 		if (oldValue == null) {
 			return;
-		}
-		System.out.println(value + " - " + oldValue);
-		System.out.println(x.get() + " - " + oldX);
-		System.out.println(y.get() + " - " + oldY);
-		System.out.println("*****************************");
+		}	
+		
 		value = new Text(oldValue);
-		x = new SimpleDoubleProperty(oldX);
-		y = new SimpleDoubleProperty(oldY);
+		DoubleProperty x = new SimpleDoubleProperty(oldX);
+		DoubleProperty y = new SimpleDoubleProperty(oldY);
+		
+		stackPaneNode.getChildren().clear();
+		createStackPaneNode();
+		
+		branch = OldBranch;		
+		
+		this.x.bind(x);
+		this.y.bind(y);
+		
 		deleteBackUp();
 	}
 	
 	@Override
 	public void deleteBackUp() {
 		oldValue = null;
+		oldX = 0;
+		oldY = 0;
+		OldBranch = null;
 	}
 	
 	/********************************************************************************************************

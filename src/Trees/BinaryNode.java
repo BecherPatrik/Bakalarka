@@ -27,6 +27,7 @@ implements INode<BinaryNode> {
 	public void deleteLeft() {
 		this.left = null;
 		graphicNode.setLeft(null);
+		graphicNode.getLeft();
 	}
 
 	@Override

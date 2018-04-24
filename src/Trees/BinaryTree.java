@@ -1,7 +1,5 @@
 package Trees;
 
-import com.sun.corba.se.impl.orbutil.RepositoryIdUtility;
-
 public class BinaryTree implements ITree<BinaryNode> {
     private BinaryNode root = null;
     
@@ -109,12 +107,12 @@ public class BinaryTree implements ITree<BinaryNode> {
             removedNode.setNode(removedNode.getRight());            
         } else { // 4.       	
         	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá děti 
-            if (side == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
-                removedNode.getParent().deleteLeft();
-            } else if (removedNode.equals(root)) {
+            if (removedNode.getGraphicNode().getSide() == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
+                removedNode.getParent().deleteLeft();               
+            } else if (removedNode.equals(root)) { //osamocený root
             	root = null;
             } else {
-            	removedNode.getParent().deleteRight();            	
+            	removedNode.getParent().deleteRight();  //pravý            	
             }
             return result; 
         } 

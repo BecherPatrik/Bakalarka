@@ -3,12 +3,16 @@ package Aplication;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
+
+import com.sun.crypto.provider.AESParameters;
 
 import Graphic.DrawingTree;
 import Graphic.IGraphicNode;
@@ -229,6 +233,7 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void insertNumber() {
+		graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
 		listOldGraphicTreeNodes.clear();
 		listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		lastAction = AnimatedAction.INSERT;
@@ -249,6 +254,7 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void searchNumber() {
+		graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
 		listOldGraphicTreeNodes.clear();
 		listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		lastAction = AnimatedAction.SEARCH;
@@ -278,12 +284,14 @@ public class WindowController implements Initializable {
 		lastResult = tree.delete(Integer.parseInt(inputNumber.getText()));		
 		graphicTree.deleteNode(lastResult);		
 	}
-	
+	@FXML private void dialogNewTree() {
+		newRandomTree();
+	}
 	/**
 	 * Vytvoření nového stromu přes tlačítko
 	 */
 	@FXML 
-	private void dialogNewTree() {
+	private void dialogNewTree2() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Nový strom");
 		alert.setHeaderText("Chcete pouze smazat aktuální strom,\nnebo vytvořit nový s náhodnýma hodnotama?");
@@ -340,25 +348,49 @@ public class WindowController implements Initializable {
 		
 	}	
 	
+	private void newRandomTree() {
+		double oldSpeed = sliderSpeed.getValue();
+		newEmptyTree();
+		sliderSpeed.setValue(0);
+		
+		lastResult = tree.insert(5);
+		graphicTree.insertRoot((INode<?>)tree.getRoot());
+		
+		lastResult = tree.insert(3);
+		graphicTree.insertNode(lastResult);
+		
+		lastResult = tree.insert(8);
+		graphicTree.insertNode(lastResult);
+		
+		lastResult = tree.insert(6);
+		graphicTree.insertNode(lastResult);
+		
+		lastResult = tree.insert(9);
+		graphicTree.insertNode(lastResult);
+		
+		lastResult = null;
+		listOldGraphicTreeNodes.clear();
+		sliderSpeed.setValue(oldSpeed);
+	}
 	/**
 	 * Vytvoření nového náhodného stromu 
 	 * @param count
 	 */
-	private void newRandomTree() {	
+	private void newRandomTree2() {	
 		int count = dialogRandomTree();
 		double oldSpeed = sliderSpeed.getValue();
 		if (count > 0) {			
 			newEmptyTree();
-			generateRandomTreeList(count);
+			randomValueList = new HashSet<>();
+			
 			sliderSpeed.setValue(0);
 			
 			for (int value : randomValueList) {
 				disableButtons();
-				lastResult = tree.insert(value);
-				
+				lastResult = tree.insert(value);				
 				if (lastResult != null) {
 					graphicTree.insertNode(lastResult);			
-				} else {
+				} else {					
 					graphicTree.insertRoot((INode<?>)tree.getRoot());
 				}
 			}
@@ -466,11 +498,12 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void repeatLastAnimation() {		
-		disableButtons();
+		disableButtons();		
+		updatePaneTree();
+		//graphicTree.setRedraw(); //zapnu vynucené překreslování
 		
 		switch (lastAction) {
-		case INSERT:
-			updatePaneTree();
+		case INSERT:			
 			if (lastResult != null) {
 				graphicTree.insertNode(lastResult);			
 			} else {
@@ -478,14 +511,11 @@ public class WindowController implements Initializable {
 			}
 			break;
 
-		case DELETE:
-			listOldGraphicTreeNodes.forEach(x -> x.useBackUp()); //použiju zálohu
-			updatePaneTree();
+		case DELETE:			
 			graphicTree.deleteNode(lastResult);
 			break;
 
 		case SEARCH:
-			updatePaneTree();
 			graphicTree.searchNode(lastResult);
 			break;
 
@@ -495,12 +525,14 @@ public class WindowController implements Initializable {
 	}
 	
 	private void updatePaneTree() {
+		listOldGraphicTreeNodes.forEach(x -> x.useBackUp());		
+		
 		graphicTree.setListGraphicNodes(listOldGraphicTreeNodes);
 
 		paneTree.getChildren().clear();
 
 		for (IGraphicNode node : graphicTree.getListGraphicNodes()) {
-			paneTree.getChildren().add(node.getStackPaneNode());
+			paneTree.getChildren().add(node.getStackPaneNode());			
 
 			if (node.getBranch() != null) {
 				paneTree.getChildren().add(node.getBranch());
