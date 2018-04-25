@@ -88,7 +88,7 @@ public class BinaryTree implements ITree<BinaryNode> {
             	result.addAnimation(AnimatedAction.MOVENODE, helpNode.getGraphicNode(), helpNode.getRight().getGraphicNode());
             	//result.addAnimation(AnimatedAction.MOVEVALUEFINISH, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
             	
-            	helpNode.setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
+            	//helpNode.setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
             }
         } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka nemá mazaný  2.
         	result.addAnimation(AnimatedAction.DELETE, null, true);

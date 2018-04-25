@@ -96,7 +96,10 @@ public class WindowController implements Initializable {
 	private Result<?> lastResult = null;
 	private AnimatedAction lastAction;
 	
-	private Set<Integer> randomValueList;	
+	private Set<Integer> randomValueList;
+	
+	private List<Integer> listHistory = new ArrayList<>();
+	private int lastValue;
 
 	/**
 	 * Inicializace okna
@@ -234,14 +237,16 @@ public class WindowController implements Initializable {
 	@FXML
 	private void insertNumber() {
 		treeLog();
-		graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
-		listOldGraphicTreeNodes.clear();
-		listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
+		//listOldGraphicTreeNodes.clear();
+		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+		
 		lastAction = AnimatedAction.INSERT;
+		createHistory();		
 		
 		disableButtons();		
 		
-		lastResult = tree.insert(Integer.parseInt(inputNumber.getText()));
+		lastResult = tree.insert(lastValue);
 		
 		if (lastResult != null) {
 			graphicTree.insertNode(lastResult);			
@@ -255,10 +260,12 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void searchNumber() {
-		graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
-		listOldGraphicTreeNodes.clear();
-		listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
+		//listOldGraphicTreeNodes.clear();
+		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		lastAction = AnimatedAction.SEARCH;
+		
+		//createHistory();	
 		
 		disableButtons();
 		
@@ -271,11 +278,12 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void deleteNumber() {
-		graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp()); //smažu zálohy 
-		listOldGraphicTreeNodes.clear();
-		listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp()); //smažu zálohy 
+		//listOldGraphicTreeNodes.clear();
+		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		
 		lastAction = AnimatedAction.DELETE;
+		createHistory();	
 		
 		disableButtons();
 		
@@ -490,12 +498,86 @@ public class WindowController implements Initializable {
 		}
 		return false;
 	}
+	
+	/**
+	 * Vytvoří historii pro animace
+	 */
+	private void createHistory() {
+		lastValue = Integer.parseInt(inputNumber.getText());
+		listHistory.clear();
+		createHistoryRecursion(tree.getRoot());
+	}
+	
+	private void createHistoryRecursion(Object object) {
+		INode<?> node = (INode<?>) object;
+		if (node != null) {
+			listHistory.add(node.getValue());
+		}
+		
+		if (node.getLeft() != null) {
+			createHistoryRecursion(node.getLeft());
+		}
+		
+		if (node.getRight() != null) {
+			createHistoryRecursion(node.getRight());
+		}		
+	}
+	
+	/**
+	 * Změní strom na předchůdce
+	 */
+	private void getHistoryTree() {
+		double oldSpeed = sliderSpeed.getValue();
 
+		newEmptyTree();
+
+		sliderSpeed.setValue(0);
+		
+		if (!(listHistory.isEmpty())) {
+			tree.insert(listHistory.get(0));
+			graphicTree.insertRoot((INode<?>)tree.getRoot());
+
+			for (int value : listHistory.subList(1, listHistory.size())) {
+				graphicTree.insertNode(tree.insert(value));
+			}
+		}
+
+		sliderSpeed.setValue(oldSpeed);		
+	}
+	
 	/**
 	 * Zopakuje poslední animaci
 	 */
 	@FXML
 	private void repeatLastAnimation() {		
+		disableButtons();
+		
+		switch (lastAction) {
+		case INSERT:	
+			getHistoryTree();
+			graphicTree.insertNode(tree.insert(lastValue));
+			break;
+
+		case DELETE:	
+			getHistoryTree();
+			graphicTree.insertNode(tree.delete(lastValue));
+			break;
+
+		case SEARCH:
+			searchNumber();
+			break;
+
+		default:
+			break;
+		}
+	}
+	
+
+	/**
+	 * Zopakuje poslední animaci
+	 */
+	@FXML
+	private void repeatLastAnimation2() {		
 		disableButtons();		
 		updatePaneTree();
 		
@@ -560,7 +642,12 @@ public class WindowController implements Initializable {
 			btnSearch.setDisable(true);
 		}
 		
-		if (isAnimationDisable || (listOldGraphicTreeNodes.isEmpty() && paneTree.getChildren().isEmpty()) || listOldGraphicTreeNodes.isEmpty())  {
+		/*if (isAnimationDisable || (listOldGraphicTreeNodes.isEmpty() && paneTree.getChildren().isEmpty()) || listOldGraphicTreeNodes.isEmpty())  {
+			btnRepeat.setDisable(true);
+		} else {
+			btnRepeat.setDisable(false);
+		}*/		
+		if (isAnimationDisable || paneTree.getChildren().isEmpty()) {
 			btnRepeat.setDisable(true);
 		} else {
 			btnRepeat.setDisable(false);
@@ -605,10 +692,10 @@ public class WindowController implements Initializable {
 	
 	private void treeLog() {
 		INode<?> root = (INode<?>)tree.getRoot();
-		System.out.println(treeLogIter(root));
+		System.out.println(treeLogRecursion(root));
 	}
 	
-	private String treeLogIter(INode<?> n) {
+	private String treeLogRecursion(INode<?> n) {
 		INode<?> parent = (INode<?>) n.getParent();
 		String s;
 		if (parent == null) {
@@ -620,12 +707,12 @@ public class WindowController implements Initializable {
 		
 		if (n.getLeft() != null) {
 			if (n.getRight() != null) {
-				return s + "\t" + treeLogIter((INode<?>) n.getLeft()) + treeLogIter((INode<?>) n.getRight());
+				return s + "\t" + treeLogRecursion((INode<?>) n.getLeft()) + treeLogRecursion((INode<?>) n.getRight());
 			} else {
-				return s + "\t" + treeLogIter((INode<?>) n.getLeft());
+				return s + "\t" + treeLogRecursion((INode<?>) n.getLeft());
 			}
 		} else if (n.getRight() != null) {
-			return s + "\t" + treeLogIter((INode<?>) n.getRight());		
+			return s + "\t" + treeLogRecursion((INode<?>) n.getRight());		
 		} else {
 			return s;
 		}
