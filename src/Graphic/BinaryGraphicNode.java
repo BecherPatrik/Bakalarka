@@ -122,13 +122,32 @@ public class BinaryGraphicNode implements IGraphicNode {
 	
 	@Override
 	public void createBackUp() {
-		oldValue = value.getText();
+		if (!(value.getText().equals(""))) {
+			oldValue = value.getText();
+		} else {
+			return; //pokud je node prázdný už má zálohu a je do něho přesunován jiný viz 0.2
+		}
+		
 		oldX = x.get();
-		oldY = y.get();			
+		oldY = y.get();
+		Oldright = right;
+		Oldleft = left;
 	}
-	
+
 	@Override 
-	public void createBackUpBranch() {		
+	public void createBackUpBranch() {
+		if (Oldright == null && rightChildrenCount != 0) {
+			Oldright = right;
+		}
+		
+		if (Oldleft == null && leftChildrenCount != 0) {
+			Oldleft = left;
+		}
+		
+		if (branch == null) { //pokud se jedná o roota
+			return;
+		}
+		
 		DoubleProperty x = new SimpleDoubleProperty(getBranchStartX().get());
 		DoubleProperty y = new SimpleDoubleProperty(getBranchStartY().get());
 		DoubleProperty x2 = new SimpleDoubleProperty(getBranchEndX().get());
@@ -142,7 +161,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 		OldBranch.endYProperty().bind(y2);
 		
 		oldXBranch = this.x.get();
-		oldYBranch = this.y.get();	
+		oldYBranch = this.y.get();
 	}
 	
 	@Override

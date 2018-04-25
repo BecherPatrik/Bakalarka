@@ -233,6 +233,7 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void insertNumber() {
+		treeLog();
 		graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
 		listOldGraphicTreeNodes.clear();
 		listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
@@ -273,9 +274,6 @@ public class WindowController implements Initializable {
 		graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp()); //smažu zálohy 
 		listOldGraphicTreeNodes.clear();
 		listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
-	//	for (IGraphicNode iGraphicNode : graphicTree.getListGraphicNodes()) {			
-	//		oldGraphicTreeNodes.add((IGraphicNode) iGraphicNode.clone());		//TODO	
-	//	}
 		
 		lastAction = AnimatedAction.DELETE;
 		
@@ -362,8 +360,8 @@ public class WindowController implements Initializable {
 		lastResult = tree.insert(8);
 		graphicTree.insertNode(lastResult);
 		
-		lastResult = tree.insert(6);
-		graphicTree.insertNode(lastResult);
+		/*lastResult = tree.insert(6);
+		graphicTree.insertNode(lastResult);*/
 		
 		lastResult = tree.insert(9);
 		graphicTree.insertNode(lastResult);
@@ -502,6 +500,7 @@ public class WindowController implements Initializable {
 		updatePaneTree();
 		
 		graphicTree.setRedraw(); //zapnu vynucené překreslování
+		disableButtons();
 		
 		switch (lastAction) {
 		case INSERT:			
@@ -602,5 +601,33 @@ public class WindowController implements Initializable {
 		
 		sliderSpeed.setDisable(true);
 		inputNumber.setDisable(true);
-	}	
+	}
+	
+	private void treeLog() {
+		INode<?> root = (INode<?>)tree.getRoot();
+		System.out.println(treeLogIter(root));
+	}
+	
+	private String treeLogIter(INode<?> n) {
+		INode<?> parent = (INode<?>) n.getParent();
+		String s;
+		if (parent == null) {
+			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + "\n";
+		} else {
+			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + "\n rodič: " +
+					parent.getValue() + " - " + parent.getGraphicNode().getValue() + " = " + parent.getGraphicNode() + "\n*********************************\n";
+		}
+		
+		if (n.getLeft() != null) {
+			if (n.getRight() != null) {
+				return s + "\t" + treeLogIter((INode<?>) n.getLeft()) + treeLogIter((INode<?>) n.getRight());
+			} else {
+				return s + "\t" + treeLogIter((INode<?>) n.getLeft());
+			}
+		} else if (n.getRight() != null) {
+			return s + "\t" + treeLogIter((INode<?>) n.getRight());		
+		} else {
+			return s;
+		}
+	}
 }

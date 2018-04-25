@@ -79,7 +79,7 @@ public class BinaryTree implements ITree<BinaryNode> {
                 
             } else { //0.2
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.2.1
-            		helpNode.getParent().setRight(helpNode.getRight());
+            		helpNode.getParent().setRight(helpNode.getRight());            		
             	} else { //0.2.2
             		helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadím místo něho jeho pravého
             	}
