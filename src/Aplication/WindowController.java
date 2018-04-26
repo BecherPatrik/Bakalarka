@@ -236,7 +236,7 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void insertNumber() {
-		treeLog();
+		//treeLog();
 		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
 		//listOldGraphicTreeNodes.clear();
 		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
@@ -513,15 +513,15 @@ public class WindowController implements Initializable {
 		INode<?> node = (INode<?>) object;
 		if (node != null) {
 			listHistory.add(node.getValue());
+
+			if (node.getLeft() != null) {
+				createHistoryRecursion(node.getLeft());
+			}
+
+			if (node.getRight() != null) {
+				createHistoryRecursion(node.getRight());
+			}
 		}
-		
-		if (node.getLeft() != null) {
-			createHistoryRecursion(node.getLeft());
-		}
-		
-		if (node.getRight() != null) {
-			createHistoryRecursion(node.getRight());
-		}		
 	}
 	
 	/**
@@ -556,7 +556,12 @@ public class WindowController implements Initializable {
 		switch (lastAction) {
 		case INSERT:	
 			getHistoryTree();
-			graphicTree.insertNode(tree.insert(lastValue));
+			if (tree.getRoot() == null) {
+				lastResult = tree.insert(lastValue);
+				graphicTree.insertRoot((INode<?>)tree.getRoot());			
+			} else {
+				graphicTree.insertNode(tree.insert(lastValue));
+			}
 			break;
 
 		case DELETE:	
