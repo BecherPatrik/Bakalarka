@@ -290,14 +290,14 @@ public class WindowController implements Initializable {
 		lastResult = tree.delete(Integer.parseInt(inputNumber.getText()));		
 		graphicTree.deleteNode(lastResult);		
 	}
-	@FXML private void dialogNewTree() {
+	@FXML private void dialogNewTree2() {
 		newRandomTree();
 	}
 	/**
 	 * Vytvoření nového stromu přes tlačítko
 	 */
 	@FXML 
-	private void dialogNewTree2() {
+	private void dialogNewTree() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Nový strom");
 		alert.setHeaderText("Chcete pouze smazat aktuální strom,\nnebo vytvořit nový s náhodnýma hodnotama?");
@@ -354,7 +354,7 @@ public class WindowController implements Initializable {
 		
 	}	
 	
-	private void newRandomTree() {
+	private void newRandomTree2() {
 		double oldSpeed = sliderSpeed.getValue();
 		newEmptyTree();
 		sliderSpeed.setValue(0);
@@ -382,12 +382,13 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového náhodného stromu 
 	 * @param count
 	 */
-	private void newRandomTree2() {	
+	private void newRandomTree() {	
 		int count = dialogRandomTree();
 		double oldSpeed = sliderSpeed.getValue();
 		if (count > 0) {			
 			newEmptyTree();
 			randomValueList = new HashSet<>();
+			generateRandomTreeList(count);
 			
 			sliderSpeed.setValue(0);
 			
