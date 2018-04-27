@@ -38,21 +38,21 @@ public interface IGraphicNode {
 	
 	void addLeftChild();
 	
-	void addRightChild();	
-
+	void addRightChild();
+	
 	/**
 	 * Vytvoří zálohu x, y a value
 	 */
-	void createBackUp();	
+	/*void createBackUp();	
 
-	void createBackUpBranch();
+	void createBackUpBranch();*/
 
 	/**
 	 * Použije zálohu a odstraní ji
 	 */
-	void useBackUp();
+	/*void useBackUp();
 
-	void deleteBackUp();
+	void deleteBackUp();*/
 	
 	/********************************************************************************************************
 	 * GETS & SETS

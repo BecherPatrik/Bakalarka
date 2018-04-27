@@ -35,7 +35,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 	private Line branch = null;
 	
 	/** Zálohy **/
-	private IGraphicNode Oldleft = null;
+/*	private IGraphicNode Oldleft = null;
 	private IGraphicNode Oldright = null;
 	
 	private String oldValue;
@@ -46,7 +46,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 	private double oldXBranch;
 	private double oldYBranch;
 	
-	private Line OldBranch = null;
+	private Line OldBranch = null;*/
 
 	public BinaryGraphicNode(int value) {
 		this.value = new Text(Integer.toString(value));
@@ -120,7 +120,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 		rightChildrenCount++;	
 	}
 	
-	@Override
+	/*@Override
 	public void createBackUp() {
 		if (!(value.getText().equals(""))) {
 			oldValue = value.getText();
@@ -208,7 +208,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 		OldBranch = null;
 		Oldright = null;
 		Oldleft = null;
-	}
+	}*/
 	
 	/********************************************************************************************************
 	 * GETS & SETS
