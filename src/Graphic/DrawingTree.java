@@ -213,6 +213,7 @@ public class DrawingTree {
 		Line line = new Line();
 		line.startXProperty().bind(node.getParent().getX().add(rootSize / 2));
 		line.startYProperty().bind(node.getParent().getY().add(rootSize / 2));
+		line.setStroke(Color.WHITE);
 		
 		if (node.getSide() == Side.LEFT) {
 			line.endXProperty().bind(node.getParent().getX().subtract(rootSize / 2));	
@@ -606,7 +607,7 @@ public class DrawingTree {
 					}	*/				
 					
 					//musím zviditelnit kvůli viditelnosti pro opakování posledního kroku
-					FadeTransition fadeTransitionNode = new FadeTransition(Duration.millis(1), node.getStackPaneNode());
+				/*	FadeTransition fadeTransitionNode = new FadeTransition(Duration.millis(1), node.getStackPaneNode());
 					fadeTransitionNode.setFromValue(0.0);
 					fadeTransitionNode.setToValue(1.0);			
 					
@@ -616,7 +617,7 @@ public class DrawingTree {
 
 					fadeTransitionBranch.play();
 					fadeTransitionNode.play();
-					node.setDefaultColorNode();
+					node.setDefaultColorNode();*/
 					
 					indexAnimation++;					
 					nextAnimation();					
@@ -781,9 +782,9 @@ public class DrawingTree {
 		SequentialTransition seqT;
 		
 		if(node.getBranch() != null) {
-			st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch(), Color.BLACK, Color.LIME);
+			st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch(), Color.WHITE, Color.LIME);
 			pt1 = new PauseTransition(Duration.millis(5 * (FASTANIMATION - animationSpeed.get())));
-			st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch(), Color.LIME, Color.BLACK);
+			st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch(), Color.LIME, Color.WHITE);
 		}
 		
 		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.WHITE, Color.LIME);

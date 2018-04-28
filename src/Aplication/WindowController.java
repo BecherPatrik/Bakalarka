@@ -12,6 +12,8 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.swing.plaf.synth.SynthSeparatorUI;
+
 import com.sun.crypto.provider.AESParameters;
 
 import Graphic.DrawingTree;
@@ -236,7 +238,7 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void insertNumber() {
-		//treeLog();
+		treeLog();
 		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
 		//listOldGraphicTreeNodes.clear();
 		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
@@ -252,7 +254,9 @@ public class WindowController implements Initializable {
 			graphicTree.insertNode(lastResult);			
 		} else {
 			graphicTree.insertRoot((INode<?>)tree.getRoot());
-		}				
+		}
+		System.out.println("-----------------------------------");
+		treeLog();
 	}
 	
 	/**
@@ -278,6 +282,7 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void deleteNumber() {
+		treeLog();
 		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp()); //smažu zálohy 
 		//listOldGraphicTreeNodes.clear();
 		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
@@ -288,16 +293,19 @@ public class WindowController implements Initializable {
 		disableButtons();
 		
 		lastResult = tree.delete(Integer.parseInt(inputNumber.getText()));		
-		graphicTree.deleteNode(lastResult);		
+		graphicTree.deleteNode(lastResult);	
+		System.out.println("-----------------------------------");
+		treeLog();
 	}
-	@FXML private void dialogNewTree2() {
+	
+	@FXML private void dialogNewTree() {
 		newRandomTree();
 	}
 	/**
 	 * Vytvoření nového stromu přes tlačítko
 	 */
 	@FXML 
-	private void dialogNewTree() {
+	private void dialogNewTree2() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Nový strom");
 		alert.setHeaderText("Chcete pouze smazat aktuální strom,\nnebo vytvořit nový s náhodnýma hodnotama?");
@@ -354,7 +362,7 @@ public class WindowController implements Initializable {
 		
 	}	
 	
-	private void newRandomTree2() {
+	private void newRandomTree() {
 		double oldSpeed = sliderSpeed.getValue();
 		newEmptyTree();
 		sliderSpeed.setValue(0);
@@ -382,7 +390,7 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového náhodného stromu 
 	 * @param count
 	 */
-	private void newRandomTree() {	
+	private void newRandomTree2() {	
 		int count = dialogRandomTree();
 		double oldSpeed = sliderSpeed.getValue();
 		if (count > 0) {			
@@ -613,7 +621,7 @@ public class WindowController implements Initializable {
 	}
 	
 	private void updatePaneTree() {
-		listOldGraphicTreeNodes.forEach(x -> x.useBackUp());		
+	//	listOldGraphicTreeNodes.forEach(x -> x.useBackUp());		
 		
 		graphicTree.setListGraphicNodes(listOldGraphicTreeNodes);		
 
@@ -697,6 +705,7 @@ public class WindowController implements Initializable {
 	}
 	
 	private void treeLog() {
+		paneTree.getChildren().forEach(x-> System.out.println(x));
 		INode<?> root = (INode<?>)tree.getRoot();
 		System.out.println(treeLogRecursion(root));
 	}
@@ -705,10 +714,10 @@ public class WindowController implements Initializable {
 		INode<?> parent = (INode<?>) n.getParent();
 		String s;
 		if (parent == null) {
-			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + "\n";
+			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +"\n";
 		} else {
-			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + "\n rodič: " +
-					parent.getValue() + " - " + parent.getGraphicNode().getValue() + " = " + parent.getGraphicNode() + "\n*********************************\n";
+			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +  "\n rodič: " +
+					parent.getValue() + " - " + parent.getGraphicNode().getValue() + " = " + parent.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() + "\n*********************************\n";
 		}
 		
 		if (n.getLeft() != null) {
