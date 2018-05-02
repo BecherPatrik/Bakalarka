@@ -40,6 +40,20 @@ implements INode<BinaryNode> {
 		value = node.getValue();
 		right = node.getRight();
 		left = node.getLeft();
+		
+		node.getGraphicNode().setSide(graphicNode.getSide()); //před změnou musím uložit aktuální stranu node
+		
+		graphicNode = node.getGraphicNode(); //změním graphicNode
+		
+		if (parent != null) {
+			graphicNode.setParent(parent.getGraphicNode());
+
+			if (graphicNode.getSide() == Side.LEFT) {
+				graphicNode.getParent().setLeft(graphicNode);
+			} else if (graphicNode.getSide() == Side.RIGHT) {
+				graphicNode.getParent().setRight(graphicNode);
+			}
+		}
 	}
 	
 	/********************************************************************************************************
@@ -100,6 +114,19 @@ implements INode<BinaryNode> {
 	@Override
 	public void setGraphicNode(IGraphicNode graphicNode) {
 		this.graphicNode = (BinaryGraphicNode) graphicNode;
+		if (left != null) {
+			this.graphicNode.setLeft(left.getGraphicNode());
+		}
+		
+		if (right != null) {
+			this.graphicNode.setRight(right.getGraphicNode());
+		}
+		
+		if (parent != null) {
+			this.graphicNode.setParent(parent.getGraphicNode());
+		} else {
+			this.graphicNode.setParent(null);
+		}		
 	}
 	
 	@Override

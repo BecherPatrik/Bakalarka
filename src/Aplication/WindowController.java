@@ -103,6 +103,10 @@ public class WindowController implements Initializable {
 	private List<Integer> listHistory = new ArrayList<>();
 	private int lastValue;
 
+	private boolean isRedraw = false;
+	private int finishAnimation = 0;
+	double oldSpeed;
+
 	/**
 	 * Inicializace okna
 	 */
@@ -370,17 +374,20 @@ public class WindowController implements Initializable {
 		lastResult = tree.insert(5);
 		graphicTree.insertRoot((INode<?>)tree.getRoot());
 		
-		lastResult = tree.insert(3);
-		graphicTree.insertNode(lastResult);
+		//lastResult = tree.insert(3);
+		//graphicTree.insertNode(lastResult);
 		
-		lastResult = tree.insert(8);
+		//lastResult = tree.insert(8);
+		//graphicTree.insertNode(lastResult);
+		
+		lastResult = tree.insert(10);
 		graphicTree.insertNode(lastResult);
 		
 		/*lastResult = tree.insert(6);
 		graphicTree.insertNode(lastResult);*/
 		
 		lastResult = tree.insert(9);
-		graphicTree.insertNode(lastResult);
+		graphicTree.insertNode(lastResult);		
 		
 		lastResult = null;
 		listOldGraphicTreeNodes.clear();
@@ -536,11 +543,13 @@ public class WindowController implements Initializable {
 	 * Změní strom na předchůdce
 	 */
 	private void getHistoryTree() {
-		double oldSpeed = sliderSpeed.getValue();
+		oldSpeed = sliderSpeed.getValue();
 
 		newEmptyTree();
 
 		sliderSpeed.setValue(0);
+		finishAnimation = 0;
+		isRedraw  = true;
 		
 		if (!(listHistory.isEmpty())) {
 			tree.insert(listHistory.get(0));
@@ -549,9 +558,12 @@ public class WindowController implements Initializable {
 			for (int value : listHistory.subList(1, listHistory.size())) {
 				graphicTree.insertNode(tree.insert(value));
 			}
+		} else {
+			repeatLastAction();
 		}
 
-		sliderSpeed.setValue(oldSpeed);		
+		sliderSpeed.setValue(oldSpeed);	
+		
 	}
 	
 	/**
@@ -563,18 +575,11 @@ public class WindowController implements Initializable {
 		
 		switch (lastAction) {
 		case INSERT:	
-			getHistoryTree();
-			if (tree.getRoot() == null) {
-				lastResult = tree.insert(lastValue);
-				graphicTree.insertRoot((INode<?>)tree.getRoot());			
-			} else {
-				graphicTree.insertNode(tree.insert(lastValue));
-			}
+			getHistoryTree();			
 			break;
 
 		case DELETE:	
 			getHistoryTree();
-			graphicTree.insertNode(tree.delete(lastValue));
 			break;
 
 		case SEARCH:
@@ -584,6 +589,32 @@ public class WindowController implements Initializable {
 		default:
 			break;
 		}
+	}
+	
+	/**
+	 * Zopakuje poslední akci pokud se musel obnovit strom (metoda se zavolá automaticky po obnovení stromu)
+	 * pro INSERT a DELETE
+	 */
+	private void repeatLastAction() {	
+		isRedraw = false;
+		sliderSpeed.setValue(oldSpeed);	
+		switch (lastAction) {
+		case INSERT:	
+			if (tree.getRoot() == null) {
+				lastResult = tree.insert(lastValue);
+				graphicTree.insertRoot((INode<?>)tree.getRoot());			
+			} else {
+				graphicTree.insertNode(tree.insert(lastValue));
+			}
+			break;
+
+		case DELETE:	
+			graphicTree.deleteNode(tree.delete(lastValue));
+			break;		
+
+		default:
+			break;
+		}		
 	}
 	
 
@@ -661,7 +692,7 @@ public class WindowController implements Initializable {
 		} else {
 			btnRepeat.setDisable(false);
 		}*/		
-		if (isAnimationDisable || paneTree.getChildren().isEmpty()) {
+		if (isAnimationDisable || (paneTree.getChildren().isEmpty() && listHistory.isEmpty())) {
 			btnRepeat.setDisable(true);
 		} else {
 			btnRepeat.setDisable(false);
@@ -672,6 +703,13 @@ public class WindowController implements Initializable {
 	 * Povolí manipulaci s tlačítkami po ukončení animace
 	 */
 	public void enableButtons() {
+		if (isRedraw) {
+			if (++finishAnimation == listHistory.size()) {
+				repeatLastAction();
+			}			
+			return;
+		}
+		
 		primaryStage.setResizable(true);
 		
 		checkEnableButtons();
@@ -707,6 +745,9 @@ public class WindowController implements Initializable {
 	private void treeLog() {
 		paneTree.getChildren().forEach(x-> System.out.println(x));
 		INode<?> root = (INode<?>)tree.getRoot();
+		if (root == null) {
+			return;
+		}
 		System.out.println(treeLogRecursion(root));
 	}
 	
@@ -717,7 +758,7 @@ public class WindowController implements Initializable {
 			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +"\n";
 		} else {
 			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +  "\n rodič: " +
-					parent.getValue() + " - " + parent.getGraphicNode().getValue() + " = " + parent.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() + "\n*********************************\n";
+					parent.getValue() + " - " + parent.getGraphicNode().getValue() + " = " + parent.getGraphicNode() + " ->" + parent.getGraphicNode().getStackPaneNode() + "\n*********************************\n";
 		}
 		
 		if (n.getLeft() != null) {
