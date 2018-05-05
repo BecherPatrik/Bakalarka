@@ -3,9 +3,7 @@ package Trees;
 public class BinaryTree implements ITree<BinaryNode> {
     private BinaryNode root = null;
     
-    public BinaryTree() {
-        
-    }
+    public BinaryTree() {}
     
     @Override
 	public Result<BinaryNode> insert(int value) {
@@ -64,7 +62,6 @@ public class BinaryTree implements ITree<BinaryNode> {
             
             removedNode.setValue(helpNode.getValue()); //uložím jeho hodnotu do toho co mažu
             
-            
             result.addAnimation(AnimatedAction.DELETE, null, true);            
             
             if (helpNode.getRight() == null) { //0.1
@@ -90,7 +87,7 @@ public class BinaryTree implements ITree<BinaryNode> {
             	
             	//helpNode.setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
             }
-        } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka nemá mazaný  2.
+        } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka má mazaný  2.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
             result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getLeft().getGraphicNode());
             

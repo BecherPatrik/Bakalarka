@@ -338,6 +338,7 @@ public class WindowController implements Initializable {
 	private void newEmptyTree() {
 		listOldGraphicTreeNodes = new ArrayList<>();
 		lastResult = null;
+		listHistory = new ArrayList<>();
 		
 		paneTree.getChildren().clear();
 		
@@ -692,7 +693,7 @@ public class WindowController implements Initializable {
 		} else {
 			btnRepeat.setDisable(false);
 		}*/		
-		if (isAnimationDisable || (paneTree.getChildren().isEmpty() && listHistory.isEmpty())) {
+		if (isAnimationDisable || paneTree.getChildren().isEmpty() || listHistory.isEmpty()) {
 			btnRepeat.setDisable(true);
 		} else {
 			btnRepeat.setDisable(false);

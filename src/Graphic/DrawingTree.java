@@ -163,14 +163,15 @@ public class DrawingTree {
 		} else {
 			xAnimatedNode.bind(newIGraphicNode.getParent().getX().add(rootSize));	
 		}
+		
 		yAnimatedNode.bind(newIGraphicNode.getParent().getY().add(DOWNMARGIN));
 		
 		//zavolám animaci
 		startAnimation(result.getRecordOfAnimations());			
 		
-		if(animationSpeed.get() != 0) {
+	/*	if(animationSpeed.get() != 0) {
 			createBranch(newIGraphicNode);			
-		}
+		}*/
 		
 		listGraphicNodes.add(newIGraphicNode);	
 	}
@@ -483,7 +484,7 @@ public class DrawingTree {
 			deleteNodeAnimation();			
 			break;
 		case MOVENODE:
-			moveAnimation();
+			moveNodeAnimation();
 			isRedraw = true;
 			break;		
 		case MOVEVALUE:
@@ -503,29 +504,15 @@ public class DrawingTree {
 	 * Zavolá znovu metodu highlightNode pro každý list zvlášť
 	 */
 	private void nextSearchNode() {		
-		highlightNode(wayList.get(wayIndex));
+		highlightNodeAnimation(wayList.get(wayIndex));
 	}		
 	
 	/**
 	 * Animace vložení nového listu
 	 */
 	private void insertNodeAnimation() {
-		//System.out.println("animace pro: " + newIGraphicNode.getValue());
 		if (animationSpeed.get() == 0) {			
-			newIGraphicNode.setX(xAnimatedNode);
-			newIGraphicNode.setY(yAnimatedNode);
-			createBranch(newIGraphicNode);
-			//System.out.println("ted insert");
-			insertBranch();
-			
-			if (newIGraphicNode.getSide() == Side.LEFT) {
-				newIGraphicNode.getParent().setLeft(newIGraphicNode);
-		    } else if (newIGraphicNode.getSide() == Side.RIGHT) {
-		    	newIGraphicNode.getParent().setRight(newIGraphicNode);
-		    }
-		    	
-			indexAnimation++;
-			nextAnimation();
+			insertNodeAnimationFinished();
 			return;
 		}
 		
@@ -540,18 +527,7 @@ public class DrawingTree {
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				insertBranch();
-				newIGraphicNode.setX(xAnimatedNode);
-				newIGraphicNode.setY(yAnimatedNode);
-				
-				if (newIGraphicNode.getSide() == Side.LEFT) {
-					newIGraphicNode.getParent().setLeft(newIGraphicNode);
-			    } else if (newIGraphicNode.getSide() == Side.RIGHT) {
-			    	newIGraphicNode.getParent().setRight(newIGraphicNode);
-			    }
-				
-				indexAnimation++;
-				nextAnimation();
+				insertNodeAnimationFinished();
 			}
 		});
 
@@ -561,12 +537,28 @@ public class DrawingTree {
 		timeline.play();
 	}
 	
+	private void insertNodeAnimationFinished() {
+		newIGraphicNode.setX(xAnimatedNode);
+		newIGraphicNode.setY(yAnimatedNode);
+		
+		createBranch(newIGraphicNode);
+		insertBranch();		
+
+		if (newIGraphicNode.getSide() == Side.LEFT) {
+			newIGraphicNode.getParent().setLeft(newIGraphicNode);
+		} else if (newIGraphicNode.getSide() == Side.RIGHT) {
+			newIGraphicNode.getParent().setRight(newIGraphicNode);
+		}
+
+		indexAnimation++;
+		nextAnimation();
+	}
+	
 	/**
 	 * Smazání listu animace
 	 */
 	private void deleteNodeAnimation() {
 		IGraphicNode node = wayList.get(wayList.size() - 1);
-		//node.createBackUp(); // vytvořím zálohu mazaného
 		
 		node.highlightFindNode(); // zvýrazním mazaný node
 		if ((boolean) recordOfAnimations.get(indexAnimation).getObject()) { //pokud má děti
@@ -575,20 +567,7 @@ public class DrawingTree {
 			nextAnimation();
 		} else {			
 			if (animationSpeed.get() == 0) { //neni animace
-				listGraphicNodes.remove(node);
-				paneTree.getChildren().remove(node.getStackPaneNode());
-				paneTree.getChildren().remove(node.getBranch());				
-				//node.getBranchEndX().unbind(); //posunuje se i po smazání furt je bylo nabindované na rodiča...
-				//node.getParent().createBackUp(); //zálohuju kvůli dítěti
-				
-				/*if (node.getSide() == Side.LEFT) {
-					node.getParent().setLeft(null);
-				} else {
-					node.getParent().setRight(null);
-				}*/
-				
-				indexAnimation++;			
-				nextAnimation();
+				deleteNodeAnimationFinished(node);
 				return;
 			}
 			
@@ -605,87 +584,31 @@ public class DrawingTree {
 			
 			fadeTransitionNode.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
-				public void handle(ActionEvent event) {					
-					listGraphicNodes.remove(node);					
-					paneTree.getChildren().remove(node.getStackPaneNode());
-					paneTree.getChildren().remove(node.getBranch());
-					//node.getBranchEndX().unbind(); //posunuje se i po smazání furt je bylo nabindované na rodiča...
-					//node.getParent().createBackUp(); //zálohuju kvůli dítěti
-					
-					/*if (node.getSide() == Side.LEFT) {
-						node.getParent().setLeft(null);
-					} else {
-						node.getParent().setRight(null);
-					}	*/				
-					
-					//musím zviditelnit kvůli viditelnosti pro opakování posledního kroku
-				/*	FadeTransition fadeTransitionNode = new FadeTransition(Duration.millis(1), node.getStackPaneNode());
-					fadeTransitionNode.setFromValue(0.0);
-					fadeTransitionNode.setToValue(1.0);			
-					
-					FadeTransition fadeTransitionBranch = new FadeTransition(Duration.millis(1), node.getBranch());
-					fadeTransitionBranch.setFromValue(0.0);
-					fadeTransitionBranch.setToValue(1.0);
-
-					fadeTransitionBranch.play();
-					fadeTransitionNode.play();
-					node.setDefaultColorNode();*/
-					
-					indexAnimation++;					
-					nextAnimation();					
+				public void handle(ActionEvent event) {	
+					deleteNodeAnimationFinished(node);										
 				}
 			});
 		}
+	}
+	
+	private void deleteNodeAnimationFinished(IGraphicNode node) {
+		listGraphicNodes.remove(node);					
+		paneTree.getChildren().remove(node.getStackPaneNode());
+		paneTree.getChildren().remove(node.getBranch());
+		
+		indexAnimation++;					
+		nextAnimation();
 	}
 
 	/**
 	 * Nahradí mazaný list novým listem
 	 */
-	private void moveAnimation() {
+	private void moveNodeAnimation() {
 		IGraphicNode graphicNodeRemoved = recordOfAnimations.get(indexAnimation).getNode1(); //zaloha už je 
 		IGraphicNode graphicNodeMoved = (IGraphicNode) recordOfAnimations.get(indexAnimation).getObject();
 		
-		//graphicNodeMoved.createBackUp();
-		
 		if (animationSpeed.get() == 0) {
-			if (graphicNodeMoved.getLeft() == null && graphicNodeMoved.getRight() == null) { // pokud nemá děti
-				
-				/*//if (graphicNodeMoved.getParent().equals(graphicNodeRemoved)) { //jen pokud se jedná o jeho rodiča
-					graphicNodeMoved.getParent().createBackUp();
-					
-					if (graphicNodeMoved.getSide() == Side.LEFT) {
-						graphicNodeMoved.getParent().setLeft(null);
-					} else {
-						graphicNodeMoved.getParent().setRight(null);
-					}
-				//} //zálohuju kvůli dítěti*/				
-				
-				graphicNodeRemoved.setValue(graphicNodeMoved.getValue());
-				graphicNodeRemoved.setDefaultColorNode();
-
-				paneTree.getChildren().remove(graphicNodeMoved.getStackPaneNode());
-				paneTree.getChildren().remove(graphicNodeMoved.getBranch());
-				listGraphicNodes.remove(graphicNodeMoved);
-				
-			} else {	
-				if (graphicNodeRemoved.getParent() == null) {
-					graphicNodeMoved.setX(rootX);
-					listGraphicNodes.remove(graphicNodeMoved); //dám roota na první místo
-					listGraphicNodes.add(0, graphicNodeMoved);
-				}
-				
-				//graphicNodeMoved.setParent(graphicNodeRemoved.getParent());
-				graphicNodeMoved.getStackPaneNode().toFront();					
-
-				paneTree.getChildren().remove(graphicNodeRemoved.getStackPaneNode());	
-				paneTree.getChildren().remove(graphicNodeRemoved.getBranch());
-				listGraphicNodes.remove(graphicNodeRemoved);
-			}			
-			
-			paneTree.getChildren().remove(graphicNodeMoved.getBranch());
-			indexAnimation++;
-			nextAnimation();
-			return;
+			moveNodeAnimationFinished(graphicNodeRemoved, graphicNodeMoved);
 		}		
 		
 		graphicNodeMoved.highlightNode();
@@ -700,49 +623,7 @@ public class DrawingTree {
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if (graphicNodeMoved.getLeft() == null && graphicNodeMoved.getRight() == null) {
-					/*//if (graphicNodeMoved.getParent().equals(graphicNodeRemoved)) { //jen pokud se jedná o jeho rodiča
-						graphicNodeMoved.getParent().createBackUp();
-						
-						if (graphicNodeMoved.getSide() == Side.LEFT) {
-							graphicNodeMoved.getParent().setLeft(null);
-						} else {
-							graphicNodeMoved.getParent().setRight(null);
-						}
-					//} //zálohuju kvůli dítěti*/
-					
-					graphicNodeRemoved.setValue(graphicNodeMoved.getValue());
-					graphicNodeRemoved.setDefaultColorNode();
-
-					paneTree.getChildren().remove(graphicNodeMoved.getStackPaneNode());	
-					paneTree.getChildren().remove(graphicNodeMoved.getBranch());
-					listGraphicNodes.remove(graphicNodeMoved);
-				} else {	
-					if (graphicNodeRemoved.getParent() == null) {
-						graphicNodeMoved.setX(rootX);
-						listGraphicNodes.remove(graphicNodeMoved); //dám roota na první místo
-						listGraphicNodes.add(0, graphicNodeMoved);
-					}
-					
-					/*graphicNodeMoved.getParent().createBackUp();
-					
-					if (graphicNodeMoved.getSide() == Side.LEFT) {
-						graphicNodeMoved.getParent().setRight(graphicNodeMoved.getRight());						
-					} else {
-						graphicNodeMoved.getParent().setLeft(graphicNodeMoved.getLeft());
-					}*/
-					
-					//graphicNodeMoved.setParent(graphicNodeRemoved.getParent());
-					graphicNodeMoved.setDefaultColorNode();
-					graphicNodeMoved.getStackPaneNode().toFront();					
-
-					paneTree.getChildren().remove(graphicNodeRemoved.getStackPaneNode());	
-					paneTree.getChildren().remove(graphicNodeRemoved.getBranch());
-					listGraphicNodes.remove(graphicNodeRemoved);
-				}
-				
-				indexAnimation++;
-				nextAnimation();
+				moveNodeAnimationFinished(graphicNodeRemoved, graphicNodeMoved);
 			}
 		});
 
@@ -752,15 +633,42 @@ public class DrawingTree {
 
 		timeline.play();				
 	}
+	
+	private void moveNodeAnimationFinished(IGraphicNode graphicNodeRemoved, IGraphicNode graphicNodeMoved) {
+		if (graphicNodeMoved.getLeft() == null && graphicNodeMoved.getRight() == null) {
+			graphicNodeRemoved.setValue(graphicNodeMoved.getValue());
+			graphicNodeRemoved.setDefaultColorNode();
+
+			paneTree.getChildren().remove(graphicNodeMoved.getStackPaneNode());	
+			paneTree.getChildren().remove(graphicNodeMoved.getBranch());
+			listGraphicNodes.remove(graphicNodeMoved);
+		} else {	
+			if (graphicNodeRemoved.getParent() == null) {
+				graphicNodeMoved.setX(rootX);
+				listGraphicNodes.remove(graphicNodeMoved); //dám roota na první místo
+				listGraphicNodes.add(0, graphicNodeMoved);
+			} else {
+				graphicNodeMoved.setParent(graphicNodeRemoved.getParent()); /** taky smazané **/
+			}
+							
+			graphicNodeMoved.setDefaultColorNode();
+			graphicNodeMoved.getStackPaneNode().toFront();					
+
+			paneTree.getChildren().remove(graphicNodeRemoved.getStackPaneNode());	
+			paneTree.getChildren().remove(graphicNodeRemoved.getBranch());
+			listGraphicNodes.remove(graphicNodeRemoved);
+		}
+		
+		indexAnimation++;
+		nextAnimation();
+	}
+	
 	/**
 	 * Přesune hodnotu do jiného listu
 	 */
 	private void moveValueAnimation() {
 		IGraphicNode node1 = recordOfAnimations.get(indexAnimation).getNode1();
 		IGraphicNode node2 = ((IGraphicNode) recordOfAnimations.get(indexAnimation).getObject());
-		
-		//node1.createBackUp();
-		//node2.createBackUp();
 		
 		node1.setValue(node2.getValue());
 		node2.setValue("");
@@ -780,14 +688,9 @@ public class DrawingTree {
 	 * Animace zvýraznění větve a následně listu 
 	 * @param node
 	 */
-	private void highlightNode(IGraphicNode node) {
+	private void highlightNodeAnimation(IGraphicNode node) {
 		if (animationSpeed.get() == 0) { //když nebude animace
-			if((boolean)recordOfAnimations.get(indexAnimation).getObject()) {
-				highlightFindNode();
-			} else {
-				indexAnimation++;
-				nextAnimation();
-			}
+			highlightNodeAnimationFinished();
 			return;
 		}
 		
@@ -818,17 +721,21 @@ public class DrawingTree {
 				if (++wayIndex < wayList.size()) {
 					nextSearchNode();
 				} else {
-					if((boolean)recordOfAnimations.get(indexAnimation).getObject()) {
-						highlightFindNode();
-					} else {
-						indexAnimation++;
-						nextAnimation();
-					}
+					highlightNodeAnimationFinished();
 				}
 			}
 		});
 		
 		seqT.play();
+	}
+	
+	private void highlightNodeAnimationFinished() {
+		if((boolean)recordOfAnimations.get(indexAnimation).getObject()) {
+			highlightFindNode();
+		} else {
+			indexAnimation++;
+			nextAnimation();
+		}		
 	}
 	
 	/**
