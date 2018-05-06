@@ -584,7 +584,7 @@ public class WindowController implements Initializable {
 			break;
 
 		case SEARCH:
-			searchNumber();
+			graphicTree.searchNode(tree.search(lastValue));
 			break;
 
 		default:

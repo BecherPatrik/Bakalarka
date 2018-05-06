@@ -44,15 +44,7 @@ public class BinaryTree implements ITree<BinaryNode> {
 		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud má dva potomnky 1.
 			helpNode = removedNode.getRight(); // dosadím pravého
 
-			if (!(helpNode.getLeft() == null && helpNode.getRight() == null)) { //pokud dosazovaný má potomky 1.1
-
-				/*if (helpNode.getLeft() == null) { // pokud pravý potomek nemá levého 1.2
-					removedNode.setRight(helpNode.getRight()); 
-				} else {
-					while (helpNode.getLeft() != null) { // dokud nemám poslední levý 1.3
-						helpNode = helpNode.getLeft();
-					}					
-				}*/
+			if (helpNode.getLeft() != null && helpNode.getRight() != null) { //pokud dosazovaný má potomky 1.1
 				if (helpNode.getLeft() != null) { // pokud pravý potomek nemá levého 1.2
 					while (helpNode.getLeft() != null) { // dokud nemám poslední levý 1.3
 						helpNode = helpNode.getLeft();
