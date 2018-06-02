@@ -42,8 +42,10 @@ implements INode<BinaryNode> {
 		left = node.getLeft();
 		
 		node.getGraphicNode().setSide(graphicNode.getSide()); //před změnou musím uložit aktuální stranu node
+		graphicNode.setLeft(node.getGraphicNode().getLeft());
+		graphicNode.setRight(node.getGraphicNode().getRight());
 		
-		graphicNode = node.getGraphicNode(); //změním graphicNode
+		//graphicNode = node.getGraphicNode(); //změním graphicNode
 		
 		if (parent != null) {
 			graphicNode.setParent(parent.getGraphicNode());

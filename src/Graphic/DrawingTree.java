@@ -173,7 +173,7 @@ public class DrawingTree {
 			createBranch(newIGraphicNode);			
 		}*/
 		
-		listGraphicNodes.add(newIGraphicNode);	
+		//listGraphicNodes.add(newIGraphicNode);	
 	}
 	
 	/**
@@ -324,7 +324,7 @@ public class DrawingTree {
 					} else {
 						xAnimatedNode.bind(iGraphicNode.getParent().getX().add(rootSize).add(rootSize * iGraphicNode.getLeftChildrenCount()));
 						xAnimatedBranch.bind(iGraphicNode.getParent().getX().add(rootSize * 1.5).add(rootSize * iGraphicNode.getLeftChildrenCount()));
-					}
+					}					
 					
 					yAnimatedNode.bind(iGraphicNode.getParent().getY().add(DOWNMARGIN));
 					yAnimatedBranch.bind(iGraphicNode.getParent().getY().add(rootSize / 2).add(DOWNMARGIN));
@@ -344,6 +344,9 @@ public class DrawingTree {
 						iGraphicNode.getRight().getBranchStartX().bind(xAnimatedBranch);
 						iGraphicNode.getRight().getBranchStartY().bind(yAnimatedBranch);
 					}
+					
+					paneTree.getChildren().add(iGraphicNode.getBranch());
+					iGraphicNode.getBranch().toBack();
 
 					balanceRedraw++;
 					balanceTreeNext();
@@ -355,6 +358,7 @@ public class DrawingTree {
 			
 			iGraphicNode.getBranchEndX().unbind();
 			iGraphicNode.getBranchEndY().unbind();
+			paneTree.getChildren().remove(iGraphicNode.getBranch());
 			timeline.play();
 		} else {
 			balanceRedraw++;
@@ -377,7 +381,7 @@ public class DrawingTree {
 	 */
 	private void redraw() {	
 		isRedraw = false;	
-
+		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		xAnimatedNode = new SimpleDoubleProperty();
 		yAnimatedNode = new SimpleDoubleProperty();
 		
@@ -391,7 +395,7 @@ public class DrawingTree {
 		root.countChildren();
 		
 		root.setX(rootX);
-		root.setY(rootY);
+		root.setY(rootY);		
 		
 		xAnimatedBranch.bind(root.getX().add(rootSize / 2));
 		yAnimatedBranch.bind(root.getY().add(rootSize / 2));
@@ -438,7 +442,7 @@ public class DrawingTree {
 			if (iGraphicNode.getRight() != null) {
 				iGraphicNode.getRight().getBranchStartX().bind(xAnimatedBranch);
 				iGraphicNode.getRight().getBranchStartY().bind(yAnimatedBranch);
-			}			
+			}				
 		}
 		
 		windowController.enableButtons();		
@@ -485,7 +489,7 @@ public class DrawingTree {
 			break;
 		case MOVENODE:
 			moveNodeAnimation();
-			isRedraw = true;
+			//isRedraw = true;
 			break;		
 		case MOVEVALUE:
 			moveValueAnimation();
@@ -543,6 +547,7 @@ public class DrawingTree {
 		
 		createBranch(newIGraphicNode);
 		insertBranch();		
+		listGraphicNodes.add(newIGraphicNode);
 
 		if (newIGraphicNode.getSide() == Side.LEFT) {
 			newIGraphicNode.getParent().setLeft(newIGraphicNode);
@@ -642,13 +647,14 @@ public class DrawingTree {
 			paneTree.getChildren().remove(graphicNodeMoved.getStackPaneNode());	
 			paneTree.getChildren().remove(graphicNodeMoved.getBranch());
 			listGraphicNodes.remove(graphicNodeMoved);
+			
 		} else {	
 			if (graphicNodeRemoved.getParent() == null) {
 				graphicNodeMoved.setX(rootX);
 				listGraphicNodes.remove(graphicNodeMoved); //dám roota na první místo
 				listGraphicNodes.add(0, graphicNodeMoved);
 			} else {
-				graphicNodeMoved.setParent(graphicNodeRemoved.getParent()); /** taky smazané **/
+				graphicNodeMoved.setParent(graphicNodeRemoved.getParent()); /** smazané **/
 			}
 							
 			graphicNodeMoved.setDefaultColorNode();
@@ -656,6 +662,7 @@ public class DrawingTree {
 
 			paneTree.getChildren().remove(graphicNodeRemoved.getStackPaneNode());	
 			paneTree.getChildren().remove(graphicNodeRemoved.getBranch());
+			createBranch(graphicNodeMoved);
 			listGraphicNodes.remove(graphicNodeRemoved);
 		}
 		

@@ -286,6 +286,9 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void deleteNumber() {
+		System.out.println();
+		System.out.println("##########################################################################");
+		System.out.println();
 		treeLog();
 		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp()); //smažu zálohy 
 		//listOldGraphicTreeNodes.clear();
@@ -302,9 +305,11 @@ public class WindowController implements Initializable {
 		treeLog();
 	}
 	
-	@FXML private void dialogNewTree() {
+	@FXML 
+	private void dialogNewTree() {
 		newRandomTree();
 	}
+	
 	/**
 	 * Vytvoření nového stromu přes tlačítko
 	 */
@@ -324,8 +329,10 @@ public class WindowController implements Initializable {
 		Optional<ButtonType> result = alert.showAndWait();
 		
 		if (result.get() == buttonTypeOne){
+			listHistory.clear();
 		     newEmptyTree();
 		} else if (result.get() == buttonTypeTwo) {
+			listHistory.clear();
 		    newRandomTree();		   
 		} else {
 		    return;
@@ -338,7 +345,7 @@ public class WindowController implements Initializable {
 	private void newEmptyTree() {
 		listOldGraphicTreeNodes = new ArrayList<>();
 		lastResult = null;
-		listHistory = new ArrayList<>();
+		//listHistory = new ArrayList<>();
 		
 		paneTree.getChildren().clear();
 		
@@ -372,26 +379,24 @@ public class WindowController implements Initializable {
 		newEmptyTree();
 		sliderSpeed.setValue(0);
 		
-		lastResult = tree.insert(5);
-		graphicTree.insertRoot((INode<?>)tree.getRoot());
+		inputNumber.setText("5");
+		insertNumber();
 		
-		//lastResult = tree.insert(3);
-		//graphicTree.insertNode(lastResult);
+		inputNumber.setText("3");
+		insertNumber();
 		
-		//lastResult = tree.insert(8);
-		//graphicTree.insertNode(lastResult);
+		inputNumber.setText("8");
+		insertNumber();
 		
-		lastResult = tree.insert(10);
-		graphicTree.insertNode(lastResult);
+		inputNumber.setText("10");
+		insertNumber();
 		
-		/*lastResult = tree.insert(6);
-		graphicTree.insertNode(lastResult);*/
+		//inputNumber.setText("6");
+		//insertNumber();
 		
-		lastResult = tree.insert(9);
-		graphicTree.insertNode(lastResult);		
+		inputNumber.setText("9");
+		insertNumber();		
 		
-		lastResult = null;
-		listOldGraphicTreeNodes.clear();
 		sliderSpeed.setValue(oldSpeed);
 	}
 	/**
@@ -458,6 +463,7 @@ public class WindowController implements Initializable {
 
 			btnTreesActual = selectedButton;
 			hideMenu();
+			listHistory.clear();
 			newEmptyTree();
 		}
 	}
@@ -710,6 +716,9 @@ public class WindowController implements Initializable {
 			}			
 			return;
 		}
+		
+		System.out.println("===============================");
+		treeLog();
 		
 		primaryStage.setResizable(true);
 		
