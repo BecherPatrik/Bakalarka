@@ -264,6 +264,7 @@ public class DrawingTree {
 	private void balanceTreeNext() {
 		if (listGraphicNodes.size() == balanceRedraw) {
 			balanceRedraw = 0;
+			checkBranches();
 			redraw();
 			return;
 		}
@@ -343,10 +344,7 @@ public class DrawingTree {
 					if (iGraphicNode.getRight() != null) {
 						iGraphicNode.getRight().getBranchStartX().bind(xAnimatedBranch);
 						iGraphicNode.getRight().getBranchStartY().bind(yAnimatedBranch);
-					}
-					
-					paneTree.getChildren().add(iGraphicNode.getBranch());
-					iGraphicNode.getBranch().toBack();
+					}				
 
 					balanceRedraw++;
 					balanceTreeNext();
@@ -370,18 +368,31 @@ public class DrawingTree {
 	 * Zjistí jestli se ukončily všechny animace balance a zavolá překleslení
 	 */
 	private void balanceRedraw() {
-		if (++balanceRedraw == listBalanceAnimation.size()) {
+		if (++balanceRedraw == listBalanceAnimation.size()) {			
 			redraw();
 			balanceRedraw = 0;
 		}		
 	}
 	
 	/**
+	 * Doplní chybějící větve
+	 */
+	private void checkBranches() {
+		for (IGraphicNode iGraphicNode : listGraphicNodes.subList(1, listGraphicNodes.size())) {
+			if (paneTree.getChildren().indexOf(iGraphicNode.getBranch()) == -1) { //pokud tam ještě větev neni
+				paneTree.getChildren().add(iGraphicNode.getBranch());
+			}						
+			
+			iGraphicNode.getBranch().toBack();			
+		}		
+	}
+
+	/**
 	 * Přebinduje celý strom 
 	 */
 	private void redraw() {	
-		isRedraw = false;	
-		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		isRedraw = false;
+
 		xAnimatedNode = new SimpleDoubleProperty();
 		yAnimatedNode = new SimpleDoubleProperty();
 		
@@ -617,6 +628,8 @@ public class DrawingTree {
 		}		
 		
 		graphicNodeMoved.highlightNode();
+		graphicNodeMoved.getStackPaneNode().toFront();
+		
 		Timeline timeline = new Timeline();
 
 		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
@@ -654,7 +667,7 @@ public class DrawingTree {
 				listGraphicNodes.remove(graphicNodeMoved); //dám roota na první místo
 				listGraphicNodes.add(0, graphicNodeMoved);
 			} else {
-				graphicNodeMoved.setParent(graphicNodeRemoved.getParent()); /** smazané **/
+				//graphicNodeMoved.setParent(graphicNodeRemoved.getParent()); /** smazané **/
 			}
 							
 			graphicNodeMoved.setDefaultColorNode();

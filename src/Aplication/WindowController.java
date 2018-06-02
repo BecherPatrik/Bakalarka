@@ -382,8 +382,8 @@ public class WindowController implements Initializable {
 		inputNumber.setText("5");
 		insertNumber();
 		
-		inputNumber.setText("3");
-		insertNumber();
+		//inputNumber.setText("3");
+		//insertNumber();
 		
 		inputNumber.setText("8");
 		insertNumber();
@@ -391,11 +391,14 @@ public class WindowController implements Initializable {
 		inputNumber.setText("10");
 		insertNumber();
 		
-		//inputNumber.setText("6");
-		//insertNumber();
+		inputNumber.setText("6");
+		insertNumber();
 		
 		inputNumber.setText("9");
-		insertNumber();		
+		insertNumber();	
+		
+		inputNumber.setText("11");
+		insertNumber();	
 		
 		sliderSpeed.setValue(oldSpeed);
 	}
@@ -622,8 +625,7 @@ public class WindowController implements Initializable {
 		default:
 			break;
 		}		
-	}
-	
+	}	
 
 	/**
 	 * Zopakuje poslední animaci
@@ -699,7 +701,7 @@ public class WindowController implements Initializable {
 		} else {
 			btnRepeat.setDisable(false);
 		}*/		
-		if (isAnimationDisable || paneTree.getChildren().isEmpty() || listHistory.isEmpty()) {
+		if (isAnimationDisable || paneTree.getChildren().isEmpty() && listHistory.isEmpty()) {
 			btnRepeat.setDisable(true);
 		} else {
 			btnRepeat.setDisable(false);

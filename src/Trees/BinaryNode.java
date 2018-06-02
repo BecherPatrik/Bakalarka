@@ -118,14 +118,21 @@ implements INode<BinaryNode> {
 		this.graphicNode = (BinaryGraphicNode) graphicNode;
 		if (left != null) {
 			this.graphicNode.setLeft(left.getGraphicNode());
+			left.graphicNode.setParent(this.graphicNode);
 		}
 		
 		if (right != null) {
 			this.graphicNode.setRight(right.getGraphicNode());
+			right.graphicNode.setParent(this.graphicNode);
 		}
 		
 		if (parent != null) {
 			this.graphicNode.setParent(parent.getGraphicNode());
+			if (graphicNode.getSide() == Side.LEFT) {
+				graphicNode.getParent().setLeft(graphicNode);
+			} else if (graphicNode.getSide() == Side.RIGHT) {
+				graphicNode.getParent().setRight(graphicNode);
+			}
 		} else {
 			this.graphicNode.setParent(null);
 		}		
