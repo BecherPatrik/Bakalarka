@@ -355,15 +355,17 @@ public class DrawingTree {
 			iGraphicNode.getY().unbind();
 			
 			iGraphicNode.getBranchEndX().unbind();
-			iGraphicNode.getBranchEndY().unbind();
-			paneTree.getChildren().remove(iGraphicNode.getBranch());
+			iGraphicNode.getBranchEndY().unbind();			
+			
+			hideMovedBranchRecursive(iGraphicNode);
+			
 			timeline.play();
 		} else {
 			balanceRedraw++;
 			balanceTreeNext();
 		}
-	}
-	
+	}	
+
 	/**
 	 * Zjistí jestli se ukončily všechny animace balance a zavolá překleslení
 	 */
@@ -372,6 +374,22 @@ public class DrawingTree {
 			redraw();
 			balanceRedraw = 0;
 		}		
+	}
+	
+	/**
+	 * Skryje všechny zainteresované větve kvůli animaci
+	 * @param iGraphicNode
+	 */
+	private void hideMovedBranchRecursive(IGraphicNode iGraphicNode) {
+		paneTree.getChildren().remove(iGraphicNode.getBranch());		
+		
+		if (iGraphicNode.getLeft() != null) {
+			hideMovedBranchRecursive(iGraphicNode.getLeft());
+		}
+		
+		if (iGraphicNode.getRight() != null) {
+			hideMovedBranchRecursive(iGraphicNode.getRight());
+		}
 	}
 	
 	/**
@@ -646,19 +664,26 @@ public class DrawingTree {
 		});
 
 		graphicNodeMoved.getX().unbind();
-		graphicNodeMoved.getY().unbind();		
-		paneTree.getChildren().remove(graphicNodeMoved.getBranch());
+		graphicNodeMoved.getY().unbind();	
+		
+		//odstraním větve
+		hideMovedBranchRecursive(graphicNodeMoved);
 
 		timeline.play();				
 	}
 	
 	private void moveNodeAnimationFinished(IGraphicNode graphicNodeRemoved, IGraphicNode graphicNodeMoved) {
-		if (graphicNodeMoved.getLeft() == null && graphicNodeMoved.getRight() == null) {
+		if (graphicNodeMoved.getLeft() == null && graphicNodeMoved.getRight() == null
+				&& !(graphicNodeMoved.getParent().equals(graphicNodeRemoved.getParent()))) { //pokud mají stejného rodiče případ 0.2.1/2
 			graphicNodeRemoved.setValue(graphicNodeMoved.getValue());
 			graphicNodeRemoved.setDefaultColorNode();
 
 			paneTree.getChildren().remove(graphicNodeMoved.getStackPaneNode());	
 			paneTree.getChildren().remove(graphicNodeMoved.getBranch());
+			
+			//dosadím na místo mazaného ten co ho nahradí
+			listGraphicNodes.remove(graphicNodeRemoved);
+			listGraphicNodes.add(listGraphicNodes.indexOf(graphicNodeMoved), graphicNodeRemoved);
 			listGraphicNodes.remove(graphicNodeMoved);
 			
 		} else {	
@@ -666,9 +691,9 @@ public class DrawingTree {
 				graphicNodeMoved.setX(rootX);
 				listGraphicNodes.remove(graphicNodeMoved); //dám roota na první místo
 				listGraphicNodes.add(0, graphicNodeMoved);
-			} else {
+			}// else {
 				//graphicNodeMoved.setParent(graphicNodeRemoved.getParent()); /** smazané **/
-			}
+			///}
 							
 			graphicNodeMoved.setDefaultColorNode();
 			graphicNodeMoved.getStackPaneNode().toFront();					
@@ -676,7 +701,13 @@ public class DrawingTree {
 			paneTree.getChildren().remove(graphicNodeRemoved.getStackPaneNode());	
 			paneTree.getChildren().remove(graphicNodeRemoved.getBranch());
 			createBranch(graphicNodeMoved);
+			
+			//dosadím na místo mazaného ten co ho nahradí
+			listGraphicNodes.remove(graphicNodeMoved);
+			listGraphicNodes.add(listGraphicNodes.indexOf(graphicNodeRemoved), graphicNodeMoved);
 			listGraphicNodes.remove(graphicNodeRemoved);
+			
+			checkBranches(); //doplním větve
 		}
 		
 		indexAnimation++;

@@ -379,32 +379,60 @@ public class WindowController implements Initializable {
 		newEmptyTree();
 		sliderSpeed.setValue(0);
 		
-		inputNumber.setText("5");
+		/*inputNumber.setText("5");
 		insertNumber();
 		
 		inputNumber.setText("3");
 		insertNumber();
 		
 		inputNumber.setText("4");
-		insertNumber();
-		
-		inputNumber.setText("8");
-		insertNumber();
+		insertNumber();		
 		
 		inputNumber.setText("10");
-		insertNumber();
-		
-		inputNumber.setText("6");
-		insertNumber();
+		insertNumber();		
 		
 		inputNumber.setText("7");
 		insertNumber();
 		
-		//inputNumber.setText("9");
+		//inputNumber.setText("6");
 		//insertNumber();
 		
-	//	inputNumber.setText("11");
-	//	insertNumber();	
+		inputNumber.setText("9");
+		insertNumber();
+		
+		inputNumber.setText("8");
+		insertNumber();		
+		
+		inputNumber.setText("11");
+		insertNumber();	*/
+		
+		
+		inputNumber.setText("880");
+		insertNumber();
+		
+		inputNumber.setText("817");
+		insertNumber();
+		
+		inputNumber.setText("242");
+		insertNumber();		
+		
+		inputNumber.setText("20");
+		insertNumber();		
+		
+		inputNumber.setText("198");
+		insertNumber();
+		
+		inputNumber.setText("676");
+		insertNumber();
+		
+		inputNumber.setText("245");
+		insertNumber();
+		
+		inputNumber.setText("726");
+		insertNumber();		
+		
+		inputNumber.setText("683");
+		insertNumber();			
 		
 		sliderSpeed.setValue(oldSpeed);
 	}

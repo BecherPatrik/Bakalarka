@@ -96,6 +96,7 @@ implements INode<BinaryNode> {
 		right = node;
 		graphicNode.setRight(node.getGraphicNode());
 		node.setParent(this);
+		node.getGraphicNode().setSide(Side.RIGHT);
 	}
 	
 	@Override
@@ -108,6 +109,7 @@ implements INode<BinaryNode> {
 		left = node;
 		graphicNode.setLeft(node.getGraphicNode());
 		node.setParent(this);	
+		node.getGraphicNode().setSide(Side.LEFT);
 	}
 
 	@Override
@@ -117,11 +119,15 @@ implements INode<BinaryNode> {
 	
 	@Override
 	public void setGraphicNode(IGraphicNode graphicNode) {
+		Side side = this.graphicNode.getSide();
+		
 		this.graphicNode = (BinaryGraphicNode) graphicNode;
+		this.graphicNode.setSide(side);
+		
 		if (left != null) {
 			this.graphicNode.setLeft(left.getGraphicNode());
 			left.graphicNode.setParent(this.graphicNode);
-		}
+		}		
 		
 		if (right != null) {
 			this.graphicNode.setRight(right.getGraphicNode());

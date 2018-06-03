@@ -237,7 +237,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 
 	@Override
 	public void setLeft(IGraphicNode left) {
-		this.left = left;
+		this.left = left;		
 	}
 
 	@Override
