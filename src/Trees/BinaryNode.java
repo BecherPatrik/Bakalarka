@@ -45,7 +45,9 @@ implements INode<BinaryNode> {
 		graphicNode.setLeft(node.getGraphicNode().getLeft());
 		graphicNode.setRight(node.getGraphicNode().getRight());
 		
-		//graphicNode = node.getGraphicNode(); //změním graphicNode
+		if (right != null || left != null) {
+			graphicNode = node.getGraphicNode(); //změním graphicNode
+		}
 		
 		if (parent != null) {
 			graphicNode.setParent(parent.getGraphicNode());

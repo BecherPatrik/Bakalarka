@@ -59,8 +59,10 @@ public class BinaryTree implements ITree<BinaryNode> {
             if (helpNode.getRight() == null) { //0.1
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.1.1
             		helpNode.getParent().deleteRight();
+            		System.out.println("\n0.1.1\n");
             	} else { //0.1.2
             		helpNode.getParent().deleteLeft(); 
+            		System.out.println("\n0.1.2\n");
             	}
                 
                 result.addAnimation(AnimatedAction.MOVENODE, removedNode.getGraphicNode(), helpNode.getGraphicNode()); 
@@ -68,9 +70,11 @@ public class BinaryTree implements ITree<BinaryNode> {
                 
             } else { //0.2
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.2.1
-            		helpNode.getParent().setRight(helpNode.getRight());            		
+            		helpNode.getParent().setRight(helpNode.getRight());
+            		System.out.println("\n0.2.1\n");
             	} else { //0.2.2
             		helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadím místo něho jeho pravého
+            		System.out.println("\n0.2.2\n");
             	}
             	
             	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
@@ -87,14 +91,18 @@ public class BinaryTree implements ITree<BinaryNode> {
             
             removedNode.setNode(removedNode.getLeft());
             
+            System.out.println("\n2.\n");            
+            
         } else if (removedNode.getRight() != null) { // 3.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
             result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getRight().getGraphicNode());
             
           //  result.getNode().setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
             
-            removedNode.setNode(removedNode.getRight());            
-        } else { // 4.       	
+            removedNode.setNode(removedNode.getRight());  
+            System.out.println("\n3.\n");
+        } else { // 4.   
+        	System.out.println("\n4.\n");
         	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá děti 
             if (removedNode.getGraphicNode().getSide() == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
                 removedNode.getParent().deleteLeft();               
