@@ -133,6 +133,10 @@ VBox {
 	-fx-background: #1d1d1d;
 }
 
+#paneTree {
+	-fx-background-color: red;
+}
+
 /**************************************************************** 
   ScrollBar Skin  
  

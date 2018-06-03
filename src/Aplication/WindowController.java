@@ -35,6 +35,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -87,6 +88,8 @@ public class WindowController implements Initializable {
 	BorderPane borderPaneTree;
 	private @FXML
 	Pane paneTree;
+	private @FXML
+	ScrollPane scrollPane;
 
 	private ITree<?> tree;
 	private DrawingTree graphicTree;	
@@ -118,6 +121,7 @@ public class WindowController implements Initializable {
 		numberOnly();
 		sliderFormat();
 		toolTips();
+		
 	}	
 
 	/**
@@ -242,10 +246,12 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void insertNumber() {
-		treeLog();
+		//treeLog();
 		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
 		//listOldGraphicTreeNodes.clear();
 		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
+		
+		System.out.println(paneTree.getWidth());
 		
 		lastAction = AnimatedAction.INSERT;
 		createHistory();		
@@ -259,8 +265,8 @@ public class WindowController implements Initializable {
 		} else {
 			graphicTree.insertRoot((INode<?>)tree.getRoot());
 		}
-		System.out.println("-----------------------------------");
-		treeLog();
+		//System.out.println("-----------------------------------");
+		//treeLog();
 	}
 	
 	/**
@@ -379,34 +385,6 @@ public class WindowController implements Initializable {
 		newEmptyTree();
 		sliderSpeed.setValue(0);
 		
-		/*inputNumber.setText("5");
-		insertNumber();
-		
-		inputNumber.setText("3");
-		insertNumber();
-		
-		inputNumber.setText("4");
-		insertNumber();		
-		
-		inputNumber.setText("10");
-		insertNumber();		
-		
-		inputNumber.setText("7");
-		insertNumber();
-		
-		//inputNumber.setText("6");
-		//insertNumber();
-		
-		inputNumber.setText("9");
-		insertNumber();
-		
-		inputNumber.setText("8");
-		insertNumber();		
-		
-		inputNumber.setText("11");
-		insertNumber();	*/
-		
-		
 		inputNumber.setText("880");
 		insertNumber();
 		
@@ -432,7 +410,40 @@ public class WindowController implements Initializable {
 		insertNumber();		
 		
 		inputNumber.setText("683");
-		insertNumber();			
+		insertNumber();	
+		
+		inputNumber.setText("5");
+		insertNumber();
+		
+		inputNumber.setText("3");
+		insertNumber();
+		
+		inputNumber.setText("4");
+		insertNumber();		
+		
+		inputNumber.setText("10");
+		insertNumber();		
+		
+		inputNumber.setText("7");
+		insertNumber();
+		
+		inputNumber.setText("6");
+		insertNumber();
+		
+		inputNumber.setText("9");
+		insertNumber();
+		
+		inputNumber.setText("8");
+		insertNumber();		
+		
+		inputNumber.setText("11");
+		insertNumber();	
+		
+		inputNumber.setText("2");
+		insertNumber();	
+		
+		inputNumber.setText("1");
+		insertNumber();		
 		
 		sliderSpeed.setValue(oldSpeed);
 	}
@@ -752,8 +763,8 @@ public class WindowController implements Initializable {
 			}			
 			return;
 		}
-		
-		System.out.println("===============================");
+		System.out.println(paneTree.getWidth()+ " - "+ scrollPane.getWidth()+ " + "+ scrollPane.getPrefViewportWidth());
+		//System.out.println("===============================");
 		treeLog();
 		
 		primaryStage.setResizable(true);
@@ -803,7 +814,7 @@ public class WindowController implements Initializable {
 		if (parent == null) {
 			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +"\n";
 		} else {
-			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +  "\n rodič: " +
+			s = ""+"x "+ n.getGraphicNode().getX().get() +"°°"+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +  "\n rodič: " +
 					parent.getValue() + " - " + parent.getGraphicNode().getValue() + " = " + parent.getGraphicNode() + " ->" + parent.getGraphicNode().getStackPaneNode() + "\n*********************************\n";
 		}
 		

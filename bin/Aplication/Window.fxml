@@ -61,11 +61,11 @@
 			</top> 
 			<center>
 				<BorderPane fx:id="borderPaneTree">
-					<center>
-					 	<ScrollPane fx:id="scrollPane" >
+					<center>					
+					 	<ScrollPane fx:id="scrollPane">
 							<Pane fx:id="paneTree" />
-						</ScrollPane> 
-					</center>					
+						</ScrollPane>
+					</center>
 					<bottom>
 						<BorderPane styleClass="bottom">
 							<padding> 
