@@ -44,6 +44,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -261,7 +262,7 @@ public class WindowController implements Initializable {
 		lastResult = tree.insert(lastValue);
 		
 		if (lastResult != null) {
-			graphicTree.insertNode(lastResult);			
+			graphicTree.insertNode(lastResult, lastValue);			
 		} else {
 			graphicTree.insertRoot((INode<?>)tree.getRoot());
 		}
@@ -282,9 +283,9 @@ public class WindowController implements Initializable {
 		//createHistory();	
 		
 		disableButtons();
-		
-		lastResult = tree.search(Integer.parseInt(inputNumber.getText()));		
-		graphicTree.searchNode(lastResult);		
+		lastValue = Integer.parseInt(inputNumber.getText());
+		lastResult = tree.search(lastValue);		
+		graphicTree.searchNode(lastResult, lastValue);		
 	}
 
 	/**
@@ -306,7 +307,7 @@ public class WindowController implements Initializable {
 		disableButtons();
 		
 		lastResult = tree.delete(Integer.parseInt(inputNumber.getText()));		
-		graphicTree.deleteNode(lastResult);	
+		graphicTree.deleteNode(lastResult, lastValue);	
 		System.out.println("-----------------------------------");
 		treeLog();
 	}
@@ -336,7 +337,7 @@ public class WindowController implements Initializable {
 		
 		if (result.get() == buttonTypeOne){
 			listHistory.clear();
-		     newEmptyTree();
+		    newEmptyTree();
 		} else if (result.get() == buttonTypeTwo) {
 			listHistory.clear();
 		    newRandomTree();		   
@@ -465,7 +466,7 @@ public class WindowController implements Initializable {
 				disableButtons();
 				lastResult = tree.insert(value);				
 				if (lastResult != null) {
-					graphicTree.insertNode(lastResult);			
+					graphicTree.insertNode(lastResult, lastValue);			
 				} else {					
 					graphicTree.insertRoot((INode<?>)tree.getRoot());
 				}
@@ -611,7 +612,7 @@ public class WindowController implements Initializable {
 			graphicTree.insertRoot((INode<?>)tree.getRoot());
 
 			for (int value : listHistory.subList(1, listHistory.size())) {
-				graphicTree.insertNode(tree.insert(value));
+				graphicTree.insertNode(tree.insert(value), lastValue);
 			}
 		} else {
 			repeatLastAction();
@@ -638,7 +639,7 @@ public class WindowController implements Initializable {
 			break;
 
 		case SEARCH:
-			graphicTree.searchNode(tree.search(lastValue));
+			graphicTree.searchNode(tree.search(lastValue), lastValue);
 			break;
 
 		default:
@@ -659,12 +660,12 @@ public class WindowController implements Initializable {
 				lastResult = tree.insert(lastValue);
 				graphicTree.insertRoot((INode<?>)tree.getRoot());			
 			} else {
-				graphicTree.insertNode(tree.insert(lastValue));
+				graphicTree.insertNode(tree.insert(lastValue), lastValue);
 			}
 			break;
 
 		case DELETE:	
-			graphicTree.deleteNode(tree.delete(lastValue));
+			graphicTree.deleteNode(tree.delete(lastValue), lastValue);
 			break;		
 
 		default:
@@ -686,18 +687,18 @@ public class WindowController implements Initializable {
 		switch (lastAction) {
 		case INSERT:			
 			if (lastResult != null) {
-				graphicTree.insertNode(lastResult);			
+				graphicTree.insertNode(lastResult, lastValue);			
 			} else {
 				graphicTree.insertRoot((INode<?>)tree.getRoot());
 			}
 			break;
 
 		case DELETE:			
-			graphicTree.deleteNode(lastResult);
+			graphicTree.deleteNode(lastResult, lastValue);
 			break;
 
 		case SEARCH:
-			graphicTree.searchNode(lastResult);
+			graphicTree.searchNode(lastResult, lastValue);
 			break;
 
 		default:

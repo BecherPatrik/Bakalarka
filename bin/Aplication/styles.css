@@ -134,7 +134,7 @@ VBox {
 }
 
 #paneTree {
-	-fx-background-color: red;
+	-fx-background-color: transparent;
 }
 
 /**************************************************************** 

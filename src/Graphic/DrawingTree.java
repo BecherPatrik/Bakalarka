@@ -25,11 +25,17 @@ import javafx.event.EventHandler;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import javafx.util.Duration;
 
 public class DrawingTree {
 	private WindowController windowController;
 	private List<IGraphicNode> listGraphicNodes = new ArrayList<>(); //root je na místě 0
+	private ITree<?> tree;
+	private int value;
+	private Text text;
 
 	private ReadOnlyDoubleProperty paneTreeWeight;
 	private Pane paneTree;
@@ -71,6 +77,15 @@ public class DrawingTree {
 		this.paneTree = paneTree;
 		this.animationSpeed = speed;
 		this.windowController = windowController;
+		this.tree = tree;
+		
+		text = new Text("ahoj");
+		text.setBoundsType(TextBoundsType.VISUAL);
+		text.setFill(Color.WHITE);
+		text.setFont(new Font(text.getFont().toString(), 16));
+		text.layoutXProperty().bind(stageWidthProperty.subtract(250));
+		text.layoutYProperty().bind(rootY);
+		paneTree.getChildren().add(text);
 	}
 	
 	/**
@@ -132,11 +147,12 @@ public class DrawingTree {
 	 * Vykreslení nového listu 
 	 * @param result
 	 */
-	public void insertNode(Result<?> result) {
+	public void insertNode(Result<?> result, int value) {
 		wayList = result.getWay();	
+		this.value = value;
 		
 		if ((boolean) result.getRecordOfAnimations().get(0).getObject()) {
-			startAnimation(result.getRecordOfAnimations());
+			startAnimation(result.getRecordOfAnimations()); //nalezen
 			return;
 		}
 		
@@ -180,7 +196,8 @@ public class DrawingTree {
 	 * Smazání listu + zavolá překreslení
 	 * @param node
 	 */
-	public void deleteNode(Result<?> result) {
+	public void deleteNode(Result<?> result, int value) {
+		this.value = value;
 		if (result.getSide() != Side.NONE) {
 			//TODO nenalezen
 		} else {
@@ -197,7 +214,8 @@ public class DrawingTree {
 	 * Najítí listu 
 	 * @param node
 	 */
-	public void searchNode(Result<?> result) {
+	public void searchNode(Result<?> result, int value) {
+		this.value = value;
 		if (!(boolean)result.getRecordOfAnimations().get(0).getObject()) {
 			//TODO nenalezen
 		} else {
@@ -538,7 +556,112 @@ public class DrawingTree {
 	 */
 	private void nextSearchNode() {		
 		highlightNodeAnimation(wayList.get(wayIndex));
-	}		
+	}
+	
+	/**
+	 * Animace zvýraznění větve a následně listu 
+	 * @param node
+	 */
+	private void highlightNodeAnimation(IGraphicNode node) {
+		if (animationSpeed.get() == 0) { //když nebude animace
+			highlightNodeAnimationFinished();
+			return;
+		}
+		
+		StrokeTransition st1 = null;
+		PauseTransition pt1 = null;
+		StrokeTransition st2 = null;		
+		SequentialTransition seqT;
+		SequentialTransition seqT2 = null;
+		
+		if(node.getBranch() != null) {
+			st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch(), Color.WHITE, Color.LIME);
+			pt1 = new PauseTransition(Duration.millis(5 * (FASTANIMATION - animationSpeed.get())));
+			st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch(), Color.LIME, Color.WHITE);
+		}
+		
+		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.WHITE, Color.LIME);
+		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())));
+		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.LIME, Color.WHITE);
+		
+		if(node.getBranch() != null) {
+			seqT2 = new SequentialTransition(st1, pt1, st2);
+			seqT = new SequentialTransition(st3, pt2, st4);
+			int oldValue = Integer.parseInt(wayList.get(wayIndex-1).getValue());
+			
+			if (value > oldValue) {
+				text.setText("HLEDÁNÍ PRVKU: " + value + "\nPorovnání " + value + " > " + oldValue);
+			} else if (value < oldValue) {
+				text.setText("HLEDÁNÍ PRVKU: " + value + "\nPorovnání " + value + " < " + oldValue);
+			}
+			
+			seqT2.play();
+		} else {
+			seqT = new SequentialTransition(st3, pt2, st4);
+			text.setText("HLEDÁNÍ PRVKU: " + value + "\nPorovnání " + value + " a " + node.getValue());
+			seqT.play();
+		}
+		
+		seqT.setOnFinished(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if (++wayIndex < wayList.size()) {
+					nextSearchNode();
+				} else {
+					text.setText("HLEDÁNÍ PRVKU: " + value + "\nPorovnání " + value + " = " + node.getValue() + "\nPrvek byl nalezen!");
+					highlightNodeAnimationFinished();					
+										
+				}
+			}
+		});
+		
+		if (seqT2 != null) {
+			seqT2.setOnFinished(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {		
+					text.setText("HLEDÁNÍ PRVKU: " + value + "\nPorovnání " + value + " a " + node.getValue());
+					seqT.play();
+				}
+			});
+		}		
+		
+		if(node.getBranch() != null) {
+			seqT2.play();
+		} else {
+			seqT.play();
+		}
+		
+	}
+	
+	private void highlightNodeAnimationFinished() {
+		if((boolean)recordOfAnimations.get(indexAnimation).getObject()) {
+			highlightFindNode();
+		} else {
+			indexAnimation++;
+			nextAnimation();
+		}		
+	}
+	
+	/**
+	 * Zvýrazní nalezený list
+	 */
+	private void highlightFindNode() {
+		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getCircleShape(), Color.WHITE, Color.YELLOW);
+		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (SLOWANIMATION - 50 - animationSpeed.get())));
+		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getCircleShape(), Color.YELLOW, Color.WHITE);
+
+		SequentialTransition seqT = new SequentialTransition(st3, pt2, st4);
+
+		seqT.setOnFinished(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				indexAnimation++;
+				nextAnimation();
+			}
+		});
+
+		seqT.play();
+	}
 	
 	/**
 	 * Animace vložení nového listu
@@ -735,80 +858,7 @@ public class DrawingTree {
 		//TODO
 	}
 
-	/**
-	 * Animace zvýraznění větve a následně listu 
-	 * @param node
-	 */
-	private void highlightNodeAnimation(IGraphicNode node) {
-		if (animationSpeed.get() == 0) { //když nebude animace
-			highlightNodeAnimationFinished();
-			return;
-		}
-		
-		StrokeTransition st1 = null;
-		PauseTransition pt1 = null;
-		StrokeTransition st2 = null;		
-		SequentialTransition seqT;
-		
-		if(node.getBranch() != null) {
-			st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch(), Color.WHITE, Color.LIME);
-			pt1 = new PauseTransition(Duration.millis(5 * (FASTANIMATION - animationSpeed.get())));
-			st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch(), Color.LIME, Color.WHITE);
-		}
-		
-		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.WHITE, Color.LIME);
-		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())));
-		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.LIME, Color.WHITE);
-		
-		if(node.getBranch() != null) {
-			seqT = new SequentialTransition(st1, pt1, st2, st3, pt2, st4);
-		} else {
-			seqT = new SequentialTransition(st3, pt2, st4);
-		}
-		
-		seqT.setOnFinished(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				if (++wayIndex < wayList.size()) {
-					nextSearchNode();
-				} else {
-					highlightNodeAnimationFinished();
-				}
-			}
-		});
-		
-		seqT.play();
-	}
-	
-	private void highlightNodeAnimationFinished() {
-		if((boolean)recordOfAnimations.get(indexAnimation).getObject()) {
-			highlightFindNode();
-		} else {
-			indexAnimation++;
-			nextAnimation();
-		}		
-	}
-	
-	/**
-	 * Zvýrazní nalezený list
-	 */
-	private void highlightFindNode() {
-		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getCircleShape(), Color.WHITE, Color.YELLOW);
-		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (SLOWANIMATION - 50 - animationSpeed.get())));
-		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getCircleShape(), Color.YELLOW, Color.WHITE);
 
-		SequentialTransition seqT = new SequentialTransition(st3, pt2, st4);
-
-		seqT.setOnFinished(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				indexAnimation++;
-				nextAnimation();
-			}
-		});
-
-		seqT.play();
-	}
 	
 	/********************************************************************************************************
 	 * GETS & SETS

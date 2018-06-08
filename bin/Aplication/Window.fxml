@@ -61,9 +61,9 @@
 			</top> 
 			<center>
 				<BorderPane fx:id="borderPaneTree">
-					<center>					
+					<center>			
 					 	<ScrollPane fx:id="scrollPane">
-							<Pane fx:id="paneTree" />
+							<Pane fx:id="paneTree" />							
 						</ScrollPane>
 					</center>
 					<bottom>
