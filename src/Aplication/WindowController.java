@@ -252,8 +252,7 @@ public class WindowController implements Initializable {
 		//listOldGraphicTreeNodes.clear();
 		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		
-		System.out.println(paneTree.getWidth());
-		
+		graphicTree.clearText();
 		lastAction = AnimatedAction.INSERT;
 		createHistory();		
 		
@@ -280,7 +279,8 @@ public class WindowController implements Initializable {
 		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		lastAction = AnimatedAction.SEARCH;
 		
-		//createHistory();	
+		//createHistory();
+		graphicTree.clearText();
 		
 		disableButtons();
 		lastValue = Integer.parseInt(inputNumber.getText());
@@ -293,10 +293,11 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void deleteNumber() {
-		System.out.println();
-		System.out.println("##########################################################################");
-		System.out.println();
-		treeLog();
+		//System.out.println();
+		//System.out.println("##########################################################################");
+		//System.out.println();
+		//treeLog();
+		graphicTree.clearText();
 		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp()); //smažu zálohy 
 		//listOldGraphicTreeNodes.clear();
 		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
@@ -308,7 +309,7 @@ public class WindowController implements Initializable {
 		
 		lastResult = tree.delete(Integer.parseInt(inputNumber.getText()));		
 		graphicTree.deleteNode(lastResult, lastValue);	
-		System.out.println("-----------------------------------");
+		//System.out.println("-----------------------------------");
 		treeLog();
 	}
 	
@@ -351,7 +352,7 @@ public class WindowController implements Initializable {
 	 */
 	private void newEmptyTree() {
 		listOldGraphicTreeNodes = new ArrayList<>();
-		lastResult = null;
+		lastResult = null;		
 		//listHistory = new ArrayList<>();
 		
 		paneTree.getChildren().clear();
@@ -385,8 +386,9 @@ public class WindowController implements Initializable {
 		double oldSpeed = sliderSpeed.getValue();
 		newEmptyTree();
 		sliderSpeed.setValue(0);
+		graphicTree.hideText();
 		
-		inputNumber.setText("880");
+		/*inputNumber.setText("880");
 		insertNumber();
 		
 		inputNumber.setText("817");
@@ -444,8 +446,29 @@ public class WindowController implements Initializable {
 		insertNumber();	
 		
 		inputNumber.setText("1");
+		insertNumber();	*/
+		
+
+		inputNumber.setText("20");
 		insertNumber();		
 		
+		inputNumber.setText("198");
+		insertNumber();
+		
+		inputNumber.setText("676");
+		insertNumber();
+		
+		inputNumber.setText("245");
+		insertNumber();
+		
+		inputNumber.setText("726");
+		insertNumber();		
+		
+		inputNumber.setText("683");
+		insertNumber();	
+		
+		graphicTree.showText();
+		graphicTree.clearText();
 		sliderSpeed.setValue(oldSpeed);
 	}
 	/**
@@ -455,6 +478,7 @@ public class WindowController implements Initializable {
 	private void newRandomTree2() {	
 		int count = dialogRandomTree();
 		double oldSpeed = sliderSpeed.getValue();
+		graphicTree.hideText();
 		if (count > 0) {			
 			newEmptyTree();
 			randomValueList = new HashSet<>();
@@ -472,6 +496,8 @@ public class WindowController implements Initializable {
 				}
 			}
 			
+			graphicTree.showText();
+			graphicTree.clearText();
 			lastResult = null;
 			listOldGraphicTreeNodes.clear();
 			sliderSpeed.setValue(oldSpeed);
@@ -628,6 +654,7 @@ public class WindowController implements Initializable {
 	@FXML
 	private void repeatLastAnimation() {		
 		disableButtons();
+		graphicTree.clearText();
 		
 		switch (lastAction) {
 		case INSERT:	

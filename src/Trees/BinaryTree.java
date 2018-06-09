@@ -39,7 +39,7 @@ public class BinaryTree implements ITree<BinaryNode> {
         removedNode = (BinaryNode) result.getNode();
 
         if (side != Side.NONE) {  //pokud ho nenajdu TODO
-            return null;
+            return result;
         }
 
 		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud má dva potomnky 1.
