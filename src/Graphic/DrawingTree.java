@@ -53,6 +53,7 @@ public class DrawingTree {
 	private final static double DOWNMARGIN = 40;	
 	
 	private double rootSize = 0;
+	private double stackPaneHeight = 0;
 	
 	private DoubleProperty rootY = new SimpleDoubleProperty();;
 	private DoubleProperty rootX = new SimpleDoubleProperty();	
@@ -122,6 +123,7 @@ public class DrawingTree {
 	public void insertRoot(INode<?> rootNode){
 		IGraphicNode root = rootNode.getGraphicNode();
 		rootSize = root.getRadiusSize();
+		stackPaneHeight = root.getStackPaneNode().getPrefHeight();
 		root.setLevel(0);
 		
 		rootY.bind(new SimpleDoubleProperty(ROOTBORDER));	
@@ -265,7 +267,7 @@ public class DrawingTree {
 		
 		Line line = new Line();
 		line.startXProperty().bind(node.getParent().getX().add(rootSize / 2));
-		line.startYProperty().bind(node.getParent().getY().add(rootSize / 2));
+		line.startYProperty().bind(node.getParent().getY().add(stackPaneHeight / 2));
 		line.setStroke(Color.WHITE);
 		
 		if (node.getSide() == Side.LEFT) {
@@ -274,7 +276,7 @@ public class DrawingTree {
 			line.endXProperty().bind(node.getParent().getX().add(rootSize * 1.5));	
 		}
 		
-		line.endYProperty().bind(node.getY().add(rootSize / 2));		
+		line.endYProperty().bind(node.getY().add(stackPaneHeight / 2));		
 		
 		node.setBranch(line);
 	}
@@ -375,7 +377,7 @@ public class DrawingTree {
 					}					
 					
 					yAnimatedNode.bind(iGraphicNode.getParent().getY().add(DOWNMARGIN));
-					yAnimatedBranch.bind(iGraphicNode.getParent().getY().add(rootSize / 2).add(DOWNMARGIN));
+					yAnimatedBranch.bind(iGraphicNode.getParent().getY().add(stackPaneHeight / 2).add(DOWNMARGIN));
 
 					iGraphicNode.setX(xAnimatedNode);
 					iGraphicNode.setY(yAnimatedNode);
@@ -474,7 +476,7 @@ public class DrawingTree {
 		root.setY(rootY);		
 		
 		xAnimatedBranch.bind(root.getX().add(rootSize / 2));
-		yAnimatedBranch.bind(root.getY().add(rootSize / 2));
+		yAnimatedBranch.bind(root.getY().add(stackPaneHeight / 2));
 		
 		if (root.getLeft() != null) {				
 			root.getLeft().getBranchStartX().bind(xAnimatedBranch);	
@@ -502,7 +504,7 @@ public class DrawingTree {
 			}
 			
 			yAnimatedNode.bind(iGraphicNode.getParent().getY().add(DOWNMARGIN));
-			yAnimatedBranch.bind(iGraphicNode.getParent().getY().add(rootSize / 2).add(DOWNMARGIN));
+			yAnimatedBranch.bind(iGraphicNode.getParent().getY().add(stackPaneHeight / 2).add(DOWNMARGIN));
 
 			iGraphicNode.setX(xAnimatedNode);
 			iGraphicNode.setY(yAnimatedNode);
@@ -868,7 +870,7 @@ public class DrawingTree {
 		text.appendText("");
 		
 		if (graphicNodeRemoved.getRight() == null || graphicNodeRemoved.getLeft() == null) {
-			if (graphicNodeRemoved.getRight() == null) {
+			if (graphicNodeMoved.getX().get() <= graphicNodeRemoved.getX().get()) {
 				appendNewText("\n\tLEVÝ potomek " + graphicNodeMoved.getValue());
 			} else {
 				appendNewText("\n\tPRAVÝ potomek " + graphicNodeMoved.getValue());
@@ -884,6 +886,8 @@ public class DrawingTree {
 	}
 	
 	private void moveNodeAnimationFinished(IGraphicNode graphicNodeRemoved, IGraphicNode graphicNodeMoved) {
+		checkBranches(); //doplním větve
+		
 		if (graphicNodeMoved.getLeft() == null && graphicNodeMoved.getRight() == null
 				&& !(graphicNodeMoved.getParent().equals(graphicNodeRemoved.getParent()))) { //pokud mají stejného rodiče případ 0.2.1/2
 			graphicNodeRemoved.setValue(graphicNodeMoved.getValue());
@@ -910,6 +914,7 @@ public class DrawingTree {
 			graphicNodeMoved.getStackPaneNode().toFront();					
 
 			paneTree.getChildren().remove(graphicNodeRemoved.getStackPaneNode());	
+			paneTree.getChildren().remove(graphicNodeMoved.getBranch());
 			paneTree.getChildren().remove(graphicNodeRemoved.getBranch());
 			createBranch(graphicNodeMoved);
 			
@@ -918,7 +923,7 @@ public class DrawingTree {
 			listGraphicNodes.add(listGraphicNodes.indexOf(graphicNodeRemoved), graphicNodeMoved);
 			listGraphicNodes.remove(graphicNodeRemoved);
 			
-			checkBranches(); //doplním větve
+			
 		}
 		
 		appendNewText("\n • Smazání proběhlo úspěšně.");
@@ -953,6 +958,7 @@ public class DrawingTree {
 	 */
 	public void clearText() {
 		text.clear();
+		oldText = "";
 	}
 	
 	/**
@@ -966,7 +972,12 @@ public class DrawingTree {
 	 * Zobrazí text
 	 */
 	public void showText() {
-		paneTree.getChildren().add(text);
+		paneTree.getChildren().remove(text);
+		paneTree.getChildren().add(2, text);
+		text.toBack();
+		text.toBack();
+		text.toBack();
+		text.toBack();
 	}
 	
 	/**

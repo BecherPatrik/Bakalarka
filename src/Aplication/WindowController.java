@@ -18,6 +18,7 @@ import com.sun.crypto.provider.AESParameters;
 
 import Graphic.DrawingTree;
 import Graphic.IGraphicNode;
+import Trees.AVLTree;
 import Trees.AnimatedAction;
 import Trees.BinaryTree;
 import Trees.INode;
@@ -314,7 +315,7 @@ public class WindowController implements Initializable {
 	}
 	
 	@FXML 
-	private void dialogNewTree() {
+	private void dialogNewTree2() {
 		newRandomTree();
 	}
 	
@@ -322,7 +323,7 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového stromu přes tlačítko
 	 */
 	@FXML 
-	private void dialogNewTree2() {
+	private void dialogNewTree() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Nový strom");
 		alert.setHeaderText("Chcete pouze smazat aktuální strom,\nnebo vytvořit nový s náhodnýma hodnotama?");
@@ -362,13 +363,13 @@ public class WindowController implements Initializable {
 		switch (btnTreesActual.getId()) {
 		case "btnBinary":
 			graphicTree = new DrawingTree(tree, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
-			tree = new BinaryTree();			
+			tree = new BinaryTree();	
+			//tree = new AVLTree();
 			break;
 			
 		case "btnAVL":
 			graphicTree = new DrawingTree(tree, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
-			tree = new BinaryTree();
-			//tree = new AVLTree();
+			tree = new AVLTree();
 			break;
 			
 		case "btnRedBlack":
@@ -382,7 +383,7 @@ public class WindowController implements Initializable {
 		
 	}	
 	
-	private void newRandomTree() {
+	private void newRandomTree2() {
 		double oldSpeed = sliderSpeed.getValue();
 		newEmptyTree();
 		sliderSpeed.setValue(0);
@@ -475,7 +476,7 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového náhodného stromu 
 	 * @param count
 	 */
-	private void newRandomTree2() {	
+	private void newRandomTree() {	
 		int count = dialogRandomTree();
 		double oldSpeed = sliderSpeed.getValue();
 		graphicTree.hideText();
@@ -493,11 +494,13 @@ public class WindowController implements Initializable {
 					graphicTree.insertNode(lastResult, lastValue);			
 				} else {					
 					graphicTree.insertRoot((INode<?>)tree.getRoot());
+					graphicTree.hideText();
 				}
 			}
 			
-			graphicTree.showText();
 			graphicTree.clearText();
+			graphicTree.showText();
+			
 			lastResult = null;
 			listOldGraphicTreeNodes.clear();
 			sliderSpeed.setValue(oldSpeed);
@@ -634,12 +637,17 @@ public class WindowController implements Initializable {
 		isRedraw  = true;
 		
 		if (!(listHistory.isEmpty())) {
+			graphicTree.hideText();
+			
 			tree.insert(listHistory.get(0));
 			graphicTree.insertRoot((INode<?>)tree.getRoot());
 
 			for (int value : listHistory.subList(1, listHistory.size())) {
 				graphicTree.insertNode(tree.insert(value), lastValue);
 			}
+			
+			graphicTree.clearText();
+			graphicTree.showText();
 		} else {
 			repeatLastAction();
 		}
@@ -681,6 +689,7 @@ public class WindowController implements Initializable {
 	private void repeatLastAction() {	
 		isRedraw = false;
 		sliderSpeed.setValue(oldSpeed);	
+		graphicTree.clearText();
 		switch (lastAction) {
 		case INSERT:	
 			if (tree.getRoot() == null) {

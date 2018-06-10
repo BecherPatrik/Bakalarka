@@ -4,9 +4,7 @@ public class AVLTree implements ITree<AVLNode> {
 	
 	private AVLNode root = null;
 
-	public AVLTree() {
-	}
-	
+	public AVLTree() {}	
 	
 	@Override
 	public Result<AVLNode> insert(int value) {

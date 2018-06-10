@@ -1,6 +1,6 @@
 package Trees;
 
-import Graphic.BinaryGraphicNode;
+import Graphic.AVLGraphicNode;
 import Graphic.IGraphicNode;
 
 public class AVLNode implements INode<AVLNode> {
@@ -10,18 +10,18 @@ public class AVLNode implements INode<AVLNode> {
 	private AVLNode parent = null;
 	private AVLNode right = null;
 	private AVLNode left = null;
-	private BinaryGraphicNode graphicNode;
+	private AVLGraphicNode graphicNode;
 
 	public AVLNode(int value, AVLNode parent, Side side) {
 		this.value = value;
 		this.parent = parent;
-		this.graphicNode = new BinaryGraphicNode(value);
+		this.graphicNode = new AVLGraphicNode(value);
 		this.graphicNode.setSide(side);
 	}
 	
 	public AVLNode(int value) {
         this.value = value;
-        this.graphicNode = new BinaryGraphicNode(value);
+        this.graphicNode = new AVLGraphicNode(value);
     }
 	
 	@Override
@@ -58,7 +58,7 @@ public class AVLNode implements INode<AVLNode> {
 			} else if (graphicNode.getSide() == Side.RIGHT) {
 				graphicNode.getParent().setRight(graphicNode);
 			}
-		}
+		}		
 	}
 	
 	public void subtractFactor() {
@@ -122,7 +122,7 @@ public class AVLNode implements INode<AVLNode> {
 	}
 
 	@Override
-	public BinaryGraphicNode getGraphicNode() {
+	public AVLGraphicNode getGraphicNode() {
 		return graphicNode;
 	}
 	
@@ -130,7 +130,7 @@ public class AVLNode implements INode<AVLNode> {
 	public void setGraphicNode(IGraphicNode graphicNode) {
 		Side side = this.graphicNode.getSide();
 		
-		this.graphicNode = (BinaryGraphicNode) graphicNode;
+		this.graphicNode = (AVLGraphicNode) graphicNode;
 		this.graphicNode.setSide(side);
 		
 		if (left != null) {

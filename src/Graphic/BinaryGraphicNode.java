@@ -65,6 +65,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 		value.setFont(new Font(value.getFont().toString(), 14));
 
 		stackPaneNode.getChildren().addAll(circle, value);
+		stackPaneNode.setPrefHeight(30+5);
 	}
 
 	@Override
