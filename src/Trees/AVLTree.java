@@ -1,0 +1,177 @@
+package Trees;
+
+public class AVLTree implements ITree<AVLNode> {
+	
+	private AVLNode root = null;
+
+	public AVLTree() {
+	}
+	
+	
+	@Override
+	public Result<AVLNode> insert(int value) {
+		if (root == null) {
+			root = new AVLNode(value);
+			return null;
+		}
+		Result<AVLNode> result = search(value);
+	    Side side = result.getSide(); //ovìøíme poslední stranu
+	    AVLNode parent = (AVLNode) result.getNode();  // vrátí prvek (side = null) nebo rodièe a místo kam uložit (side = R, L)
+	    
+	    if (side == Side.LEFT) {
+	    	parent.setLeft(new AVLNode(value, parent, side));
+	    	result.setNode(parent.getLeft()); //zmìním výsledek z rodièe na nový node
+	    } else if (side == Side.RIGHT) {
+	    	parent.setRight(new AVLNode(value, parent, side));
+	    	result.setNode(parent.getRight());
+	    } else {
+	    	result.setNode(null); //už je obsažen  
+	    	return result;
+	    }
+	    
+	    result.addAnimation(AnimatedAction.INSERT, null, null);
+	    return result;
+	}
+    
+    @Override
+	public Result<AVLNode> delete(int value) {
+    	AVLNode removedNode, helpNode = null;
+        
+        Result<AVLNode> result = search(value);
+        Side side = result.getSide(); //zjistím smìr
+        removedNode = (AVLNode) result.getNode();
+
+        if (side != Side.NONE) {  //pokud ho nenajdu TODO
+            return result;
+        }
+
+		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud má dva potomnky 1.
+			helpNode = removedNode.getRight(); // dosadím pravého
+
+			if (helpNode.getLeft() != null || helpNode.getRight() != null) { //pokud dosazovaný má potomky 1.1
+				if (helpNode.getLeft() != null) { // pokud pravý potomek nemá levého 1.2
+					while (helpNode.getLeft() != null) { // dokud nemám poslední levý 1.3
+						helpNode = helpNode.getLeft();
+					}					
+				}
+			}             
+            
+            removedNode.setValue(helpNode.getValue()); //uložím jeho hodnotu do toho co mažu
+            
+            result.addAnimation(AnimatedAction.DELETE, null, true);            
+            
+            if (helpNode.getRight() == null) { //0.1
+            	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.1.1
+            		helpNode.getParent().deleteRight();
+            		System.out.println("\n0.1.1\n");
+            	} else { //0.1.2
+            		helpNode.getParent().deleteLeft(); 
+            		System.out.println("\n0.1.2\n");
+            	}
+                
+                result.addAnimation(AnimatedAction.MOVENODE, removedNode.getGraphicNode(), helpNode.getGraphicNode()); 
+                removedNode.setGraphicNode(helpNode.getGraphicNode());
+                
+            } else { //0.2
+            	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.2.1
+            		helpNode.getParent().setRight(helpNode.getRight());
+            		System.out.println("\n0.2.1\n");
+            	} else { //0.2.2
+            		helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadím místo nìho jeho pravého
+            		System.out.println("\n0.2.2\n");
+            	}
+            	
+            	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
+            	result.addAnimation(AnimatedAction.MOVENODE, helpNode.getGraphicNode(), helpNode.getRight().getGraphicNode());
+            	//result.addAnimation(AnimatedAction.MOVEVALUEFINISH, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
+            	
+            	//helpNode.setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
+            }
+        } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka má mazaný  2.
+        	result.addAnimation(AnimatedAction.DELETE, null, true);
+            result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getLeft().getGraphicNode());
+            
+            //result.getNode().setGraphicNode(removedNode.getLeft().getGraphicNode()); /******nové******/
+            
+            removedNode.setNode(removedNode.getLeft());
+            
+            System.out.println("\n2.\n");            
+            
+        } else if (removedNode.getRight() != null) { // 3.
+        	result.addAnimation(AnimatedAction.DELETE, null, true);
+            result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getRight().getGraphicNode());
+            
+          //  result.getNode().setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
+            
+            removedNode.setNode(removedNode.getRight());  
+            System.out.println("\n3.\n");
+        } else { // 4.   
+        	System.out.println("\n4.\n");
+        	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá dìti 
+            if (removedNode.getGraphicNode().getSide() == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
+                removedNode.getParent().deleteLeft();               
+            } else if (removedNode.equals(root)) { //osamocený root
+            	root = null;
+            } else {
+            	removedNode.getParent().deleteRight();  //pravý            	
+            }
+            return result; 
+        } 
+        
+        return result;
+	}	
+	
+	/**
+	 * @param value - hledaný list
+	 * @return ResultNode<AVLNode> - vrací nalezený list (side = NONE) nebo vrací rodièe a stranu
+	 * 
+	 */
+	@Override
+    public Result<AVLNode> search(int value) {
+		Result<AVLNode> resultNode = new Result<>(root);
+		AVLNode result = root;
+		AVLNode parent = root;
+
+        while (result != null) {
+            if (value < result.getValue()) {
+            	parent = result;
+                result = result.getLeft();
+                
+                resultNode.setSide(Side.LEFT); 
+            } else if (value > result.getValue()) {
+            	parent = result;
+            	result = result.getRight();
+            	
+            	resultNode.setSide(Side.RIGHT); 
+            } else {               
+            	resultNode.setSide(Side.NONE);
+            	resultNode.addSide(result.getGraphicNode());
+                break;
+            }            
+            
+            resultNode.addSide(parent.getGraphicNode());
+        }
+      
+        if (resultNode.getSide() == Side.NONE) {
+        	resultNode.addAnimation(AnimatedAction.SEARCH, result.getGraphicNode(), true);
+        	resultNode.setNode(result);
+        } else {
+        	resultNode.addAnimation(AnimatedAction.SEARCH, parent.getGraphicNode(), false);
+        	resultNode.setNode(parent);
+        }
+        return resultNode;
+    }
+	
+	/********************************************************************************************************
+	 * GETS & SETS
+	 * 
+	 *******************************************************************************************************/
+	
+	@Override
+	public AVLNode getRoot() {
+		return root;
+	}
+	
+	
+    	
+}

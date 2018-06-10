@@ -3,21 +3,23 @@ package Trees;
 import Graphic.BinaryGraphicNode;
 import Graphic.IGraphicNode;
 
-public class BinaryNode implements INode<BinaryNode> {
+public class AVLNode implements INode<AVLNode> {
+	
 	private int value;
-	private BinaryNode parent = null;
-	private BinaryNode right = null;
-	private BinaryNode left = null;
+	private int factor = 0;
+	private AVLNode parent = null;
+	private AVLNode right = null;
+	private AVLNode left = null;
 	private BinaryGraphicNode graphicNode;
 
-	public BinaryNode(int value, BinaryNode parent, Side side) {
+	public AVLNode(int value, AVLNode parent, Side side) {
 		this.value = value;
 		this.parent = parent;
 		this.graphicNode = new BinaryGraphicNode(value);
 		this.graphicNode.setSide(side);
 	}
 	
-	public BinaryNode(int value) {
+	public AVLNode(int value) {
         this.value = value;
         this.graphicNode = new BinaryGraphicNode(value);
     }
@@ -35,17 +37,17 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 	
 	@Override
-	public void setNode(BinaryNode node) {
+	public void setNode(AVLNode node) {
 		value = node.getValue();
 		right = node.getRight();
 		left = node.getLeft();
 		
-		node.getGraphicNode().setSide(graphicNode.getSide()); //pÅ™ed zmÄ›nou musÃ­m uloÅ¾it aktuÃ¡lnÃ­ stranu node
+		node.getGraphicNode().setSide(graphicNode.getSide()); //pøed zmìnou musím uložit aktuální stranu node
 		graphicNode.setLeft(node.getGraphicNode().getLeft());
 		graphicNode.setRight(node.getGraphicNode().getRight());
 		
 		if (right != null || left != null) {
-			graphicNode = node.getGraphicNode(); //zmÄ›nÃ­m graphicNode
+			graphicNode = node.getGraphicNode(); //zmìním graphicNode
 		}
 		
 		if (parent != null) {
@@ -57,6 +59,14 @@ public class BinaryNode implements INode<BinaryNode> {
 				graphicNode.getParent().setRight(graphicNode);
 			}
 		}
+	}
+	
+	public void subtractFactor() {
+		this.factor--;
+	}
+	
+	public void addFactor() {
+		this.factor++;
 	}
 	
 	/********************************************************************************************************
@@ -75,23 +85,23 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 	
 	@Override
-	public BinaryNode getParent() {
+	public AVLNode getParent() {
 		return parent;
 	}
 
 	@Override
-	public void setParent(BinaryNode node) {
+	public void setParent(AVLNode node) {
 		parent = node;
 		graphicNode.setParent(node.getGraphicNode());
 	}
 	
 	@Override
-	public BinaryNode getRight() {
+	public AVLNode getRight() {
 		return right;
 	}
 
 	@Override
-	public void setRight(BinaryNode node) {
+	public void setRight(AVLNode node) {
 		right = node;
 		graphicNode.setRight(node.getGraphicNode());
 		node.setParent(this);
@@ -99,12 +109,12 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 	
 	@Override
-	public BinaryNode getLeft() {
+	public AVLNode getLeft() {
 		return left;
 	}
 
 	@Override
-	public void setLeft(BinaryNode node) {
+	public void setLeft(AVLNode node) {
 		left = node;
 		graphicNode.setLeft(node.getGraphicNode());
 		node.setParent(this);	
@@ -145,9 +155,17 @@ public class BinaryNode implements INode<BinaryNode> {
 		}		
 	}
 	
+	public int getFactor() {
+		return factor;
+	}
+
+	public void setFactor(int factor) {
+		this.factor = factor;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
-		BinaryNode node = (BinaryNode) obj;
+		AVLNode node = (AVLNode) obj;
 		return (value == node.getValue());
 	}
 }
