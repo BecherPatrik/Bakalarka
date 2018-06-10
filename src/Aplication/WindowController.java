@@ -310,7 +310,7 @@ public class WindowController implements Initializable {
 		lastResult = tree.delete(Integer.parseInt(inputNumber.getText()));		
 		graphicTree.deleteNode(lastResult, lastValue);	
 		//System.out.println("-----------------------------------");
-		treeLog();
+		//treeLog();
 	}
 	
 	@FXML 
@@ -749,6 +749,7 @@ public class WindowController implements Initializable {
 				node.getStackPaneNode().toFront();
 			}
 		}
+		graphicTree.clearText();
 	}
 	
 	/**
@@ -791,9 +792,9 @@ public class WindowController implements Initializable {
 			}			
 			return;
 		}
-		System.out.println(paneTree.getWidth()+ " - "+ scrollPane.getWidth()+ " + "+ scrollPane.getPrefViewportWidth());
+		//System.out.println(paneTree.getWidth()+ " - "+ scrollPane.getWidth()+ " + "+ scrollPane.getPrefViewportWidth());
 		//System.out.println("===============================");
-		treeLog();
+		//treeLog();
 		
 		primaryStage.setResizable(true);
 		

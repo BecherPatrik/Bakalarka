@@ -35,12 +35,15 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.util.Duration;
 
+
 public class DrawingTree {
 	private WindowController windowController;
 	private List<IGraphicNode> listGraphicNodes = new ArrayList<>(); //root je na místě 0
 	private ITree<?> tree;
 	private int value;
 	private TextArea text;
+	private String oldText = "";
+	private String newText;
 
 	private ReadOnlyDoubleProperty paneTreeWeight;
 	private Pane paneTree;
@@ -103,6 +106,8 @@ public class DrawingTree {
 				// fitToWidth and fitToHeight values. 
 			}			
 		});	
+		
+		
 		
 		//DefaultCaret caret = (DefaultCaret) text.getCaret();
 	//	caret.setUpdatePolicy(ALWAYS_UPDATE);
@@ -615,18 +620,18 @@ public class DrawingTree {
 			int oldValue = Integer.parseInt(wayList.get(wayIndex-1).getValue());
 			
 			if (value > oldValue) {
-				text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " > " + oldValue);
-				text.appendText("");
+				text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " > " + oldValue + "\n" + oldText);
+				oldText = (" • Porovnání " + value + " > " + oldValue + "\n" + oldText);				
 			} else if (value < oldValue) {
-				text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " < " + oldValue);
-				text.appendText("");
+				text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " < " + oldValue + "\n" + oldText);
+				oldText = (" • Porovnání " + value + " < " + oldValue + "\n" + oldText);
 			}
 			
 			seqT2.play();
 		} else {
 			seqT = new SequentialTransition(st3, pt2, st4);
-			text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " a " + node.getValue());
-			text.appendText("");
+			oldText = text.getText();
+			text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " a " + node.getValue() + "\n" + oldText);
 			seqT.play();
 		}
 		
@@ -637,11 +642,14 @@ public class DrawingTree {
 					nextSearchNode();
 				} else {				
 					if (value > Integer.parseInt(node.getValue())) {
-						text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " > " + node.getValue());
+						text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " > " + node.getValue() + "\n" + oldText);
+						oldText = (" • Porovnání " + value + " > " + node.getValue() + "\n" + oldText);
 					} else if (value < Integer.parseInt(node.getValue())) {
-						text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " < " + node.getValue());
+						text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " < " + node.getValue() + "\n" + oldText);
+						oldText = (" • Porovnání " + value + " < " + node.getValue() + "\n" + oldText);
 					} else {
-						text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " = " + node.getValue());
+						text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " = " + node.getValue() + "\n" + oldText);
+						oldText = (" • Porovnání " + value + " = " + node.getValue() + "\n" + oldText);
 					}
 					highlightNodeAnimationFinished();
 				}
@@ -652,7 +660,7 @@ public class DrawingTree {
 			seqT2.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {		
-					text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " a " + node.getValue());
+					text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " a " + node.getValue() + "\n" + oldText);
 					seqT.play();
 				}
 			});
@@ -670,20 +678,16 @@ public class DrawingTree {
 		if(!notFind && ((boolean)recordOfAnimations.get(indexAnimation).getObject())) {
 			if (animationSpeed.get() == 0) { //když nebude animace
 				text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Prvek byl nalezen!");
-				text.appendText("");
 			} else {
-				text.appendText("\n • Prvek byl nalezen!");
-				text.appendText("");
+				text.setText("HLEDÁNÍ PRVKU: " + value +"\n • Prvek byl nalezen!" + "\n" + oldText);
 			}
 			
 			highlightFindNode();
 		} else {
 			if (animationSpeed.get() == 0) { //když nebude animace
 				text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Prvek nebyl nalezen!");
-				text.appendText("");
 			} else {
-				text.appendText("\n • Prvek nebyl nalezen.");
-				text.appendText("");
+				text.setText("HLEDÁNÍ PRVKU: " + value +"\n • Prvek nebyl nalezen." + "\n"+ oldText);
 			}
 			if (notFind) {
 				windowController.enableButtons();
@@ -719,15 +723,15 @@ public class DrawingTree {
 	 * Animace vložení nového listu
 	 */
 	private void insertNodeAnimation() {
+		oldText = text.getText();
+		
 		if (animationSpeed.get() == 0) {	
 			if (newIGraphicNode.getSide() == Side.LEFT) {
-				text.appendText("\nVLOŽENÍ PRVKU " + newIGraphicNode.getValue()+": \n • Prvek "+ newIGraphicNode.getValue() + " < rodič "
+				setTextWithHistory("VLOŽENÍ PRVKU " + newIGraphicNode.getValue()+": \n • Prvek "+ newIGraphicNode.getValue() + " < rodič "
 						+ newIGraphicNode.getParent().getValue() + ".\n • Bude vložen VLEVO.");
-				text.appendText("");
 			} else if (newIGraphicNode.getSide() == Side.RIGHT) {
-				text.appendText("\nVLOŽENÍ PRVKU " + newIGraphicNode.getValue()+": \n • Prvek "+ newIGraphicNode.getValue() + " > rodič "
+				setTextWithHistory("VLOŽENÍ PRVKU " + newIGraphicNode.getValue()+": \n • Prvek "+ newIGraphicNode.getValue() + " > rodič "
 						+ newIGraphicNode.getParent().getValue() + ".\n • Bude vložen VPRAVO.");
-				text.appendText("");
 			}
 			
 			insertNodeAnimationFinished();
@@ -753,13 +757,11 @@ public class DrawingTree {
 		newIGraphicNode.getY().unbind();
 		
 		if (newIGraphicNode.getSide() == Side.LEFT) {
-			text.appendText("\nVLOŽENÍ PRVKU " + newIGraphicNode.getValue()+": \n • Prvek "+ newIGraphicNode.getValue() + " < rodič "
+			setTextWithHistory("VLOŽENÍ PRVKU " + newIGraphicNode.getValue()+": \n • Prvek "+ newIGraphicNode.getValue() + " < rodič "
 					+ newIGraphicNode.getParent().getValue() + ".\n • Bude vložen VLEVO.");
-			text.appendText("");
 		} else if (newIGraphicNode.getSide() == Side.RIGHT) {
-			text.appendText("\nVLOŽENÍ PRVKU " + newIGraphicNode.getValue()+": \n • Prvek "+ newIGraphicNode.getValue() + " > rodič "
+			setTextWithHistory("VLOŽENÍ PRVKU " + newIGraphicNode.getValue()+": \n • Prvek "+ newIGraphicNode.getValue() + " > rodič "
 					+ newIGraphicNode.getParent().getValue() + ".\n • Bude vložen VPRAVO.");
-			text.appendText("");
 		}
 
 		timeline.play();
@@ -773,9 +775,7 @@ public class DrawingTree {
 		insertBranch();		
 		listGraphicNodes.add(newIGraphicNode);
 
-		text.appendText("\n • Vložení proběhlo úspěšně.");
-		text.appendText("");
-	
+		appendNewText("\n • Vložení proběhlo úspěšně.");	
 
 		indexAnimation++;
 		nextAnimation();
@@ -786,19 +786,18 @@ public class DrawingTree {
 	 */
 	private void deleteNodeAnimation() {
 		IGraphicNode node = wayList.get(wayList.size() - 1);
+		oldText = text.getText();
 		
 		node.highlightFindNode(); // zvýrazním mazaný node
-		text.appendText("\nMAZÁNÍ PRVKU "+ node.getValue() + ":");
-		text.appendText("");
+		setTextWithHistory("MAZÁNÍ PRVKU "+ node.getValue() + ":");
 		if ((boolean) recordOfAnimations.get(indexAnimation).getObject()) { //pokud má děti
-			text.appendText("\n • Mazaný má potomky.");
-			text.appendText("");
+			appendNewText("\n • Mazaný má potomky.");
+			
 			node.setValue("");
 			indexAnimation++;
 			nextAnimation();
 		} else {	
-			text.appendText("\n • Mazaný je list.");
-			text.appendText("");
+			appendNewText("\n • Mazaný je list.");
 			if (animationSpeed.get() == 0) { //neni animace
 				deleteNodeAnimationFinished(node);
 				return;
@@ -828,8 +827,7 @@ public class DrawingTree {
 		listGraphicNodes.remove(node);					
 		paneTree.getChildren().remove(node.getStackPaneNode());
 		paneTree.getChildren().remove(node.getBranch());
-		text.appendText("\n • Smazání proběhlo úspěšně.");
-		text.appendText("");
+		appendNewText("\n • Smazání proběhlo úspěšně.");
 		indexAnimation++;					
 		nextAnimation();
 	}
@@ -866,28 +864,18 @@ public class DrawingTree {
 		graphicNodeMoved.getX().unbind();
 		graphicNodeMoved.getY().unbind();	
 		
-		text.appendText("\n • Mazaný uzel nahradí:");
+		appendNewText("\n • Mazaný uzel nahradí:");
 		text.appendText("");
 		
 		if (graphicNodeRemoved.getRight() == null || graphicNodeRemoved.getLeft() == null) {
 			if (graphicNodeRemoved.getRight() == null) {
-				text.appendText("\n\tLEVÝ potomek " + graphicNodeMoved.getValue());
-				text.appendText("");
+				appendNewText("\n\tLEVÝ potomek " + graphicNodeMoved.getValue());
 			} else {
-				text.appendText("\n\tPRAVÝ potomek " + graphicNodeMoved.getValue());
-				text.appendText("");
+				appendNewText("\n\tPRAVÝ potomek " + graphicNodeMoved.getValue());
 			}
 		} else if(graphicNodeRemoved.getRight() != null || graphicNodeRemoved.getLeft() != null) {
-			text.appendText("\n\tNEJLEVĚJŠÍ potomek "+  graphicNodeMoved.getValue() + "\n\tz PRAVÉHO podstromu");
-			text.appendText(" ");
-			
-			text.setScrollTop(999);
-			
-			System.out.println(text.getScrollTop()); 
-			//text.setCaretPosition(text.getText().length());
-			//text.positionCaret(text.getText().length());
-		}
-		
+			appendNewText("\n\tNEJLEVĚJŠÍ potomek "+  graphicNodeMoved.getValue() + "\n\tz PRAVÉHO podstromu");			
+		}		
 		
 		//odstraním větve
 		hideMovedBranchRecursive(graphicNodeMoved);
@@ -933,6 +921,8 @@ public class DrawingTree {
 			checkBranches(); //doplním větve
 		}
 		
+		appendNewText("\n • Smazání proběhlo úspěšně.");
+		
 		indexAnimation++;
 		nextAnimation();
 	}
@@ -977,6 +967,25 @@ public class DrawingTree {
 	 */
 	public void showText() {
 		paneTree.getChildren().add(text);
+	}
+	
+	/**
+	 * Přidá text do TextArea opačně 
+	 * řeší to bug se scroll barem
+	 * @param s
+	 */
+	private void setTextWithHistory(String s) {
+		newText = s;
+		text.setText(newText + "\n\n" + oldText);		
+	}
+	
+	/**
+	 * Přidá k nově přidanému textu řetězec (zachovává historii)
+	 * @param s
+	 */
+	private void appendNewText(String s) {
+		newText = newText.concat(s);
+		text.setText(newText + "\n\n" + oldText);
 	}
 	
 	/********************************************************************************************************

@@ -19,7 +19,7 @@ public class Main extends Application {
 		primaryStage.setTitle("Stromy - Binární strom");
 		primaryStage.setMinHeight(600);
 		primaryStage.setMinWidth(931);
-		primaryStage.setScene(new Scene(root, 815, 505));
+		primaryStage.setScene(new Scene(root, 930, 600));
 		primaryStage.centerOnScreen();
 		primaryStage.show();
 		
