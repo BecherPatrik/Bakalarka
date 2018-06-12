@@ -80,9 +80,6 @@ public interface IGraphicNode {
 	int getRightChildrenCount();
 	int getLeftChildrenCount();
 	
-	int getLevel();	
-	void setLevel(int level);
-	
 	String getValue();
 	void setValue(String value);
 	

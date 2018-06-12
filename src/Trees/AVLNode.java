@@ -1,6 +1,7 @@
 package Trees;
 
 import Graphic.AVLGraphicNode;
+import Graphic.BinaryGraphicNode;
 import Graphic.IGraphicNode;
 
 public class AVLNode implements INode<AVLNode> {
@@ -25,19 +26,29 @@ public class AVLNode implements INode<AVLNode> {
     }
 	
 	@Override
+	public void deleteLeftWithGraphic() {
+		deleteLeft();
+		this.graphicNode.setLeft(null);
+	}
+	
+	@Override
 	public void deleteLeft() {
 		this.left = null;
-		this.graphicNode.setLeft(null);
 	}
 
 	@Override
-	public void deleteRight() {
-		this.right = null;
+	public void deleteRightWithGraphic() {
+		deleteRight();
 		this.graphicNode.setRight(null);
 	}
 	
 	@Override
-	public void setNode(AVLNode node) {
+	public void deleteRight() {
+		this.right = null;		
+	}
+	
+	@Override
+	public void setNodeWithGraphic(AVLNode node) {
 		value = node.getValue();
 		right = node.getRight();
 		left = node.getLeft();
@@ -59,7 +70,7 @@ public class AVLNode implements INode<AVLNode> {
 				graphicNode.getParent().setRight(graphicNode);
 			}
 		}		
-	}
+	}	
 	
 	public void subtractFactor() {
 		this.factor--;
@@ -67,6 +78,29 @@ public class AVLNode implements INode<AVLNode> {
 	
 	public void addFactor() {
 		this.factor++;
+	}
+	
+	/**
+	 * Vypoèítá rekurzivnì ohodnocení listù
+	 * @return vrací výšku pod stromù 
+	 */
+	public int countFactor() {
+		int l = 0;
+		int r = 0;
+		
+		if (left != null) {
+			l += left.countFactor();
+		}
+		
+		if (right != null) {
+			r += right.countFactor();
+		}
+		
+		factor = r - l;
+		
+		graphicNode.setFactor(""+factor);
+		
+		return Math.max(r, l) + 1;
 	}
 	
 	/********************************************************************************************************
@@ -90,9 +124,14 @@ public class AVLNode implements INode<AVLNode> {
 	}
 
 	@Override
-	public void setParent(AVLNode node) {
+	public void setParentWithGraphic(AVLNode node) {
 		parent = node;
 		graphicNode.setParent(node.getGraphicNode());
+	}
+	
+	@Override
+	public void setParent(AVLNode node) {
+		parent = node;
 	}
 	
 	@Override
@@ -101,11 +140,18 @@ public class AVLNode implements INode<AVLNode> {
 	}
 
 	@Override
-	public void setRight(AVLNode node) {
+	public void setRightWithGraphic(AVLNode node) {
 		right = node;
 		graphicNode.setRight(node.getGraphicNode());
-		node.setParent(this);
+		node.setParentWithGraphic(this);
 		node.getGraphicNode().setSide(Side.RIGHT);
+		node.setParent(this);
+	}
+	
+	@Override
+	public void setRight(AVLNode node) {
+		right = node;
+		node.setParent(this);
 	}
 	
 	@Override
@@ -114,11 +160,18 @@ public class AVLNode implements INode<AVLNode> {
 	}
 
 	@Override
-	public void setLeft(AVLNode node) {
+	public void setLeftWithGraphic(AVLNode node) {
 		left = node;
 		graphicNode.setLeft(node.getGraphicNode());
-		node.setParent(this);	
+		node.setParentWithGraphic(this);	
 		node.getGraphicNode().setSide(Side.LEFT);
+		node.setParent(this);
+	}
+	
+	@Override
+	public void setLeft(AVLNode node) {
+		left = node;
+		node.setParent(this);	
 	}
 
 	@Override
@@ -161,7 +214,7 @@ public class AVLNode implements INode<AVLNode> {
 
 	public void setFactor(int factor) {
 		this.factor = factor;
-	}
+	}	
 	
 	@Override
 	public boolean equals(Object obj) {

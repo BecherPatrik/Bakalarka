@@ -16,10 +16,10 @@ public class BinaryTree implements ITree<BinaryNode> {
 	    BinaryNode parent = (BinaryNode) result.getNode();  // vrátí prvek (side = null) nebo rodiče a místo kam uložit (side = R, L)
 	    
 	    if (side == Side.LEFT) {
-	    	parent.setLeft(new BinaryNode(value, parent, side));
+	    	parent.setLeftWithGraphic(new BinaryNode(value, parent, side));
 	    	result.setNode(parent.getLeft()); //změním výsledek z rodiče na nový node
 	    } else if (side == Side.RIGHT) {
-	    	parent.setRight(new BinaryNode(value, parent, side));
+	    	parent.setRightWithGraphic(new BinaryNode(value, parent, side));
 	    	result.setNode(parent.getRight());
 	    } else {
 	    	result.setNode(null); //už je obsažen  
@@ -59,10 +59,10 @@ public class BinaryTree implements ITree<BinaryNode> {
             
             if (helpNode.getRight() == null) { //0.1
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.1.1
-            		helpNode.getParent().deleteRight();
+            		helpNode.getParent().deleteRightWithGraphic();
             		//System.out.println("\n0.1.1\n");
             	} else { //0.1.2
-            		helpNode.getParent().deleteLeft(); 
+            		helpNode.getParent().deleteLeftWithGraphic(); 
             		//System.out.println("\n0.1.2\n");
             	}
                 
@@ -71,10 +71,10 @@ public class BinaryTree implements ITree<BinaryNode> {
                 
             } else { //0.2
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.2.1
-            		helpNode.getParent().setRight(helpNode.getRight());
+            		helpNode.getParent().setRightWithGraphic(helpNode.getRight());
             		//System.out.println("\n0.2.1\n");
             	} else { //0.2.2
-            		helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadím místo něho jeho pravého
+            		helpNode.getParent().setLeftWithGraphic(helpNode.getRight());  //nebo dosadím místo něho jeho pravého
             		//System.out.println("\n0.2.2\n");
             	}
             	
@@ -90,7 +90,7 @@ public class BinaryTree implements ITree<BinaryNode> {
             
             //result.getNode().setGraphicNode(removedNode.getLeft().getGraphicNode()); /******nové******/
             
-            removedNode.setNode(removedNode.getLeft());
+            removedNode.setNodeWithGraphic(removedNode.getLeft());
             
             //System.out.println("\n2.\n");            
             
@@ -100,17 +100,17 @@ public class BinaryTree implements ITree<BinaryNode> {
             
           //  result.getNode().setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
             
-            removedNode.setNode(removedNode.getRight());  
+            removedNode.setNodeWithGraphic(removedNode.getRight());  
             System.out.println("\n3.\n");
         } else { // 4.   
         	//System.out.println("\n4.\n");
         	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá děti 
             if (removedNode.getGraphicNode().getSide() == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
-                removedNode.getParent().deleteLeft();               
+                removedNode.getParent().deleteLeftWithGraphic();               
             } else if (removedNode.equals(root)) { //osamocený root
             	root = null;
             } else {
-            	removedNode.getParent().deleteRight();  //pravý            	
+            	removedNode.getParent().deleteRightWithGraphic();  //pravý            	
             }
             return result; 
         } 

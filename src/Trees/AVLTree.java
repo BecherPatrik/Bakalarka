@@ -1,8 +1,11 @@
 package Trees;
 
+import java.util.ArrayList;
+
 public class AVLTree implements ITree<AVLNode> {
 	
 	private AVLNode root = null;
+	private ArrayList<AVLNode> nodes = new ArrayList<>();
 
 	public AVLTree() {}	
 	
@@ -10,6 +13,7 @@ public class AVLTree implements ITree<AVLNode> {
 	public Result<AVLNode> insert(int value) {
 		if (root == null) {
 			root = new AVLNode(value);
+			nodes.add(root);
 			return null;
 		}
 		Result<AVLNode> result = search(value);
@@ -17,18 +21,18 @@ public class AVLTree implements ITree<AVLNode> {
 	    AVLNode parent = (AVLNode) result.getNode();  // vrátí prvek (side = null) nebo rodièe a místo kam uložit (side = R, L)
 	    
 	    if (side == Side.LEFT) {
-	    	parent.setLeft(new AVLNode(value, parent, side));
+	    	parent.setLeftWithGraphic(new AVLNode(value, parent, side));
 	    	result.setNode(parent.getLeft()); //zmìním výsledek z rodièe na nový node
 	    } else if (side == Side.RIGHT) {
-	    	parent.setRight(new AVLNode(value, parent, side));
+	    	parent.setRightWithGraphic(new AVLNode(value, parent, side));
 	    	result.setNode(parent.getRight());
 	    } else {
 	    	result.setNode(null); //už je obsažen  
 	    	return result;
 	    }
-	    
+	    nodes.add((AVLNode)result.getNode());
 	    result.addAnimation(AnimatedAction.INSERT, null, null);
-	    return result;
+	    return balanceTree(result);
 	}
     
     @Override
@@ -60,10 +64,10 @@ public class AVLTree implements ITree<AVLNode> {
             
             if (helpNode.getRight() == null) { //0.1
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.1.1
-            		helpNode.getParent().deleteRight();
+            		helpNode.getParent().deleteRightWithGraphic();
             		System.out.println("\n0.1.1\n");
             	} else { //0.1.2
-            		helpNode.getParent().deleteLeft(); 
+            		helpNode.getParent().deleteLeftWithGraphic(); 
             		System.out.println("\n0.1.2\n");
             	}
                 
@@ -72,46 +76,32 @@ public class AVLTree implements ITree<AVLNode> {
                 
             } else { //0.2
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.2.1
-            		helpNode.getParent().setRight(helpNode.getRight());
-            		System.out.println("\n0.2.1\n");
+            		helpNode.getParent().setRightWithGraphic(helpNode.getRight());
             	} else { //0.2.2
-            		helpNode.getParent().setLeft(helpNode.getRight());  //nebo dosadím místo nìho jeho pravého
-            		System.out.println("\n0.2.2\n");
+            		helpNode.getParent().setLeftWithGraphic(helpNode.getRight());  //nebo dosadím místo nìho jeho pravého
             	}
             	
             	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
             	result.addAnimation(AnimatedAction.MOVENODE, helpNode.getGraphicNode(), helpNode.getRight().getGraphicNode());
-            	//result.addAnimation(AnimatedAction.MOVEVALUEFINISH, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
-            	
-            	//helpNode.setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
             }
         } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka má mazaný  2.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
             result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getLeft().getGraphicNode());
             
-            //result.getNode().setGraphicNode(removedNode.getLeft().getGraphicNode()); /******nové******/
-            
-            removedNode.setNode(removedNode.getLeft());
-            
-            System.out.println("\n2.\n");            
-            
+            removedNode.setNodeWithGraphic(removedNode.getLeft());            
         } else if (removedNode.getRight() != null) { // 3.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
             result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getRight().getGraphicNode());
             
-          //  result.getNode().setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
-            
-            removedNode.setNode(removedNode.getRight());  
-            System.out.println("\n3.\n");
+            removedNode.setNodeWithGraphic(removedNode.getRight());  
         } else { // 4.   
-        	System.out.println("\n4.\n");
         	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá dìti 
             if (removedNode.getGraphicNode().getSide() == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
-                removedNode.getParent().deleteLeft();               
+                removedNode.getParent().deleteLeftWithGraphic();               
             } else if (removedNode.equals(root)) { //osamocený root
             	root = null;
             } else {
-            	removedNode.getParent().deleteRight();  //pravý            	
+            	removedNode.getParent().deleteRightWithGraphic();  //pravý            	
             }
             return result; 
         } 
@@ -160,6 +150,62 @@ public class AVLTree implements ITree<AVLNode> {
         return resultNode;
     }
 	
+	/**
+	 * Zavolá funkci pro ohodnocení listù a pøípadnì pøidá akce pro balancování stromu
+	 * @param result
+	 * @return
+	 */
+	private Result<AVLNode> balanceTree(Result<AVLNode> result) {
+		root.countFactor();
+		
+		AVLNode balanceNode = null;
+		
+		for (AVLNode node : nodes) {
+			if (node.getFactor() == 2 || node.getFactor() == -2) {
+				balanceNode = node;
+				break;
+			}
+		}
+		
+		if (balanceNode != null) {
+			if (balanceNode.getFactor() == 2) {
+				if (balanceNode.getLeft().getFactor() == -1) {
+					return rlBalance();
+				} else {
+					return rrBalance();
+				}
+			} else {
+				if (balanceNode.getRight().getFactor() == 1) {
+					return lrBalance();
+				} else {
+					return llBalance();
+				}
+			}
+		}
+		
+		return result;		
+	}
+	
+	private Result<AVLNode> llBalance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Result<AVLNode> lrBalance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Result<AVLNode> rrBalance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Result<AVLNode> rlBalance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/********************************************************************************************************
 	 * GETS & SETS
 	 * 
@@ -168,8 +214,5 @@ public class AVLTree implements ITree<AVLNode> {
 	@Override
 	public AVLNode getRoot() {
 		return root;
-	}
-	
-	
-    	
+	}    	
 }

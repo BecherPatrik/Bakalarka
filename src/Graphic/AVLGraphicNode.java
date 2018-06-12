@@ -1,6 +1,5 @@
 package Graphic;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -28,5 +27,20 @@ public class AVLGraphicNode extends BinaryGraphicNode {
 		super.getStackPaneNode().getChildren().add(factor);
 		super.getStackPaneNode().setPrefHeight(getRadiusSize() + 30);
 		StackPane.setAlignment(factor, Pos.TOP_CENTER);		
+	}	
+
+	/********************************************************************************************************
+	 * GETS & SETS
+	 * 
+	 *******************************************************************************************************/
+
+	public Text getFactor() {
+		return factor;
 	}
+
+	public void setFactor(String factor) {
+		this.factor.setText(factor);
+		Text text = (Text) super.getStackPaneNode().getChildren().get(2);
+		text.setText(factor);
+	}	
 }

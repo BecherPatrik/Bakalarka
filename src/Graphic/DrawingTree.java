@@ -3,12 +3,8 @@ package Graphic;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.DefaultCaret;
-
 import Aplication.WindowController;
-import Trees.BinaryNode;
 import Trees.INode;
-import Trees.ITree;
 import Trees.RecordOfAnimation;
 import Trees.Result;
 import Trees.Side;
@@ -22,8 +18,6 @@ import javafx.animation.Timeline;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextArea;
@@ -31,15 +25,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextBoundsType;
 import javafx.util.Duration;
 
 
 public class DrawingTree {
 	private WindowController windowController;
 	private List<IGraphicNode> listGraphicNodes = new ArrayList<>(); //root je na místě 0
-	private ITree<?> tree;
 	private int value;
 	private TextArea text;
 	private String oldText = "";
@@ -79,39 +70,20 @@ public class DrawingTree {
 	
 	private DoubleProperty xAnimatedBranch = new SimpleDoubleProperty();
 	private DoubleProperty yAnimatedBranch = new SimpleDoubleProperty();
-	
-	private List<Timeline> listBalanceAnimation = new ArrayList<>();	
 
-	public DrawingTree(ITree<?> tree, Pane paneTree, DoubleProperty speed, ReadOnlyDoubleProperty stageWidthProperty, WindowController windowController) {
+	public DrawingTree(Pane paneTree, DoubleProperty speed, ReadOnlyDoubleProperty stageWidthProperty, WindowController windowController) {
 		this.paneTreeWeight = stageWidthProperty;
 		this.paneTree = paneTree;
 		this.animationSpeed = speed;
 		this.windowController = windowController;
-		this.tree = tree;
 		
+		//Přidá text
 		text = new TextArea("");		
-		//text.setDisable(true);
 		text.setMaxWidth(250);
 		text.setMaxHeight(95);
-		text.setEditable(false);
-	//	text.setBoundsType(TextBoundsType.VISUAL);
-		//text.setFill(Color.WHITE);
+		text.setEditable(false);		
 		text.setFont(new Font(text.getFont().toString(), 15));
-		text.layoutXProperty().bind(stageWidthProperty.subtract(270));
-		//text.layoutYProperty().bind(0);
-		
-		text.textProperty().addListener(new ChangeListener<Object>() {
-			@Override
-			public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
-				// text.scrol
-				// fitToWidth and fitToHeight values. 
-			}			
-		});	
-		
-		
-		
-		//DefaultCaret caret = (DefaultCaret) text.getCaret();
-	//	caret.setUpdatePolicy(ALWAYS_UPDATE);
+		text.layoutXProperty().bind(stageWidthProperty.subtract(270));		
 		
 		paneTree.getChildren().add(text);
 	}
@@ -124,7 +96,6 @@ public class DrawingTree {
 		IGraphicNode root = rootNode.getGraphicNode();
 		rootSize = root.getRadiusSize();
 		stackPaneHeight = root.getStackPaneNode().getPrefHeight();
-		root.setLevel(0);
 		
 		rootY.bind(new SimpleDoubleProperty(ROOTBORDER));	
 		rootX.bind(paneTreeWeight.subtract(31).divide(2.0));	
@@ -197,8 +168,6 @@ public class DrawingTree {
 		
 		newIGraphicNode = result.getNode().getGraphicNode(); //vkládaný list	
 		//newIGraphicNode.setParent(((INode<?>)result.getNode().getParent()).getGraphicNode());
-		
-		newIGraphicNode.setLevel(result.getWay().size());
 		
 		paneTree.getChildren().add(newIGraphicNode.getStackPaneNode()); //přidám list 		
 		
@@ -294,7 +263,6 @@ public class DrawingTree {
 	 * Upraví vzdálenosti listů 
 	 */
 	private void balanceTree() {		
-		listBalanceAnimation = new ArrayList<>();
 		
 		//listGraphicNodes.forEach(x -> x.createBackUpBranch());
 
@@ -415,16 +383,6 @@ public class DrawingTree {
 		}
 	}	
 
-	/**
-	 * Zjistí jestli se ukončily všechny animace balance a zavolá překleslení
-	 */
-	private void balanceRedraw() {
-		if (++balanceRedraw == listBalanceAnimation.size()) {			
-			redraw();
-			balanceRedraw = 0;
-		}		
-	}
-	
 	/**
 	 * Skryje všechny zainteresované větve kvůli animaci
 	 * @param iGraphicNode
@@ -573,10 +531,13 @@ public class DrawingTree {
 		case MOVEVALUE:
 			moveValueAnimation();
 			break;
-		case SWAP:
-			swapAnimation();
+		case RR:
 			break;
-		case MOVEVALUEFINISH:
+		case LL:
+			break;
+		case RL:
+			break;
+		case LR:
 			break;
 		default:
 			break;
@@ -946,11 +907,6 @@ public class DrawingTree {
 
 		indexAnimation++;
 		nextAnimation();			
-	}
-	
-	private void swapAnimation(){
-		//createBackUp();
-		//TODO
 	}
 	
 	/**

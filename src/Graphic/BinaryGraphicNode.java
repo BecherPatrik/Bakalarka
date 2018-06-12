@@ -22,7 +22,6 @@ public class BinaryGraphicNode implements IGraphicNode {
 	private int leftChildrenCount = 0;
 	private int rightChildrenCount = 0;
 	private Side side;
-	private int level = 0;	
 
 	private Text value;	
 
@@ -269,16 +268,6 @@ public class BinaryGraphicNode implements IGraphicNode {
 	@Override
 	public int getLeftChildrenCount() {
 		return leftChildrenCount;
-	}
-
-	@Override
-	public int getLevel() {
-		return level;
-	}
-
-	@Override
-	public void setLevel(int level) {
-		this.level = level;
 	}
 
 	@Override

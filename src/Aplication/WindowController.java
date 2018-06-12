@@ -3,18 +3,12 @@ package Aplication;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
-
-import javax.swing.plaf.synth.SynthSeparatorUI;
-
-import com.sun.crypto.provider.AESParameters;
 
 import Graphic.DrawingTree;
 import Graphic.IGraphicNode;
@@ -45,7 +39,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -259,6 +252,9 @@ public class WindowController implements Initializable {
 		
 		disableButtons();		
 		
+		if (lastValue == 7) {
+			System.out.println();
+		}
 		lastResult = tree.insert(lastValue);
 		
 		if (lastResult != null) {
@@ -315,7 +311,7 @@ public class WindowController implements Initializable {
 	}
 	
 	@FXML 
-	private void dialogNewTree2() {
+	private void dialogNewTree() {
 		newRandomTree();
 	}
 	
@@ -323,10 +319,10 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového stromu přes tlačítko
 	 */
 	@FXML 
-	private void dialogNewTree() {
+	private void dialogNewTree1() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Nový strom");
-		alert.setHeaderText("Chcete pouze smazat aktuální strom,\nnebo vytvořit nový s náhodnýma hodnotama?");
+		alert.setHeaderText("Chcete pouze smazat aktuální strom,\nnebo vytvořit nový s náhodnými hodnotami?");
 		alert.setContentText("Vyberte si možnost:");
 
 		ButtonType buttonTypeOne = new ButtonType("Smazat aktuální");
@@ -362,18 +358,18 @@ public class WindowController implements Initializable {
 		
 		switch (btnTreesActual.getId()) {
 		case "btnBinary":
-			graphicTree = new DrawingTree(tree, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
-			tree = new BinaryTree();	
-			//tree = new AVLTree();
+			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
+			//tree = new BinaryTree();	
+			tree = new AVLTree();
 			break;
 			
 		case "btnAVL":
-			graphicTree = new DrawingTree(tree, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
+			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
 			tree = new AVLTree();
 			break;
 			
 		case "btnRedBlack":
-			graphicTree = new DrawingTree(tree, paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
+			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
 			tree = new BinaryTree();
 			//tree = new RedBlackTree();
 			break;
@@ -383,38 +379,11 @@ public class WindowController implements Initializable {
 		
 	}	
 	
-	private void newRandomTree2() {
+	private void newRandomTree() {
 		double oldSpeed = sliderSpeed.getValue();
 		newEmptyTree();
 		sliderSpeed.setValue(0);
-		graphicTree.hideText();
-		
-		/*inputNumber.setText("880");
-		insertNumber();
-		
-		inputNumber.setText("817");
-		insertNumber();
-		
-		inputNumber.setText("242");
-		insertNumber();		
-		
-		inputNumber.setText("20");
-		insertNumber();		
-		
-		inputNumber.setText("198");
-		insertNumber();
-		
-		inputNumber.setText("676");
-		insertNumber();
-		
-		inputNumber.setText("245");
-		insertNumber();
-		
-		inputNumber.setText("726");
-		insertNumber();		
-		
-		inputNumber.setText("683");
-		insertNumber();	
+		graphicTree.hideText();		
 		
 		inputNumber.setText("5");
 		insertNumber();
@@ -422,51 +391,19 @@ public class WindowController implements Initializable {
 		inputNumber.setText("3");
 		insertNumber();
 		
-		inputNumber.setText("4");
-		insertNumber();		
-		
-		inputNumber.setText("10");
-		insertNumber();		
-		
-		inputNumber.setText("7");
-		insertNumber();
-		
 		inputNumber.setText("6");
-		insertNumber();
-		
-		inputNumber.setText("9");
-		insertNumber();
+		insertNumber();	
 		
 		inputNumber.setText("8");
-		insertNumber();		
-		
-		inputNumber.setText("11");
 		insertNumber();	
 		
-		inputNumber.setText("2");
+		inputNumber.setText("7");
 		insertNumber();	
 		
-		inputNumber.setText("1");
+		/*inputNumber.setText("6");
+		insertNumber();	
+		inputNumber.setText("6");
 		insertNumber();	*/
-		
-
-		inputNumber.setText("20");
-		insertNumber();		
-		
-		inputNumber.setText("198");
-		insertNumber();
-		
-		inputNumber.setText("676");
-		insertNumber();
-		
-		inputNumber.setText("245");
-		insertNumber();
-		
-		inputNumber.setText("726");
-		insertNumber();		
-		
-		inputNumber.setText("683");
-		insertNumber();	
 		
 		graphicTree.showText();
 		graphicTree.clearText();
@@ -476,7 +413,7 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového náhodného stromu 
 	 * @param count
 	 */
-	private void newRandomTree() {	
+	private void newRandomTree1() {	
 		int count = dialogRandomTree();
 		double oldSpeed = sliderSpeed.getValue();
 		graphicTree.hideText();

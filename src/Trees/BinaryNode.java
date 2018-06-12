@@ -23,19 +23,29 @@ public class BinaryNode implements INode<BinaryNode> {
     }
 	
 	@Override
-	public void deleteLeft() {
+	public void deleteLeftWithGraphic() {
 		this.left = null;
 		this.graphicNode.setLeft(null);
 	}
+	
+	@Override
+	public void deleteLeft() {
+		this.left = null;
+	}
 
 	@Override
-	public void deleteRight() {
+	public void deleteRightWithGraphic() {
 		this.right = null;
 		this.graphicNode.setRight(null);
 	}
 	
 	@Override
-	public void setNode(BinaryNode node) {
+	public void deleteRight() {
+		this.right = null;		
+	}
+	
+	@Override
+	public void setNodeWithGraphic(BinaryNode node) {
 		value = node.getValue();
 		right = node.getRight();
 		left = node.getLeft();
@@ -56,7 +66,7 @@ public class BinaryNode implements INode<BinaryNode> {
 			} else if (graphicNode.getSide() == Side.RIGHT) {
 				graphicNode.getParent().setRight(graphicNode);
 			}
-		}
+		}		
 	}
 	
 	/********************************************************************************************************
@@ -80,9 +90,14 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 
 	@Override
-	public void setParent(BinaryNode node) {
+	public void setParentWithGraphic(BinaryNode node) {
 		parent = node;
 		graphicNode.setParent(node.getGraphicNode());
+	}
+	
+	@Override
+	public void setParent(BinaryNode node) {
+		parent = node;
 	}
 	
 	@Override
@@ -91,11 +106,18 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 
 	@Override
-	public void setRight(BinaryNode node) {
+	public void setRightWithGraphic(BinaryNode node) {
 		right = node;
 		graphicNode.setRight(node.getGraphicNode());
-		node.setParent(this);
+		node.setParentWithGraphic(this);
 		node.getGraphicNode().setSide(Side.RIGHT);
+		node.setParent(this);
+	}
+	
+	@Override
+	public void setRight(BinaryNode node) {
+		right = node;
+		node.setParent(this);
 	}
 	
 	@Override
@@ -104,11 +126,18 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 
 	@Override
-	public void setLeft(BinaryNode node) {
+	public void setLeftWithGraphic(BinaryNode node) {
 		left = node;
 		graphicNode.setLeft(node.getGraphicNode());
-		node.setParent(this);	
+		node.setParentWithGraphic(this);	
 		node.getGraphicNode().setSide(Side.LEFT);
+		node.setParent(this);
+	}
+	
+	@Override
+	public void setLeft(BinaryNode node) {
+		left = node;
+		node.setParent(this);	
 	}
 
 	@Override
