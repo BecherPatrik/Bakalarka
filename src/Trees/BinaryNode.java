@@ -117,7 +117,9 @@ public class BinaryNode implements INode<BinaryNode> {
 	@Override
 	public void setRight(BinaryNode node) {
 		right = node;
-		node.setParent(this);
+		if (node != null) {
+			node.setParent(this);
+		}		
 	}
 	
 	@Override
@@ -137,7 +139,10 @@ public class BinaryNode implements INode<BinaryNode> {
 	@Override
 	public void setLeft(BinaryNode node) {
 		left = node;
-		node.setParent(this);	
+		if (node != null) {
+			node.setParent(this);
+		}
+			
 	}
 
 	@Override

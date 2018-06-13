@@ -96,9 +96,9 @@ public class AVLNode implements INode<AVLNode> {
 			r += right.countFactor();
 		}
 		
-		factor = r - l;
+		factor = l - r;	
 		
-		graphicNode.setFactor(""+factor);
+		graphicNode.setNewFactor(Integer.toString(factor));
 		
 		return Math.max(r, l) + 1;
 	}
@@ -151,7 +151,9 @@ public class AVLNode implements INode<AVLNode> {
 	@Override
 	public void setRight(AVLNode node) {
 		right = node;
-		node.setParent(this);
+		if (node != null) {
+			node.setParent(this);
+		}		
 	}
 	
 	@Override
@@ -171,7 +173,10 @@ public class AVLNode implements INode<AVLNode> {
 	@Override
 	public void setLeft(AVLNode node) {
 		left = node;
-		node.setParent(this);	
+		if (node != null) {
+			node.setParent(this);
+		}
+			
 	}
 
 	@Override

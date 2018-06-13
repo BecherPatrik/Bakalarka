@@ -252,9 +252,6 @@ public class WindowController implements Initializable {
 		
 		disableButtons();		
 		
-		if (lastValue == 7) {
-			System.out.println();
-		}
 		lastResult = tree.insert(lastValue);
 		
 		if (lastResult != null) {
@@ -397,8 +394,8 @@ public class WindowController implements Initializable {
 		inputNumber.setText("8");
 		insertNumber();	
 		
-		inputNumber.setText("7");
-		insertNumber();	
+		//inputNumber.setText("7");
+		//insertNumber();	
 		
 		/*inputNumber.setText("6");
 		insertNumber();	

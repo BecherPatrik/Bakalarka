@@ -314,6 +314,10 @@ public class BinaryGraphicNode implements IGraphicNode {
 		return stackPaneNode;
 	}
 
+	public Circle getCircle() {
+		return circle;
+	}
+
 	@Override
 	public Line getBranch() {
 		return branch;

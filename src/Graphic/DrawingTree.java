@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Aplication.WindowController;
+import Trees.AVLNode;
 import Trees.INode;
+import Trees.ITree;
 import Trees.RecordOfAnimation;
 import Trees.Result;
 import Trees.Side;
@@ -30,12 +32,13 @@ import javafx.util.Duration;
 
 public class DrawingTree {
 	private WindowController windowController;
+	
 	private List<IGraphicNode> listGraphicNodes = new ArrayList<>(); //root je na místě 0
-	private int value;
+	
+	private int value;	
 	private TextArea text;
 	private String oldText = "";
 	private String newText;
-
 	private ReadOnlyDoubleProperty paneTreeWeight;
 	private Pane paneTree;
 	private DoubleProperty animationSpeed = new SimpleDoubleProperty();
@@ -62,6 +65,7 @@ public class DrawingTree {
 	private int indexAnimation = 0;
 	private boolean isRedraw = false;
 	private boolean notFind = false;
+	private boolean isBalance = false;
 	
 	private int balanceRedraw = 0;
 	
@@ -480,8 +484,12 @@ public class DrawingTree {
 				iGraphicNode.getRight().getBranchStartY().bind(yAnimatedBranch);
 			}				
 		}
-		
-		windowController.enableButtons();		
+		if (indexAnimation >= recordOfAnimations.size()) {
+			windowController.enableButtons();	
+		} else {
+			indexAnimation++;
+			nextAnimation();
+		}
 	}	
 	
 	/********************************************************************************************************
@@ -496,6 +504,7 @@ public class DrawingTree {
 	private void startAnimation(ArrayList<RecordOfAnimation> recordOfAnimations) {
 		indexAnimation = 0;
 		notFind = false;
+		isBalance = false;
 		this.recordOfAnimations = recordOfAnimations;
 		nextAnimation();
 	}
@@ -518,31 +527,49 @@ public class DrawingTree {
 			wayIndex = 0;
 			nextSearchNode();
 			break;
+			
 		case INSERT:
 			insertNodeAnimation();
 			break;
+			
 		case DELETE:
 			deleteNodeAnimation();			
 			break;
+			
 		case MOVENODE:
 			moveNodeAnimation();
 			//isRedraw = true;
-			break;		
+			break;
+			
 		case MOVEVALUE:
 			moveValueAnimation();
 			break;
+			
 		case RR:
+			rrAnimation();
 			break;
+			
 		case LL:
+			llAnimation();
 			break;
+			
 		case RL:
+			rlAnimation();
 			break;
+			
 		case LR:
+			lrAnimation();
 			break;
+			
+		case UPDATEFACTOR:
+			updateFactor();
+			break;
+			
 		default:
 			break;
 		}	
-	}	
+	}
+	
 
 	/**
 	 * Zavolá znovu metodu highlightNode pro každý list zvlášť
@@ -550,6 +577,7 @@ public class DrawingTree {
 	private void nextSearchNode() {		
 		highlightNodeAnimation(wayList.get(wayIndex));
 	}
+	
 	
 	/**
 	 * Animace zvýraznění větve a následně listu 
@@ -633,9 +661,9 @@ public class DrawingTree {
 			seqT2.play();
 		} else {
 			seqT.play();
-		}
-		
+		}		
 	}
+	
 	
 	private void highlightNodeAnimationFinished() {
 		if(!notFind && ((boolean)recordOfAnimations.get(indexAnimation).getObject())) {
@@ -661,6 +689,7 @@ public class DrawingTree {
 		}		
 	}
 	
+	
 	/**
 	 * Zvýrazní nalezený list
 	 */
@@ -681,6 +710,7 @@ public class DrawingTree {
 
 		seqT.play();
 	}
+	
 	
 	/**
 	 * Animace vložení nového listu
@@ -795,6 +825,7 @@ public class DrawingTree {
 		nextAnimation();
 	}
 
+	
 	/**
 	 * Nahradí mazaný list novým listem
 	 */
@@ -846,6 +877,7 @@ public class DrawingTree {
 		timeline.play();				
 	}
 	
+	
 	private void moveNodeAnimationFinished(IGraphicNode graphicNodeRemoved, IGraphicNode graphicNodeMoved) {
 		checkBranches(); //doplním větve
 		
@@ -893,6 +925,7 @@ public class DrawingTree {
 		nextAnimation();
 	}
 	
+	
 	/**
 	 * Přesune hodnotu do jiného listu
 	 */
@@ -910,6 +943,111 @@ public class DrawingTree {
 	}
 	
 	/**
+	 * Aktualizuje ohodnocení listů
+	 */
+	private void updateFactor() {
+		if (!(isBalance)) {
+			indexAnimation--;
+			isBalance = true;
+			balanceTree();
+			return;
+		}
+		
+		isBalance = false;
+		
+		if (animationSpeed.get() == 0 || (!(boolean)recordOfAnimations.get(indexAnimation).getObject())) { //když nebude animace
+			for (IGraphicNode iGraphicNode : listGraphicNodes) {
+				((AVLGraphicNode)iGraphicNode).updateFactor();
+			}
+			indexAnimation++;
+			nextAnimation();
+			return;
+		}
+		
+		oldText = text.getText();
+		
+		AVLGraphicNode start = (AVLGraphicNode)recordOfAnimations.get(indexAnimation).getNode1();
+		nextUpdateFactor(start);		
+	}
+	
+	private void nextUpdateFactor(AVLGraphicNode node) {				
+		SequentialTransition seqT;
+		
+		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.WHITE, Color.LIME);
+		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())));
+		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.LIME, Color.WHITE);
+		
+		setTextWithHistory("VÝPOČET FAKTORU VYVÁŽENÍ:");
+		
+		seqT = new SequentialTransition(st3, pt2, st4);		
+		
+		seqT.play();
+		
+		seqT.setOnFinished(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				node.updateFactor();
+				int factor = Integer.parseInt(node.getFactor().getText().toString());
+				
+				if (factor == -2 || factor == 2) {
+					node.highlightFindNode();
+					appendNewText("\n • Strom je nevyvážený.");
+					indexAnimation++;
+					nextAnimation();
+				} else {
+					if(node.getBranch() != null) {
+						StrokeTransition st1 = new StrokeTransition(Duration.millis(SLOWANIMATION),(Line) node.getBranch(), Color.WHITE, Color.LIME);
+						PauseTransition pt1 = new PauseTransition(Duration.millis(5 * (FASTANIMATION - animationSpeed.get())));
+						StrokeTransition st2 = new StrokeTransition(Duration.millis(SLOWANIMATION), (Line) node.getBranch(), Color.LIME, Color.WHITE);
+						SequentialTransition seqT2 = new SequentialTransition(st1, pt1, st2);
+						
+						seqT2.setOnFinished(new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent event) {		
+								nextUpdateFactor((AVLGraphicNode)node.getParent());
+							}
+						});
+						
+						seqT2.play();
+					} else {
+						appendNewText("\n • Strom je vyvážený.");
+						indexAnimation++;
+						nextAnimation();
+					}					
+				}				
+			}
+		});			
+	}
+	
+	private void rrAnimation() {
+		IGraphicNode nodeB = recordOfAnimations.get(indexAnimation).getNode1();
+		IGraphicNode nodeA = nodeB.getLeft();
+		
+		oldText = text.getText();
+		
+		appendNewText("• Rotace RR.");
+		
+		/*if (result.getSide() == Side.LEFT) {
+			xAnimatedNode.bind(newIGraphicNode.getParent().getX().subtract(rootSize));	
+		} else {
+			xAnimatedNode.bind(newIGraphicNode.getParent().getX().add(rootSize));	
+		}*/
+		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+	}
+	
+	private void rlAnimation() {
+		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+	}
+	
+	private void llAnimation() {
+		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+	}
+	
+	private void lrAnimation() {
+		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+	}
+	
+	/**
 	 * Vymaže text
 	 */
 	public void clearText() {
@@ -917,12 +1055,14 @@ public class DrawingTree {
 		oldText = "";
 	}
 	
+	
 	/**
 	 * Skryje text
 	 */
 	public void hideText() {
 		paneTree.getChildren().remove(text);
 	}
+	
 	
 	/**
 	 * Zobrazí text
@@ -936,6 +1076,7 @@ public class DrawingTree {
 		text.toBack();
 	}
 	
+	
 	/**
 	 * Přidá text do TextArea opačně 
 	 * řeší to bug se scroll barem
@@ -946,6 +1087,7 @@ public class DrawingTree {
 		text.setText(newText + "\n\n" + oldText);		
 	}
 	
+	
 	/**
 	 * Přidá k nově přidanému textu řetězec (zachovává historii)
 	 * @param s
@@ -955,21 +1097,25 @@ public class DrawingTree {
 		text.setText(newText + "\n\n" + oldText);
 	}
 	
+	
 	/********************************************************************************************************
 	 * GETS & SETS
 	 * 
-	 *******************************************************************************************************/
+	 *  *******************************************************************************************************/
+	
 	
 	public List<IGraphicNode> getListGraphicNodes() {
 		return listGraphicNodes;
 	}
+	
 	
 	public void setListGraphicNodes(List<IGraphicNode> oldGraphicTreeNodes) {
 		listGraphicNodes.clear();
 		listGraphicNodes.addAll(oldGraphicTreeNodes);		
 	}
 
+	
 	public void setRedraw() {
 		redraw();
-	}	
+	}
 }

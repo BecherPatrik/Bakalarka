@@ -10,6 +10,7 @@ import javafx.scene.text.TextBoundsType;
 public class AVLGraphicNode extends BinaryGraphicNode {
 	
 	private Text factor;
+	private String newFactor;
 
 	public AVLGraphicNode(int value) {
 		super(value);		
@@ -27,7 +28,26 @@ public class AVLGraphicNode extends BinaryGraphicNode {
 		super.getStackPaneNode().getChildren().add(factor);
 		super.getStackPaneNode().setPrefHeight(getRadiusSize() + 30);
 		StackPane.setAlignment(factor, Pos.TOP_CENTER);		
-	}	
+	}
+	
+	@Override
+	public void highlightFindNode() {
+		super.highlightFindNode();
+		factor.setFill(Color.RED);
+	}
+
+	@Override
+	public void setDefaultColorNode() {
+		super.setDefaultColorNode();
+		factor.setFill(Color.WHITE);
+	}
+	
+	/**
+	 * Aklualizuje hodnost listu
+	 */
+	public void updateFactor() {
+		setFactor(newFactor);
+	}
 
 	/********************************************************************************************************
 	 * GETS & SETS
@@ -42,5 +62,9 @@ public class AVLGraphicNode extends BinaryGraphicNode {
 		this.factor.setText(factor);
 		Text text = (Text) super.getStackPaneNode().getChildren().get(2);
 		text.setText(factor);
+	}
+
+	public void setNewFactor(String newFactor) {
+		this.newFactor = newFactor;
 	}	
 }

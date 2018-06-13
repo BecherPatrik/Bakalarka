@@ -56,6 +56,7 @@ public class Result<T> {
 	 * (DELETE, null, (boolean) děti)<br>
 	 * (MOVEVALUE, cíl, (INode) zdroj)<br>
 	 * (MOVENODE, cíl, (INode) zdroj)<br>
+	 * (UPDATEFACTOR, začátek, (boolean) animovat)<br>
 	 * </p>
 	 * @param action
 	 * @param node1

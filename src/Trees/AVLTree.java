@@ -32,7 +32,7 @@ public class AVLTree implements ITree<AVLNode> {
 	    }
 	    nodes.add((AVLNode)result.getNode());
 	    result.addAnimation(AnimatedAction.INSERT, null, null);
-	    return balanceTree(result);
+	    return balanceTree(result, (AVLNode)result.getNode());
 	}
     
     @Override
@@ -47,10 +47,10 @@ public class AVLTree implements ITree<AVLNode> {
             return result;
         }
 
-		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud má dva potomnky 1.
+		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud má 2 potomky 1.
 			helpNode = removedNode.getRight(); // dosadím pravého
 
-			if (helpNode.getLeft() != null || helpNode.getRight() != null) { //pokud dosazovaný má potomky 1.1
+			if (helpNode.getLeft() != null || helpNode.getRight() != null) { //pokud dosazovaný má levé potomky 1.1
 				if (helpNode.getLeft() != null) { // pokud pravý potomek nemá levého 1.2
 					while (helpNode.getLeft() != null) { // dokud nemám poslední levý 1.3
 						helpNode = helpNode.getLeft();
@@ -65,10 +65,8 @@ public class AVLTree implements ITree<AVLNode> {
             if (helpNode.getRight() == null) { //0.1
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.1.1
             		helpNode.getParent().deleteRightWithGraphic();
-            		System.out.println("\n0.1.1\n");
             	} else { //0.1.2
             		helpNode.getParent().deleteLeftWithGraphic(); 
-            		System.out.println("\n0.1.2\n");
             	}
                 
                 result.addAnimation(AnimatedAction.MOVENODE, removedNode.getGraphicNode(), helpNode.getGraphicNode()); 
@@ -95,18 +93,21 @@ public class AVLTree implements ITree<AVLNode> {
             
             removedNode.setNodeWithGraphic(removedNode.getRight());  
         } else { // 4.   
-        	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá dìti 
-            if (removedNode.getGraphicNode().getSide() == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
-                removedNode.getParent().deleteLeftWithGraphic();               
+        	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá dìti
+        	
+        	if (removedNode.getGraphicNode().getSide() == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
+                removedNode.getParent().deleteLeftWithGraphic();  
             } else if (removedNode.equals(root)) { //osamocený root
             	root = null;
+            	return balanceTree(result, null);
             } else {
             	removedNode.getParent().deleteRightWithGraphic();  //pravý            	
             }
-            return result; 
+            
+            return balanceTree(result, removedNode.getParent());
         } 
         
-        return result;
+        return balanceTree(result, removedNode);
 	}	
 	
 	/**
@@ -155,55 +156,107 @@ public class AVLTree implements ITree<AVLNode> {
 	 * @param result
 	 * @return
 	 */
-	private Result<AVLNode> balanceTree(Result<AVLNode> result) {
+	private Result<AVLNode> balanceTree(Result<AVLNode> result, AVLNode startNode) {
 		root.countFactor();
 		
-		AVLNode balanceNode = null;
+		AVLNode balanceNode = startNode;
 		
-		for (AVLNode node : nodes) {
-			if (node.getFactor() == 2 || node.getFactor() == -2) {
-				balanceNode = node;
+		result.addAnimation(AnimatedAction.UPDATEFACTOR, startNode.getGraphicNode(), true);
+		
+		while (balanceNode != null) {
+			if (balanceNode.getFactor() == 2 || balanceNode.getFactor() == -2) {
 				break;
 			}
+			balanceNode = balanceNode.getParent();
 		}
 		
 		if (balanceNode != null) {
 			if (balanceNode.getFactor() == 2) {
 				if (balanceNode.getLeft().getFactor() == -1) {
-					return rlBalance();
+					return rlBalance(result, balanceNode);
 				} else {
-					return rrBalance();
+					return rrBalance(result, balanceNode);
 				}
 			} else {
 				if (balanceNode.getRight().getFactor() == 1) {
-					return lrBalance();
+					return lrBalance(result, balanceNode);
 				} else {
-					return llBalance();
+					return llBalance(result, balanceNode);
 				}
 			}
 		}
 		
+		
+		
 		return result;		
 	}
 	
-	private Result<AVLNode> llBalance() {
-		// TODO Auto-generated method stub
-		return null;
+	private Result<AVLNode> llBalance(Result<AVLNode> result, AVLNode nodeB) {
+		AVLNode nodeA = nodeB.getRight();
+		
+		if (nodeB.getParent() == null) {
+			root = nodeA;
+		}
+		
+		nodeB.setRight(nodeA.getLeft());
+		nodeA.setLeft(nodeB);
+		
+		result.addAnimation(AnimatedAction.LL, nodeB.getGraphicNode(), root);
+		
+		root.countFactor();
+		
+		return result;
 	}
 
-	private Result<AVLNode> lrBalance() {
-		// TODO Auto-generated method stub
-		return null;
+	private Result<AVLNode> lrBalance(Result<AVLNode> result, AVLNode nodeC) {
+		AVLNode nodeA = nodeC.getRight();
+		AVLNode nodeB = nodeA.getLeft();
+		
+		if (nodeC.getParent() == null) {
+			root = nodeB;
+		}
+		
+		nodeC.setRight(nodeB.getLeft());
+		nodeA.setLeft(nodeB.getRight());
+		nodeB.setLeft(nodeC);
+		nodeB.setRight(nodeA);
+		
+		result.addAnimation(AnimatedAction.LR, nodeB.getGraphicNode(), root);		
+		
+		return result;
 	}
 
-	private Result<AVLNode> rrBalance() {
-		// TODO Auto-generated method stub
-		return null;
+	private Result<AVLNode> rrBalance(Result<AVLNode> result, AVLNode nodeB) {
+		AVLNode nodeA = nodeB.getLeft();
+		
+		if (nodeB.getParent() == null) {
+			root = nodeA;
+		}
+		
+		nodeB.setLeft(nodeA.getRight());
+		nodeA.setRight(nodeB);
+		
+		result.addAnimation(AnimatedAction.RR, nodeB.getGraphicNode(), root);		
+		
+		return result;
 	}
 
-	private Result<AVLNode> rlBalance() {
-		// TODO Auto-generated method stub
-		return null;
+	private Result<AVLNode> rlBalance(Result<AVLNode> result, AVLNode nodeC) {
+		AVLNode nodeA = nodeC.getLeft();
+		AVLNode nodeB = nodeA.getRight();
+		
+		if (nodeC.getParent() == null) {
+			root = nodeB;
+		}
+		
+		nodeC.setLeft(nodeB.getRight());
+		nodeA.setRight(nodeB.getLeft());
+		nodeB.setRight(nodeC);
+		nodeB.setLeft(nodeA);
+		
+		result.addAnimation(AnimatedAction.RL, nodeB.getGraphicNode(), root);		
+		
+		return result;
 	}
 
 	/********************************************************************************************************
