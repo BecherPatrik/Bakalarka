@@ -110,8 +110,8 @@ public class BinaryNode implements INode<BinaryNode> {
 		right = node;
 		graphicNode.setRight(node.getGraphicNode());
 		node.setParentWithGraphic(this);
-		node.getGraphicNode().setSide(Side.RIGHT);
-		node.setParent(this);
+		//***//node.getGraphicNode().setSide(Side.RIGHT); 
+		//***//node.setParent(this);
 	}
 	
 	@Override
@@ -132,8 +132,8 @@ public class BinaryNode implements INode<BinaryNode> {
 		left = node;
 		graphicNode.setLeft(node.getGraphicNode());
 		node.setParentWithGraphic(this);	
-		node.getGraphicNode().setSide(Side.LEFT);
-		node.setParent(this);
+		//***//node.getGraphicNode().setSide(Side.LEFT);
+		//***//node.setParent(this);
 	}
 	
 	@Override
@@ -141,8 +141,7 @@ public class BinaryNode implements INode<BinaryNode> {
 		left = node;
 		if (node != null) {
 			node.setParent(this);
-		}
-			
+		}			
 	}
 
 	@Override
@@ -159,16 +158,17 @@ public class BinaryNode implements INode<BinaryNode> {
 		
 		if (left != null) {
 			this.graphicNode.setLeft(left.getGraphicNode());
-			left.graphicNode.setParent(this.graphicNode);
+			//***//left.graphicNode.setParent(this.graphicNode);
 		}		
 		
 		if (right != null) {
 			this.graphicNode.setRight(right.getGraphicNode());
-			right.graphicNode.setParent(this.graphicNode);
+			//***//right.graphicNode.setParent(this.graphicNode);
 		}
 		
 		if (parent != null) {
 			this.graphicNode.setParent(parent.getGraphicNode());
+			
 			if (graphicNode.getSide() == Side.LEFT) {
 				graphicNode.getParent().setLeft(graphicNode);
 			} else if (graphicNode.getSide() == Side.RIGHT) {

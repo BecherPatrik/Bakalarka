@@ -391,8 +391,11 @@ public class WindowController implements Initializable {
 		inputNumber.setText("6");
 		insertNumber();	
 		
-		inputNumber.setText("8");
+		inputNumber.setText("2");
 		insertNumber();	
+		
+		//inputNumber.setText("4");
+	//	insertNumber();	
 		
 		//inputNumber.setText("7");
 		//insertNumber();	

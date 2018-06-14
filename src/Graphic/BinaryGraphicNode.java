@@ -237,7 +237,11 @@ public class BinaryGraphicNode implements IGraphicNode {
 
 	@Override
 	public void setLeft(IGraphicNode left) {
-		this.left = left;		
+		this.left = left;	
+		if (left != null) {
+			this.left.setParent(this);
+			this.left.setSide(Side.LEFT);
+		}		
 	}
 
 	@Override
@@ -248,6 +252,10 @@ public class BinaryGraphicNode implements IGraphicNode {
 	@Override
 	public void setRight(IGraphicNode right) {
 		this.right = right;
+		if (right != null) {
+			this.right.setParent(this);
+			this.right.setSide(Side.RIGHT);
+		}		
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.List;
 
 import Aplication.WindowController;
 import Trees.AVLNode;
+import Trees.AnimatedAction;
 import Trees.INode;
 import Trees.ITree;
 import Trees.RecordOfAnimation;
@@ -28,7 +29,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-
 
 public class DrawingTree {
 	private WindowController windowController;
@@ -375,8 +375,8 @@ public class DrawingTree {
 			iGraphicNode.getX().unbind();
 			iGraphicNode.getY().unbind();
 			
-			iGraphicNode.getBranchEndX().unbind();
-			iGraphicNode.getBranchEndY().unbind();			
+			//iGraphicNode.getBranchEndX().unbind();
+			//iGraphicNode.getBranchEndY().unbind();			
 			
 			hideMovedBranchRecursive(iGraphicNode);
 			
@@ -570,14 +570,12 @@ public class DrawingTree {
 		}	
 	}
 	
-
 	/**
 	 * Zavolá znovu metodu highlightNode pro každý list zvlášť
 	 */
 	private void nextSearchNode() {		
 		highlightNodeAnimation(wayList.get(wayIndex));
 	}
-	
 	
 	/**
 	 * Animace zvýraznění větve a následně listu 
@@ -664,7 +662,6 @@ public class DrawingTree {
 		}		
 	}
 	
-	
 	private void highlightNodeAnimationFinished() {
 		if(!notFind && ((boolean)recordOfAnimations.get(indexAnimation).getObject())) {
 			if (animationSpeed.get() == 0) { //když nebude animace
@@ -689,7 +686,6 @@ public class DrawingTree {
 		}		
 	}
 	
-	
 	/**
 	 * Zvýrazní nalezený list
 	 */
@@ -710,7 +706,6 @@ public class DrawingTree {
 
 		seqT.play();
 	}
-	
 	
 	/**
 	 * Animace vložení nového listu
@@ -824,7 +819,6 @@ public class DrawingTree {
 		indexAnimation++;					
 		nextAnimation();
 	}
-
 	
 	/**
 	 * Nahradí mazaný list novým listem
@@ -877,7 +871,6 @@ public class DrawingTree {
 		timeline.play();				
 	}
 	
-	
 	private void moveNodeAnimationFinished(IGraphicNode graphicNodeRemoved, IGraphicNode graphicNodeMoved) {
 		checkBranches(); //doplním větve
 		
@@ -924,7 +917,6 @@ public class DrawingTree {
 		indexAnimation++;
 		nextAnimation();
 	}
-	
 	
 	/**
 	 * Přesune hodnotu do jiného listu
@@ -1023,17 +1015,69 @@ public class DrawingTree {
 		IGraphicNode nodeB = recordOfAnimations.get(indexAnimation).getNode1();
 		IGraphicNode nodeA = nodeB.getLeft();
 		
+		nodeA.highlightNode();
+		
 		oldText = text.getText();
 		
-		appendNewText("• Rotace RR.");
+		appendNewText("\n • Rotace RR.");
 		
-		/*if (result.getSide() == Side.LEFT) {
-			xAnimatedNode.bind(newIGraphicNode.getParent().getX().subtract(rootSize));	
-		} else {
-			xAnimatedNode.bind(newIGraphicNode.getParent().getX().add(rootSize));	
-		}*/
-		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		xAnimatedNode.bind(nodeB.getX().add(rootSize));	
+		yAnimatedNode.bind(nodeB.getY().add(DOWNMARGIN));
+		
+		Timeline timeline = new Timeline();
+
+		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
+				new KeyValue(nodeA.getX(), nodeB.getX().get()),
+				new KeyValue(nodeA.getY(), nodeB.getY().get()),
+				new KeyValue(nodeB.getX(), xAnimatedNode.get()),
+				new KeyValue(nodeB.getY(), yAnimatedNode.get()));
+
+		timeline.getKeyFrames().add(kf);
+
+		timeline.setOnFinished(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				rrAnimationFinished(nodeA, nodeB);
+			}
+		});
+		
+		nodeA.getX().unbind();
+		nodeA.getY().unbind();
+		
+		nodeB.getX().unbind();
+		nodeB.getY().unbind();
+		
+		hideMovedBranchRecursive(nodeB);
+		timeline.play();		
 	}
+	
+	private void rrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {
+		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		
+		nodeB.setLeft(nodeA.getRight());
+		
+		nodeA.setParent(nodeB.getParent());
+		nodeA.setSide(nodeB.getSide());
+		nodeA.setRight(nodeB);	
+		
+		nodeA.setX(nodeB.getX());
+		nodeA.setY(nodeB.getY());
+		
+		nodeB.setX(xAnimatedNode);
+		nodeB.setY(yAnimatedNode);
+		
+		nodeA.setDefaultColorNode();
+		nodeB.setDefaultColorNode();
+		
+		listGraphicNodes.remove(nodeA); //posunu list A před B
+		listGraphicNodes.add(listGraphicNodes.indexOf(nodeB), nodeA);
+		
+		recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		
+		indexAnimation++;
+		nextAnimation();
+	}
+	
 	
 	private void rlAnimation() {
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
@@ -1055,14 +1099,12 @@ public class DrawingTree {
 		oldText = "";
 	}
 	
-	
 	/**
 	 * Skryje text
 	 */
 	public void hideText() {
 		paneTree.getChildren().remove(text);
 	}
-	
 	
 	/**
 	 * Zobrazí text
@@ -1076,7 +1118,6 @@ public class DrawingTree {
 		text.toBack();
 	}
 	
-	
 	/**
 	 * Přidá text do TextArea opačně 
 	 * řeší to bug se scroll barem
@@ -1087,7 +1128,6 @@ public class DrawingTree {
 		text.setText(newText + "\n\n" + oldText);		
 	}
 	
-	
 	/**
 	 * Přidá k nově přidanému textu řetězec (zachovává historii)
 	 * @param s
@@ -1097,23 +1137,19 @@ public class DrawingTree {
 		text.setText(newText + "\n\n" + oldText);
 	}
 	
-	
 	/********************************************************************************************************
 	 * GETS & SETS
 	 * 
 	 *  *******************************************************************************************************/
 	
-	
 	public List<IGraphicNode> getListGraphicNodes() {
 		return listGraphicNodes;
 	}
-	
 	
 	public void setListGraphicNodes(List<IGraphicNode> oldGraphicTreeNodes) {
 		listGraphicNodes.clear();
 		listGraphicNodes.addAll(oldGraphicTreeNodes);		
 	}
-
 	
 	public void setRedraw() {
 		redraw();
