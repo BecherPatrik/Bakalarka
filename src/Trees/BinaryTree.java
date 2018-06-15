@@ -159,6 +159,16 @@ public class BinaryTree implements ITree<BinaryNode> {
         return resultNode;
     }
 	
+	@Override
+	public void disableBalance() {
+		return;		
+	}
+	
+	@Override
+	public void enableBalance() {
+		return;
+	}
+	
 	/********************************************************************************************************
 	 * GETS & SETS
 	 * 

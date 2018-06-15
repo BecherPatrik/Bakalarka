@@ -6,6 +6,8 @@ public class AVLTree implements ITree<AVLNode> {
 	
 	private AVLNode root = null;
 	private ArrayList<AVLNode> nodes = new ArrayList<>();
+	
+	private boolean balance = true;
 
 	public AVLTree() {}	
 	
@@ -32,7 +34,14 @@ public class AVLTree implements ITree<AVLNode> {
 	    }
 	    nodes.add((AVLNode)result.getNode());
 	    result.addAnimation(AnimatedAction.INSERT, null, null);
-	    return balanceTree(result, (AVLNode)result.getNode());
+	    
+	    if (balance) {
+	    	return balanceTree(result, (AVLNode)result.getNode());
+	    } else {
+	    	root.countFactor();
+	    	result.addAnimation(AnimatedAction.UPDATEFACTOR, null, false);
+	    	return result;
+	    }	    
 	}
     
     @Override
@@ -184,9 +193,7 @@ public class AVLTree implements ITree<AVLNode> {
 					return llBalance(result, balanceNode);
 				}
 			}
-		}
-		
-		
+		}		
 		
 		return result;		
 	}
@@ -257,6 +264,16 @@ public class AVLTree implements ITree<AVLNode> {
 		result.addAnimation(AnimatedAction.RL, nodeB.getGraphicNode(), root);		
 		
 		return result;
+	}
+	
+	@Override
+	public void disableBalance() {
+		this.balance = false;		
+	}
+	
+	@Override
+	public void enableBalance() {
+		this.balance = true;		
 	}
 
 	/********************************************************************************************************

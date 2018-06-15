@@ -241,7 +241,7 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void insertNumber() {
-		//treeLog();
+		treeLog();
 		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
 		//listOldGraphicTreeNodes.clear();
 		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
@@ -394,8 +394,8 @@ public class WindowController implements Initializable {
 		inputNumber.setText("2");
 		insertNumber();	
 		
-		//inputNumber.setText("4");
-	//	insertNumber();	
+		inputNumber.setText("4");
+		insertNumber();	
 		
 		//inputNumber.setText("7");
 		//insertNumber();	
@@ -572,6 +572,7 @@ public class WindowController implements Initializable {
 		sliderSpeed.setValue(0);
 		finishAnimation = 0;
 		isRedraw  = true;
+		tree.disableBalance();
 		
 		if (!(listHistory.isEmpty())) {
 			graphicTree.hideText();
@@ -585,12 +586,11 @@ public class WindowController implements Initializable {
 			
 			graphicTree.clearText();
 			graphicTree.showText();
-		} else {
+		} else {			
 			repeatLastAction();
-		}
+		}	
 
-		sliderSpeed.setValue(oldSpeed);	
-		
+		sliderSpeed.setValue(oldSpeed);			
 	}
 	
 	/**
@@ -627,6 +627,7 @@ public class WindowController implements Initializable {
 		isRedraw = false;
 		sliderSpeed.setValue(oldSpeed);	
 		graphicTree.clearText();
+		tree.enableBalance();
 		switch (lastAction) {
 		case INSERT:	
 			if (tree.getRoot() == null) {
@@ -739,8 +740,8 @@ public class WindowController implements Initializable {
 			return;
 		}
 		//System.out.println(paneTree.getWidth()+ " - "+ scrollPane.getWidth()+ " + "+ scrollPane.getPrefViewportWidth());
-		//System.out.println("===============================");
-		//treeLog();
+		System.out.println("===============================");
+		treeLog();
 		
 		primaryStage.setResizable(true);
 		
@@ -789,7 +790,7 @@ public class WindowController implements Initializable {
 		if (parent == null) {
 			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +"\n";
 		} else {
-			s = ""+"x "+ n.getGraphicNode().getX().get() +"°°"+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +  "\n rodič: " +
+			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +  "\n rodič: " +
 					parent.getValue() + " - " + parent.getGraphicNode().getValue() + " = " + parent.getGraphicNode() + " ->" + parent.getGraphicNode().getStackPaneNode() + "\n*********************************\n";
 		}
 		
