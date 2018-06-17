@@ -303,7 +303,7 @@ public class WindowController implements Initializable {
 		
 		lastResult = tree.delete(Integer.parseInt(inputNumber.getText()));		
 		graphicTree.deleteNode(lastResult, lastValue);	
-		//System.out.println("-----------------------------------");
+		//System.out.println("----------------------------------");
 		//treeLog();
 	}
 	
@@ -382,7 +382,7 @@ public class WindowController implements Initializable {
 		sliderSpeed.setValue(0);
 		graphicTree.hideText();		
 		
-		inputNumber.setText("5");
+		/*inputNumber.setText("5");
 		insertNumber();
 		
 		inputNumber.setText("3");
@@ -394,16 +394,23 @@ public class WindowController implements Initializable {
 		inputNumber.setText("2");
 		insertNumber();	
 		
-		inputNumber.setText("4");
+		//inputNumber.setText("4");
+		//insertNumber();	*/
+		
+		inputNumber.setText("5");
+		insertNumber();
+		
+		inputNumber.setText("3");
+		insertNumber();
+		
+		inputNumber.setText("7");
 		insertNumber();	
 		
-		//inputNumber.setText("7");
-		//insertNumber();	
-		
-		/*inputNumber.setText("6");
+		inputNumber.setText("8");
 		insertNumber();	
-		inputNumber.setText("6");
-		insertNumber();	*/
+		
+		//inputNumber.setText("6");
+		//insertNumber();		
 		
 		graphicTree.showText();
 		graphicTree.clearText();

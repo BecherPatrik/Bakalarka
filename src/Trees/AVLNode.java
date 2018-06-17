@@ -101,6 +101,7 @@ public class AVLNode implements INode<AVLNode> {
 		graphicNode.setNewFactor(Integer.toString(factor));
 		
 		return Math.max(r, l) + 1;
+		
 	}
 	
 	/********************************************************************************************************

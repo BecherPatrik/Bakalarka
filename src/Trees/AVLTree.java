@@ -210,8 +210,6 @@ public class AVLTree implements ITree<AVLNode> {
 		
 		result.addAnimation(AnimatedAction.LL, nodeB.getGraphicNode(), root);
 		
-		root.countFactor();
-		
 		return result;
 	}
 

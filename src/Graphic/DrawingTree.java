@@ -1030,8 +1030,8 @@ public class DrawingTree {
 		xAnimatedNode = new SimpleDoubleProperty(nodeB.getX().get() + rootSize);	
 		yAnimatedNode = new SimpleDoubleProperty(nodeB.getY().get() + DOWNMARGIN);
 		
-		xAnimatedNode.bind(nodeB.getX().add(rootSize));	
-		yAnimatedNode.bind(nodeB.getY().add(DOWNMARGIN));
+		//xAnimatedNode.bind(nodeB.getX().add(rootSize));	
+		//yAnimatedNode.bind(nodeB.getY().add(DOWNMARGIN));
 		
 		Timeline timeline = new Timeline();
 
@@ -1127,9 +1127,113 @@ public class DrawingTree {
 	}
 	
 	private void llAnimation() {
-		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		IGraphicNode nodeB = recordOfAnimations.get(indexAnimation).getNode1();
+		IGraphicNode nodeA = nodeB.getRight();
+		
+		if (animationSpeed.get() == 0) {
+			oldText = text.getText();
+			setTextWithHistory("VYVÁŽENÍ STROMU");
+			appendNewText("\n • Rotace LL.");
+			llAnimationFinished(nodeA, nodeB);
+			return;
+		}		
+		
+		nodeA.highlightNode();		
+		
+		appendNewText("\n • Rotace LL.");
+		
+		xAnimatedNode = new SimpleDoubleProperty(nodeB.getX().get() - rootSize);	
+		yAnimatedNode = new SimpleDoubleProperty(nodeB.getY().get() + DOWNMARGIN);
+		
+		Timeline timeline = new Timeline();
+
+		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
+				new KeyValue(nodeA.getX(), nodeB.getX().get()),
+				new KeyValue(nodeA.getY(), nodeB.getY().get()),
+				new KeyValue(nodeB.getX(), xAnimatedNode.get()),
+				new KeyValue(nodeB.getY(), yAnimatedNode.get()));
+
+		timeline.getKeyFrames().add(kf);
+
+		timeline.setOnFinished(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				llAnimationFinished(nodeA, nodeB);
+			}
+		});
+		
+		if (nodeA.getLeft() != null) {
+			nodeA.getLeft().getX().unbind();
+			nodeA.getLeft().getY().unbind();
+		}
+		
+		nodeA.getX().unbind();
+		nodeA.getY().unbind();
+		
+		nodeB.getX().unbind();
+		nodeB.getY().unbind();
+		
+		hideMovedBranchRecursive(nodeB);
+		timeline.play();		
 	}
 	
+	private void llAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {
+		xAnimatedBranch = new SimpleDoubleProperty();
+		yAnimatedBranch = new SimpleDoubleProperty();
+		xAnimatedNode = new SimpleDoubleProperty();
+		yAnimatedNode = new SimpleDoubleProperty();
+		
+		
+		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		
+		nodeB.setRight(nodeA.getLeft());
+		
+		nodeA.setParent(nodeB.getParent());
+		nodeA.setSide(nodeB.getSide());
+		if (nodeA.getSide() == Side.LEFT) {
+			nodeA.getParent().setLeft(nodeA);
+		} else if(nodeA.getSide() == Side.RIGHT) {			
+			nodeA.getParent().setRight(nodeA);
+		}
+		
+		nodeA.setLeft(nodeB);	
+		
+		if (nodeA.getParent() == null) {
+			xAnimatedNode.bind(rootX);
+			yAnimatedNode.bind(rootY);
+			
+			paneTree.getChildren().remove(nodeA.getBranch());
+			nodeA.setBranch(null);			
+			
+			createBranch(nodeB);
+			paneTree.getChildren().remove(nodeB.getBranch());
+		} else {
+			xAnimatedNode.bind(nodeA.getParent().getX().add(rootSize));
+			yAnimatedNode.bind(nodeA.getParent().getY().add(DOWNMARGIN));			
+			nodeA.setX(xAnimatedNode);
+			nodeA.setY(yAnimatedNode);
+		}				
+		
+		
+		xAnimatedBranch.bind(nodeB.getParent().getX().subtract(rootSize));
+		yAnimatedBranch.bind(nodeB.getParent().getY().add(DOWNMARGIN));
+		nodeB.setX(xAnimatedBranch);
+		nodeB.setY(yAnimatedBranch);
+		
+		nodeA.setDefaultColorNode();
+		nodeB.setDefaultColorNode();
+		
+		listGraphicNodes.remove(nodeA); //posunu list A před B
+		listGraphicNodes.add(listGraphicNodes.indexOf(nodeB), nodeA);
+		
+		appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
+		
+		recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		
+		indexAnimation++;
+		nextAnimation();		
+	}
+
 	private void lrAnimation() {
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
 	}
@@ -1183,7 +1287,7 @@ public class DrawingTree {
 	/********************************************************************************************************
 	 * GETS & SETS
 	 * 
-	 *  *******************************************************************************************************/
+	 ********************************************************************************************************/
 	
 	public List<IGraphicNode> getListGraphicNodes() {
 		return listGraphicNodes;
