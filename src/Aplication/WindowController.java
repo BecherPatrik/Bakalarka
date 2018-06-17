@@ -382,22 +382,22 @@ public class WindowController implements Initializable {
 		sliderSpeed.setValue(0);
 		graphicTree.hideText();		
 		
-		/*inputNumber.setText("5");
+		inputNumber.setText("5");
 		insertNumber();
 		
 		inputNumber.setText("3");
 		insertNumber();
 		
-		inputNumber.setText("6");
-		insertNumber();	
+		//inputNumber.setText("6");
+		//insertNumber();	
 		
-		inputNumber.setText("2");
-		insertNumber();	
+		//inputNumber.setText("2");
+		//insertNumber();	
 		
 		//inputNumber.setText("4");
-		//insertNumber();	*/
+		//insertNumber();	
 		
-		inputNumber.setText("5");
+		/*inputNumber.setText("5");
 		insertNumber();
 		
 		inputNumber.setText("3");
@@ -410,7 +410,7 @@ public class WindowController implements Initializable {
 		insertNumber();	
 		
 		//inputNumber.setText("6");
-		//insertNumber();		
+		//insertNumber();*/		
 		
 		graphicTree.showText();
 		graphicTree.clearText();

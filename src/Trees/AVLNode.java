@@ -53,12 +53,12 @@ public class AVLNode implements INode<AVLNode> {
 		right = node.getRight();
 		left = node.getLeft();
 		
-		node.getGraphicNode().setSide(graphicNode.getSide()); //pøed zmìnou musím uloit aktuální stranu node
+		node.getGraphicNode().setSide(graphicNode.getSide()); //pÅ™ed zmÄ›nou musÃ­m uloÅ¾it aktuÃ¡lnÃ­ stranu node
 		graphicNode.setLeft(node.getGraphicNode().getLeft());
 		graphicNode.setRight(node.getGraphicNode().getRight());
 		
 		if (right != null || left != null) {
-			graphicNode = node.getGraphicNode(); //zmìním graphicNode
+			graphicNode = node.getGraphicNode(); //zmÄ›nÃ­m graphicNode
 		}
 		
 		if (parent != null) {
@@ -81,8 +81,8 @@ public class AVLNode implements INode<AVLNode> {
 	}
 	
 	/**
-	 * Vypoèítá rekurzivnì ohodnocení listù
-	 * @return vrací vıšku pod stromù 
+	 * VypoÄÃ­tÃ¡ rekurzivnÄ› ohodnocenÃ­ listÅ¯
+	 * @return vracÃ­ vÃ½Å¡ku pod stromÅ¯ 
 	 */
 	public int countFactor() {
 		int l = 0;

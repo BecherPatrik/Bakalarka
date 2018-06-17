@@ -19,17 +19,17 @@ public class AVLTree implements ITree<AVLNode> {
 			return null;
 		}
 		Result<AVLNode> result = search(value);
-	    Side side = result.getSide(); //ovÏ¯Ìme poslednÌ stranu
-	    AVLNode parent = (AVLNode) result.getNode();  // vr·tÌ prvek (side = null) nebo rodiËe a mÌsto kam uloûit (side = R, L)
+	    Side side = result.getSide(); //ovƒõ≈ô√≠me posledn√≠ stranu
+	    AVLNode parent = (AVLNode) result.getNode();  // vr√°t√≠ prvek (side = null) nebo rodiƒçe a m√≠sto kam ulo≈æit (side = R, L)
 	    
 	    if (side == Side.LEFT) {
 	    	parent.setLeftWithGraphic(new AVLNode(value, parent, side));
-	    	result.setNode(parent.getLeft()); //zmÏnÌm v˝sledek z rodiËe na nov˝ node
+	    	result.setNode(parent.getLeft()); //zmƒõn√≠m v√Ωsledek z rodiƒçe na nov√Ω node
 	    } else if (side == Side.RIGHT) {
 	    	parent.setRightWithGraphic(new AVLNode(value, parent, side));
 	    	result.setNode(parent.getRight());
 	    } else {
-	    	result.setNode(null); //uû je obsaûen  
+	    	result.setNode(null); //u≈æ je obsa≈æen  
 	    	return result;
 	    }
 	    nodes.add((AVLNode)result.getNode());
@@ -49,25 +49,25 @@ public class AVLTree implements ITree<AVLNode> {
     	AVLNode removedNode, helpNode = null;
         
         Result<AVLNode> result = search(value);
-        Side side = result.getSide(); //zjistÌm smÏr
+        Side side = result.getSide(); //zjist√≠m smƒõr
         removedNode = (AVLNode) result.getNode();
 
         if (side != Side.NONE) {  //pokud ho nenajdu TODO
             return result;
         }
 
-		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud m· 2 potomky 1.
-			helpNode = removedNode.getRight(); // dosadÌm pravÈho
+		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud m√° 2 potomky 1.
+			helpNode = removedNode.getRight(); // dosad√≠m prav√©ho
 
-			if (helpNode.getLeft() != null || helpNode.getRight() != null) { //pokud dosazovan˝ m· levÈ potomky 1.1
-				if (helpNode.getLeft() != null) { // pokud prav˝ potomek nem· levÈho 1.2
-					while (helpNode.getLeft() != null) { // dokud nem·m poslednÌ lev˝ 1.3
+			if (helpNode.getLeft() != null || helpNode.getRight() != null) { //pokud dosazovan√Ω m√° lev√© potomky 1.1
+				if (helpNode.getLeft() != null) { // pokud prav√Ω potomek nem√° lev√©ho 1.2
+					while (helpNode.getLeft() != null) { // dokud nem√°m posledn√≠ lev√Ω 1.3
 						helpNode = helpNode.getLeft();
 					}					
 				}
 			}             
             
-            removedNode.setValue(helpNode.getValue()); //uloûÌm jeho hodnotu do toho co maûu
+            removedNode.setValue(helpNode.getValue()); //ulo≈æ√≠m jeho hodnotu do toho co ma≈æu
             
             result.addAnimation(AnimatedAction.DELETE, null, true);            
             
@@ -85,13 +85,13 @@ public class AVLTree implements ITree<AVLNode> {
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.2.1
             		helpNode.getParent().setRightWithGraphic(helpNode.getRight());
             	} else { //0.2.2
-            		helpNode.getParent().setLeftWithGraphic(helpNode.getRight());  //nebo dosadÌm mÌsto nÏho jeho pravÈho
+            		helpNode.getParent().setLeftWithGraphic(helpNode.getRight());  //nebo dosad√≠m m√≠sto nƒõho jeho prav√©ho
             	}
             	
             	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
             	result.addAnimation(AnimatedAction.MOVENODE, helpNode.getGraphicNode(), helpNode.getRight().getGraphicNode());
             }
-        } else if (removedNode.getLeft() != null) {   //zjistÌm jakÈho potomka m· mazan˝  2.
+        } else if (removedNode.getLeft() != null) {   //zjist√≠m jak√©ho potomka m√° mazan√Ω  2.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
             result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getLeft().getGraphicNode());
             
@@ -102,15 +102,15 @@ public class AVLTree implements ITree<AVLNode> {
             
             removedNode.setNodeWithGraphic(removedNode.getRight());  
         } else { // 4.   
-        	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nem· dÏti
+        	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nem√° dƒõti
         	
-        	if (removedNode.getGraphicNode().getSide() == Side.LEFT) { //nem· û·dnÈho potomka, tak je to list => smaûu ho
+        	if (removedNode.getGraphicNode().getSide() == Side.LEFT) { //nem√° ≈æ√°dn√©ho potomka, tak je to list => sma≈æu ho
                 removedNode.getParent().deleteLeftWithGraphic();  
-            } else if (removedNode.equals(root)) { //osamocen˝ root
+            } else if (removedNode.equals(root)) { //osamocen√Ω root
             	root = null;
             	return balanceTree(result, null);
             } else {
-            	removedNode.getParent().deleteRightWithGraphic();  //prav˝            	
+            	removedNode.getParent().deleteRightWithGraphic();  //prav√Ω            	
             }
             
             return balanceTree(result, removedNode.getParent());
@@ -120,8 +120,8 @@ public class AVLTree implements ITree<AVLNode> {
 	}	
 	
 	/**
-	 * @param value - hledan˝ list
-	 * @return ResultNode<AVLNode> - vracÌ nalezen˝ list (side = NONE) nebo vracÌ rodiËe a stranu
+	 * @param value - hledan√Ω list
+	 * @return ResultNode<AVLNode> - vrac√≠ nalezen√Ω list (side = NONE) nebo vrac√≠ rodiƒçe a stranu
 	 * 
 	 */
 	@Override
@@ -161,7 +161,7 @@ public class AVLTree implements ITree<AVLNode> {
     }
 	
 	/**
-	 * Zavol· funkci pro ohodnocenÌ list˘ a p¯ÌpadnÏ p¯id· akce pro balancov·nÌ stromu
+	 * Zavol√° funkci pro ohodnocen√≠ list≈Ø a p≈ô√≠padnƒõ p≈ôid√° akce pro balancov√°n√≠ stromu
 	 * @param result
 	 * @return
 	 */
