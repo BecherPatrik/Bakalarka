@@ -1096,8 +1096,11 @@ public class DrawingTree {
 			createBranch(nodeB);
 			paneTree.getChildren().remove(nodeB.getBranch());
 		} else {
-			xAnimatedNode.bind(nodeA.getParent().getX().subtract(rootSize));
-			yAnimatedNode.bind(nodeA.getParent().getY().add(DOWNMARGIN));			
+			if (nodeA.getSide() == Side.LEFT) {
+				xAnimatedNode.bind(nodeA.getParent().getX().subtract(rootSize));
+			} else if(nodeA.getSide() == Side.RIGHT) {			
+				xAnimatedNode.bind(nodeA.getParent().getX().add(rootSize));
+			}		
 			nodeA.setX(xAnimatedNode);
 			nodeA.setY(yAnimatedNode);
 		}				
@@ -1219,8 +1222,11 @@ public class DrawingTree {
 			createBranch(nodeC);
 			paneTree.getChildren().remove(nodeC.getBranch());
 		} else {
-			xAnimatedNode.bind(nodeB.getParent().getX().subtract(rootSize));
-			yAnimatedNode.bind(nodeB.getParent().getY().add(DOWNMARGIN));			
+			if (nodeB.getSide() == Side.LEFT) {
+				xAnimatedNode.bind(nodeB.getParent().getX().subtract(rootSize));
+			} else if(nodeB.getSide() == Side.RIGHT) {			
+				xAnimatedNode.bind(nodeB.getParent().getX().add(rootSize));
+			}			
 			nodeB.setX(xAnimatedNode);
 			nodeB.setY(yAnimatedNode);
 		}				
@@ -1328,8 +1334,11 @@ public class DrawingTree {
 			createBranch(nodeB);
 			paneTree.getChildren().remove(nodeB.getBranch());
 		} else {
-			xAnimatedNode.bind(nodeA.getParent().getX().add(rootSize));
-			yAnimatedNode.bind(nodeA.getParent().getY().add(DOWNMARGIN));			
+			if (nodeA.getSide() == Side.LEFT) {
+				xAnimatedNode.bind(nodeA.getParent().getX().subtract(rootSize));
+			} else if(nodeA.getSide() == Side.RIGHT) {			
+				xAnimatedNode.bind(nodeA.getParent().getX().add(rootSize));
+			}				
 			nodeA.setX(xAnimatedNode);
 			nodeA.setY(yAnimatedNode);
 		}				
@@ -1355,9 +1364,131 @@ public class DrawingTree {
 	}
 
 	private void lrAnimation() {
-		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		IGraphicNode nodeC = recordOfAnimations.get(indexAnimation).getNode1();
+		IGraphicNode nodeA = nodeC.getRight();
+		IGraphicNode nodeB = nodeA.getLeft();
+		
+		if (animationSpeed.get() == 0) {
+			oldText = text.getText();
+			setTextWithHistory("VYVÁŽENÍ STROMU");
+			appendNewText("\n • Rotace LR.");
+			lrAnimationFinished(nodeA, nodeB, nodeC);
+			return;
+		}		
+		
+		nodeA.highlightNode();	
+		nodeB.highlightNode();
+		
+		appendNewText("\n • Rotace LR.");
+		
+		xAnimatedNode = new SimpleDoubleProperty(nodeC.getX().get() - rootSize);	
+		yAnimatedNode = new SimpleDoubleProperty(nodeC.getY().get() + DOWNMARGIN);		
+		
+		Timeline timeline = new Timeline();
+
+		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
+				new KeyValue(nodeB.getX(), nodeC.getX().get()),
+				new KeyValue(nodeB.getY(), nodeC.getY().get()),
+				new KeyValue(nodeC.getX(), xAnimatedNode.get()),
+				new KeyValue(nodeC.getY(), yAnimatedNode.get()));
+
+		timeline.getKeyFrames().add(kf);
+
+		timeline.setOnFinished(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				lrAnimationFinished(nodeA, nodeB, nodeC);
+			}
+		});
+		
+		if (nodeB.getRight() != null) {
+			nodeB.getRight().getX().unbind();
+			nodeB.getRight().getY().unbind();
+		}
+		
+		if (nodeB.getLeft() != null) {
+			nodeB.getLeft().getX().unbind();
+			nodeB.getLeft().getY().unbind();
+		}
+		
+		nodeC.getX().unbind();
+		nodeC.getY().unbind();
+		
+		nodeB.getX().unbind();
+		nodeB.getY().unbind();
+		
+		nodeA.getX().unbind();
+		nodeA.getY().unbind();		
+		
+		hideMovedBranchRecursive(nodeC);
+		
+		timeline.play();		
 	}
 	
+	private void lrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {
+		xAnimatedBranch = new SimpleDoubleProperty();
+		yAnimatedBranch = new SimpleDoubleProperty();
+		xAnimatedNode = new SimpleDoubleProperty();
+		yAnimatedNode = new SimpleDoubleProperty();		
+		
+		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		
+		nodeA.setLeft(nodeB.getRight());
+		nodeC.setRight(nodeB.getLeft());
+		
+		nodeB.setRight(nodeA);		
+		
+		nodeB.setParent(nodeC.getParent());
+		nodeB.setSide(nodeC.getSide());
+		if (nodeB.getSide() == Side.LEFT) {
+			nodeB.getParent().setLeft(nodeB);
+		} else if(nodeB.getSide() == Side.RIGHT) {			
+			nodeB.getParent().setRight(nodeB);
+		}
+		
+		nodeB.setLeft(nodeC);	
+		
+		if (nodeB.getParent() == null) {
+			xAnimatedNode.bind(rootX);
+			yAnimatedNode.bind(rootY);
+			
+			paneTree.getChildren().remove(nodeA.getBranch());
+			nodeB.setBranch(null);			
+			
+			createBranch(nodeC);
+			paneTree.getChildren().remove(nodeC.getBranch());
+		} else {
+			if (nodeB.getSide() == Side.LEFT) {
+				xAnimatedNode.bind(nodeB.getParent().getX().subtract(rootSize));
+			} else if(nodeB.getSide() == Side.RIGHT) {			
+				xAnimatedNode.bind(nodeB.getParent().getX().add(rootSize));
+			}			
+			yAnimatedNode.bind(nodeB.getParent().getY().add(DOWNMARGIN));			
+			nodeB.setX(xAnimatedNode);
+			nodeB.setY(yAnimatedNode);
+		}				
+		
+		
+		xAnimatedBranch.bind(nodeC.getParent().getX().subtract(rootSize));
+		yAnimatedBranch.bind(nodeC.getParent().getY().add(DOWNMARGIN));
+		nodeC.setX(xAnimatedBranch);
+		nodeC.setY(yAnimatedBranch);
+		
+		nodeA.setDefaultColorNode();
+		nodeB.setDefaultColorNode();
+		nodeC.setDefaultColorNode();
+		
+		listGraphicNodes.remove(nodeB); //posunu list B před C
+		listGraphicNodes.add(listGraphicNodes.indexOf(nodeC), nodeB);
+		
+		appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
+		
+		recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		
+		indexAnimation++;
+		nextAnimation();
+	}
+
 	/**
 	 * Vymaže text
 	 */
