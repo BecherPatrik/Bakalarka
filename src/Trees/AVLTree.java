@@ -199,14 +199,21 @@ public class AVLTree implements ITree<AVLNode> {
 	}
 	
 	private Result<AVLNode> llBalance(Result<AVLNode> result, AVLNode nodeB) {
-		AVLNode nodeA = nodeB.getRight();
+		AVLNode nodeA = nodeB.getRight();	
 		
 		if (nodeB.getParent() == null) {
 			root = nodeA;
+		} else {
+			if (nodeB.getGraphicNode().getSide() == Side.LEFT) {
+				nodeB.getParent().setLeft(nodeA);
+			} else {
+				nodeB.getParent().setRight(nodeA);
+			}
+			
 		}
 		
 		nodeB.setRight(nodeA.getLeft());
-		nodeA.setLeft(nodeB);
+		nodeA.setLeft(nodeB);	
 		
 		result.addAnimation(AnimatedAction.LL, nodeB.getGraphicNode(), root);
 		
@@ -219,6 +226,12 @@ public class AVLTree implements ITree<AVLNode> {
 		
 		if (nodeC.getParent() == null) {
 			root = nodeB;
+		} else {
+			if (nodeC.getGraphicNode().getSide() == Side.LEFT) {
+				nodeC.getParent().setLeft(nodeB);
+			} else {
+				nodeC.getParent().setRight(nodeB);
+			}			
 		}
 		
 		nodeC.setRight(nodeB.getLeft());
@@ -226,7 +239,7 @@ public class AVLTree implements ITree<AVLNode> {
 		nodeB.setLeft(nodeC);
 		nodeB.setRight(nodeA);
 		
-		result.addAnimation(AnimatedAction.LR, nodeB.getGraphicNode(), root);		
+		result.addAnimation(AnimatedAction.LR, nodeC.getGraphicNode(), root);		
 		
 		return result;
 	}
@@ -236,6 +249,12 @@ public class AVLTree implements ITree<AVLNode> {
 		
 		if (nodeB.getParent() == null) {
 			root = nodeA;
+		} else {
+			if (nodeB.getGraphicNode().getSide() == Side.LEFT) {
+				nodeB.getParent().setLeft(nodeA);
+			} else {
+				nodeB.getParent().setRight(nodeA);
+			}			
 		}
 		
 		nodeB.setLeft(nodeA.getRight());
@@ -252,6 +271,12 @@ public class AVLTree implements ITree<AVLNode> {
 		
 		if (nodeC.getParent() == null) {
 			root = nodeB;
+		} else {
+			if (nodeC.getGraphicNode().getSide() == Side.LEFT) {
+				nodeC.getParent().setLeft(nodeB);
+			} else {
+				nodeC.getParent().setRight(nodeB);
+			}			
 		}
 		
 		nodeC.setLeft(nodeB.getRight());
@@ -259,7 +284,7 @@ public class AVLTree implements ITree<AVLNode> {
 		nodeB.setRight(nodeC);
 		nodeB.setLeft(nodeA);
 		
-		result.addAnimation(AnimatedAction.RL, nodeB.getGraphicNode(), root);		
+		result.addAnimation(AnimatedAction.RL, nodeC.getGraphicNode(), root);		
 		
 		return result;
 	}

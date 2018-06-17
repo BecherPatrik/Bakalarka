@@ -84,7 +84,7 @@ public class AVLNode implements INode<AVLNode> {
 	 * Vypočítá rekurzivně ohodnocení listů
 	 * @return vrací výšku pod stromů 
 	 */
-	public int countFactor() {
+	public int countFactor() {		
 		int l = 0;
 		int r = 0;
 		
@@ -94,6 +94,10 @@ public class AVLNode implements INode<AVLNode> {
 		
 		if (right != null) {
 			r += right.countFactor();
+		}
+		
+		if (this.value == 15) {
+			System.out.println();
 		}
 		
 		factor = l - r;	
