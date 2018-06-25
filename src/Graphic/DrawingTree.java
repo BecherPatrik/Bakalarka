@@ -338,6 +338,12 @@ public class DrawingTree {
 			timeline.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
+					if (iGraphicNode.getParent() == null) { //pokud dojde ke změně rootu mezi animací
+						balanceRedraw++;
+						balanceTreeNext();
+						return;
+					}
+					
 					xAnimatedNode = new SimpleDoubleProperty();
 					xAnimatedBranch = new SimpleDoubleProperty();
 					if (iGraphicNode.getSide() == Side.LEFT) {
@@ -938,7 +944,7 @@ public class DrawingTree {
 	 * Aktualizuje ohodnocení listů
 	 */
 	private void updateFactor() {
-		if (!(isBalance)) {
+		if (!(isBalance) && animationSpeed.get() != 0) {
 			indexAnimation--;
 			isBalance = true;
 			balanceTree();
@@ -1019,6 +1025,7 @@ public class DrawingTree {
 			oldText = text.getText();
 			setTextWithHistory("VYVÁŽENÍ STROMU");
 			appendNewText("\n • Rotace RR.");
+			hideMovedBranchRecursive(nodeB);
 			rrAnimationFinished(nodeA, nodeB);
 			return;
 		}		
@@ -1134,6 +1141,7 @@ public class DrawingTree {
 			oldText = text.getText();
 			setTextWithHistory("VYVÁŽENÍ STROMU");
 			appendNewText("\n • Rotace RL.");
+			hideMovedBranchRecursive(nodeC);
 			rlAnimationFinished(nodeA, nodeB, nodeC);
 			return;
 		}		
@@ -1260,6 +1268,7 @@ public class DrawingTree {
 			oldText = text.getText();
 			setTextWithHistory("VYVÁŽENÍ STROMU");
 			appendNewText("\n • Rotace LL.");
+			hideMovedBranchRecursive(nodeB);
 			llAnimationFinished(nodeA, nodeB);
 			return;
 		}		
@@ -1372,6 +1381,7 @@ public class DrawingTree {
 			oldText = text.getText();
 			setTextWithHistory("VYVÁŽENÍ STROMU");
 			appendNewText("\n • Rotace LR.");
+			hideMovedBranchRecursive(nodeC);
 			lrAnimationFinished(nodeA, nodeB, nodeC);
 			return;
 		}		

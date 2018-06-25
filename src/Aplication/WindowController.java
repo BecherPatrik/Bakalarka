@@ -103,7 +103,8 @@ public class WindowController implements Initializable {
 
 	private boolean isRedraw = false;
 	private int finishAnimation = 0;
-	double oldSpeed;
+	private double oldSpeed;
+	private boolean randomTree = false;
 
 	/**
 	 * Inicializace okna
@@ -115,8 +116,7 @@ public class WindowController implements Initializable {
 		hideMenu();
 		numberOnly();
 		sliderFormat();
-		toolTips();
-		
+		toolTips();		
 	}	
 
 	/**
@@ -308,7 +308,7 @@ public class WindowController implements Initializable {
 	}
 	
 	@FXML 
-	private void dialogNewTree() {
+	private void dialogNewTree1() {
 		newRandomTree();
 	}
 	
@@ -316,7 +316,7 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového stromu přes tlačítko
 	 */
 	@FXML 
-	private void dialogNewTree1() {
+	private void dialogNewTree() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Nový strom");
 		alert.setHeaderText("Chcete pouze smazat aktuální strom,\nnebo vytvořit nový s náhodnými hodnotami?");
@@ -372,11 +372,10 @@ public class WindowController implements Initializable {
 			break;
 		default:
 			break;
-		}
-		
+		}		
 	}	
 	
-	private void newRandomTree() {
+	private void newRandomTree1() {
 		double oldSpeed = sliderSpeed.getValue();
 		newEmptyTree();
 		sliderSpeed.setValue(0);
@@ -414,19 +413,32 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového náhodného stromu 
 	 * @param count
 	 */
-	private void newRandomTree1() {	
+	private void newRandomTree() {	
 		int count = dialogRandomTree();
-		double oldSpeed = sliderSpeed.getValue();
+		oldSpeed = sliderSpeed.getValue();
 		graphicTree.hideText();
+		
 		if (count > 0) {			
 			newEmptyTree();
 			randomValueList = new HashSet<>();
 			generateRandomTreeList(count);
 			
+			/*randomValueList.add(432);
+			randomValueList.add(102);
+			randomValueList.add(532);
+			randomValueList.add(665);
+			randomValueList.add(826);
+			randomValueList.add(954);
+			randomValueList.add(539);*/			
+			
 			sliderSpeed.setValue(0);
 			
 			for (int value : randomValueList) {
-				disableButtons();
+				disableButtons();	
+			/*	if (value == 539) {
+					System.out.println();
+				}*/
+				
 				lastResult = tree.insert(value);				
 				if (lastResult != null) {
 					graphicTree.insertNode(lastResult, lastValue);			
@@ -434,14 +446,12 @@ public class WindowController implements Initializable {
 					graphicTree.insertRoot((INode<?>)tree.getRoot());
 					graphicTree.hideText();
 				}
-			}
+			}			
 			
-			graphicTree.clearText();
-			graphicTree.showText();
+			randomTree = true;
 			
 			lastResult = null;
-			listOldGraphicTreeNodes.clear();
-			sliderSpeed.setValue(oldSpeed);
+			listOldGraphicTreeNodes.clear();			
 		}		
 	}
 	
@@ -740,9 +750,17 @@ public class WindowController implements Initializable {
 			}			
 			return;
 		}
+		
+		if (randomTree) {
+			graphicTree.clearText();
+			graphicTree.showText();
+			sliderSpeed.setValue(oldSpeed);
+			randomTree = false;
+		}
+		
 		//System.out.println(paneTree.getWidth()+ " - "+ scrollPane.getWidth()+ " + "+ scrollPane.getPrefViewportWidth());
-		System.out.println("===============================");
-		treeLog();
+		//System.out.println("===============================");
+		//treeLog();
 		
 		primaryStage.setResizable(true);
 		

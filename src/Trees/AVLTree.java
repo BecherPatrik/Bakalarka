@@ -203,13 +203,13 @@ public class AVLTree implements ITree<AVLNode> {
 		
 		if (nodeB.getParent() == null) {
 			root = nodeA;
+			nodeA.setParent(null);
 		} else {
 			if (nodeB.getGraphicNode().getSide() == Side.LEFT) {
 				nodeB.getParent().setLeft(nodeA);
 			} else {
 				nodeB.getParent().setRight(nodeA);
-			}
-			
+			}			
 		}
 		
 		nodeB.setRight(nodeA.getLeft());
@@ -226,6 +226,7 @@ public class AVLTree implements ITree<AVLNode> {
 		
 		if (nodeC.getParent() == null) {
 			root = nodeB;
+			nodeB.setParent(null);
 		} else {
 			if (nodeC.getGraphicNode().getSide() == Side.LEFT) {
 				nodeC.getParent().setLeft(nodeB);
@@ -249,6 +250,7 @@ public class AVLTree implements ITree<AVLNode> {
 		
 		if (nodeB.getParent() == null) {
 			root = nodeA;
+			nodeA.setParent(null);
 		} else {
 			if (nodeB.getGraphicNode().getSide() == Side.LEFT) {
 				nodeB.getParent().setLeft(nodeA);
@@ -271,6 +273,7 @@ public class AVLTree implements ITree<AVLNode> {
 		
 		if (nodeC.getParent() == null) {
 			root = nodeB;
+			nodeB.setParent(null);
 		} else {
 			if (nodeC.getGraphicNode().getSide() == Side.LEFT) {
 				nodeC.getParent().setLeft(nodeB);

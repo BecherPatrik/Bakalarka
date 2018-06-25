@@ -96,7 +96,7 @@ public class AVLNode implements INode<AVLNode> {
 			r += right.countFactor();
 		}
 		
-		if (this.value == 15) {
+		if (this.value == 2) {
 			System.out.println();
 		}
 		
