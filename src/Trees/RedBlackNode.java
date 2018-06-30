@@ -1,6 +1,6 @@
 package Trees;
 
-import Graphic.AVLGraphicNode;
+import Graphic.RedBlackGraphicNode;
 import Graphic.IGraphicNode;
 
 public class RedBlackNode implements INode<RedBlackNode> {
@@ -10,18 +10,18 @@ public class RedBlackNode implements INode<RedBlackNode> {
 	private RedBlackNode parent = null;
 	private RedBlackNode right = null;
 	private RedBlackNode left = null;
-	private AVLGraphicNode graphicNode;
+	private RedBlackGraphicNode graphicNode;
 
 	public RedBlackNode(int value, RedBlackNode parent, Side side) {
 		this.value = value;
 		this.parent = parent;
-		this.graphicNode = new AVLGraphicNode(value);
+		this.graphicNode = new RedBlackGraphicNode(value);
 		this.graphicNode.setSide(side);
 	}
 	
 	public RedBlackNode(int value) {
         this.value = value;
-        this.graphicNode = new AVLGraphicNode(value);
+        this.graphicNode = new RedBlackGraphicNode(value);
     }
 	
 	@Override
@@ -86,6 +86,14 @@ public class RedBlackNode implements INode<RedBlackNode> {
 		this.value = value;		
 	}
 	
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
 	@Override
 	public RedBlackNode getParent() {
 		return parent;
@@ -147,7 +155,7 @@ public class RedBlackNode implements INode<RedBlackNode> {
 	}
 
 	@Override
-	public AVLGraphicNode getGraphicNode() {
+	public RedBlackGraphicNode getGraphicNode() {
 		return graphicNode;
 	}
 	
@@ -155,7 +163,7 @@ public class RedBlackNode implements INode<RedBlackNode> {
 	public void setGraphicNode(IGraphicNode graphicNode) {
 		Side side = this.graphicNode.getSide();
 		
-		this.graphicNode = (AVLGraphicNode) graphicNode;
+		this.graphicNode = (RedBlackGraphicNode) graphicNode;
 		this.graphicNode.setSide(side);
 		
 		if (left != null) {

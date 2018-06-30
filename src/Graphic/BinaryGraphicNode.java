@@ -31,21 +31,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 	private StackPane stackPaneNode;
 	private Circle circle;
 	
-	private Line branch = null;
-	
-	/** Zálohy **/
-/*	private IGraphicNode Oldleft = null;
-	private IGraphicNode Oldright = null;
-	
-	private String oldValue;
-	
-	private double oldX;
-	private double oldY;
-	
-	private double oldXBranch;
-	private double oldYBranch;
-	
-	private Line OldBranch = null;*/
+	private Line branch = null;	
 
 	public BinaryGraphicNode(int value) {
 		this.value = new Text(Integer.toString(value));
@@ -58,6 +44,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 		circle = new Circle(radiusSize);
 		circle.setStrokeWidth(1.5);
 		circle.setStroke(Color.WHITE);
+		circle.setFill(Color.BLACK);
 
 		value.setBoundsType(TextBoundsType.VISUAL);
 		value.setFill(Color.WHITE);
@@ -118,97 +105,7 @@ public class BinaryGraphicNode implements IGraphicNode {
 	@Override
 	public void addRightChild() {
 		rightChildrenCount++;	
-	}
-	
-	/*@Override
-	public void createBackUp() {
-		if (!(value.getText().equals(""))) {
-			oldValue = value.getText();
-		} else {
-			return; //pokud je node prázdný už má zálohu a je do něho přesunován jiný viz 0.2
-		}
-		
-		oldX = x.get();
-		oldY = y.get();
-		Oldright = right;
-		Oldleft = left;
-	}
-
-	@Override 
-	public void createBackUpBranch() {
-		if (Oldright == null && rightChildrenCount != 0) {
-			Oldright = right;
-		}
-		
-		if (Oldleft == null && leftChildrenCount != 0) {
-			Oldleft = left;
-		}
-		
-		if (branch == null) { //pokud se jedná o roota
-			return;
-		}
-		
-		DoubleProperty x = new SimpleDoubleProperty(getBranchStartX().get());
-		DoubleProperty y = new SimpleDoubleProperty(getBranchStartY().get());
-		DoubleProperty x2 = new SimpleDoubleProperty(getBranchEndX().get());
-		DoubleProperty y2 = new SimpleDoubleProperty(getBranchEndY().get());
-		
-		OldBranch = new Line();	
-		
-		OldBranch.startXProperty().bind(x);
-		OldBranch.startYProperty().bind(y);
-		OldBranch.endXProperty().bind(x2);
-		OldBranch.endYProperty().bind(y2);
-		
-		oldXBranch = this.x.get();
-		oldYBranch = this.y.get();
-	}
-	
-	@Override
-	public void useBackUp() {
-		DoubleProperty x;
-		DoubleProperty y;
-		if (oldValue != null) {
-			value = new Text(oldValue);
-			stackPaneNode.getChildren().clear();
-			createStackPaneNode();
-		}	
-		
-		if (oldX != 0) {
-			x = new SimpleDoubleProperty(oldX);
-			y = new SimpleDoubleProperty(oldY);
-			
-			this.x.bind(x);
-			this.y.bind(y);			
-		} else if (oldXBranch != 0) {
-			x = new SimpleDoubleProperty(oldXBranch);
-			y = new SimpleDoubleProperty(oldYBranch);
-			
-			this.x.bind(x);
-			this.y.bind(y);	
-		}
-		
-		if (OldBranch != null) {
-			branch = OldBranch;	
-		}
-		
-		right = Oldright;
-		left = Oldleft;
-		
-		deleteBackUp();
-	}
-	
-	@Override
-	public void deleteBackUp() {
-		oldValue = null;
-		oldX = 0;
-		oldY = 0;
-		oldXBranch = 0;
-		oldYBranch = 0;
-		OldBranch = null;
-		Oldright = null;
-		Oldleft = null;
-	}*/
+	}	
 	
 	/********************************************************************************************************
 	 * GETS & SETS

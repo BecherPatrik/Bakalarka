@@ -1324,8 +1324,7 @@ public class DrawingTree {
 		/*xAnimatedBranch = new SimpleDoubleProperty();
 		yAnimatedBranch = new SimpleDoubleProperty();
 		xAnimatedNode = new SimpleDoubleProperty();
-		yAnimatedNode = new SimpleDoubleProperty();*/
-		
+		yAnimatedNode = new SimpleDoubleProperty();*/		
 		
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
 		
