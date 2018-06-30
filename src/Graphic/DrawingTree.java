@@ -7,7 +7,6 @@ import Aplication.WindowController;
 import Trees.AVLNode;
 import Trees.AnimatedAction;
 import Trees.INode;
-import Trees.ITree;
 import Trees.RecordOfAnimation;
 import Trees.Result;
 import Trees.Side;
@@ -971,6 +970,13 @@ public class DrawingTree {
 	private void nextUpdateFactor(AVLGraphicNode node) {				
 		SequentialTransition seqT;
 		
+		if (node == null) {
+			appendNewText("\n • Strom je vyvážený.");
+			indexAnimation++;
+			nextAnimation();
+			return;
+		}
+		
 		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.WHITE, Color.LIME);
 		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())));
 		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), node.getCircleShape(), Color.LIME, Color.WHITE);
@@ -1073,10 +1079,10 @@ public class DrawingTree {
 	}
 	
 	private void rrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {
-		xAnimatedBranch = new SimpleDoubleProperty();
+		/*xAnimatedBranch = new SimpleDoubleProperty();
 		yAnimatedBranch = new SimpleDoubleProperty();
 		xAnimatedNode = new SimpleDoubleProperty();
-		yAnimatedNode = new SimpleDoubleProperty();
+		yAnimatedNode = new SimpleDoubleProperty();*/
 		
 		
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
@@ -1198,10 +1204,10 @@ public class DrawingTree {
 	}
 	
 	private void rlAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {
-		xAnimatedBranch = new SimpleDoubleProperty();
+		/*xAnimatedBranch = new SimpleDoubleProperty();
 		yAnimatedBranch = new SimpleDoubleProperty();
 		xAnimatedNode = new SimpleDoubleProperty();
-		yAnimatedNode = new SimpleDoubleProperty();		
+		yAnimatedNode = new SimpleDoubleProperty();	*/	
 		
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
 		
@@ -1308,15 +1314,17 @@ public class DrawingTree {
 		nodeB.getX().unbind();
 		nodeB.getY().unbind();
 		
+		System.out.println("-" + nodeA.getX()+ ", "+nodeB.getX());
+		
 		hideMovedBranchRecursive(nodeB);
 		timeline.play();		
 	}
 	
 	private void llAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {
-		xAnimatedBranch = new SimpleDoubleProperty();
+		/*xAnimatedBranch = new SimpleDoubleProperty();
 		yAnimatedBranch = new SimpleDoubleProperty();
 		xAnimatedNode = new SimpleDoubleProperty();
-		yAnimatedNode = new SimpleDoubleProperty();
+		yAnimatedNode = new SimpleDoubleProperty();*/
 		
 		
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
@@ -1365,6 +1373,7 @@ public class DrawingTree {
 		listGraphicNodes.add(listGraphicNodes.indexOf(nodeB), nodeA);
 		
 		appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
+		System.out.println("+" + nodeA.getX()+ ", "+nodeB.getX());
 		
 		recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
 		
@@ -1436,10 +1445,10 @@ public class DrawingTree {
 	}
 	
 	private void lrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {
-		xAnimatedBranch = new SimpleDoubleProperty();
+		/*xAnimatedBranch = new SimpleDoubleProperty();
 		yAnimatedBranch = new SimpleDoubleProperty();
 		xAnimatedNode = new SimpleDoubleProperty();
-		yAnimatedNode = new SimpleDoubleProperty();		
+		yAnimatedNode = new SimpleDoubleProperty();*/		
 		
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
 		

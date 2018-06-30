@@ -241,7 +241,7 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void insertNumber() {
-		treeLog();
+		//treeLog();
 		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
 		//listOldGraphicTreeNodes.clear();
 		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
@@ -308,7 +308,7 @@ public class WindowController implements Initializable {
 	}
 	
 	@FXML 
-	private void dialogNewTree1() {
+	private void dialogNewTree() {
 		newRandomTree();
 	}
 	
@@ -316,7 +316,7 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového stromu přes tlačítko
 	 */
 	@FXML 
-	private void dialogNewTree() {
+	private void dialogNewTree1() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Nový strom");
 		alert.setHeaderText("Chcete pouze smazat aktuální strom,\nnebo vytvořit nový s náhodnými hodnotami?");
@@ -375,7 +375,7 @@ public class WindowController implements Initializable {
 		}		
 	}	
 	
-	private void newRandomTree1() {
+	private void newRandomTree() {
 		double oldSpeed = sliderSpeed.getValue();
 		newEmptyTree();
 		sliderSpeed.setValue(0);
@@ -413,7 +413,7 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového náhodného stromu 
 	 * @param count
 	 */
-	private void newRandomTree() {	
+	private void newRandomTree1() {	
 		int count = dialogRandomTree();
 		oldSpeed = sliderSpeed.getValue();
 		graphicTree.hideText();
@@ -435,9 +435,6 @@ public class WindowController implements Initializable {
 			
 			for (int value : randomValueList) {
 				disableButtons();	
-			/*	if (value == 539) {
-					System.out.println();
-				}*/
 				
 				lastResult = tree.insert(value);				
 				if (lastResult != null) {

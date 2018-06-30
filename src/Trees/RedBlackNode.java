@@ -3,23 +3,23 @@ package Trees;
 import Graphic.AVLGraphicNode;
 import Graphic.IGraphicNode;
 
-public class AVLNode implements INode<AVLNode> {
+public class RedBlackNode implements INode<RedBlackNode> {
 	
 	private int value;
-	private int factor = 0;
-	private AVLNode parent = null;
-	private AVLNode right = null;
-	private AVLNode left = null;
+	private Color color = Color.BLACK;
+	private RedBlackNode parent = null;
+	private RedBlackNode right = null;
+	private RedBlackNode left = null;
 	private AVLGraphicNode graphicNode;
 
-	public AVLNode(int value, AVLNode parent, Side side) {
+	public RedBlackNode(int value, RedBlackNode parent, Side side) {
 		this.value = value;
 		this.parent = parent;
 		this.graphicNode = new AVLGraphicNode(value);
 		this.graphicNode.setSide(side);
 	}
 	
-	public AVLNode(int value) {
+	public RedBlackNode(int value) {
         this.value = value;
         this.graphicNode = new AVLGraphicNode(value);
     }
@@ -47,7 +47,7 @@ public class AVLNode implements INode<AVLNode> {
 	}
 	
 	@Override
-	public void setNodeWithGraphic(AVLNode node) {
+	public void setNodeWithGraphic(RedBlackNode node) {
 		value = node.getValue();
 		right = node.getRight();
 		left = node.getLeft();
@@ -69,42 +69,6 @@ public class AVLNode implements INode<AVLNode> {
 				graphicNode.getParent().setRight(graphicNode);
 			}
 		}		
-	}	
-	
-	public void subtractFactor() {
-		this.factor--;
-	}
-	
-	public void addFactor() {
-		this.factor++;
-	}
-	
-	/**
-	 * Vypočítá rekurzivně ohodnocení listů
-	 * @return vrací výšku pod stromů 
-	 */
-	public int countFactor() {		
-		int l = 0;
-		int r = 0;
-		
-		if (left != null) {
-			l += left.countFactor();
-		}
-		
-		if (right != null) {
-			r += right.countFactor();
-		}
-		
-		if (this.value == 2) {
-			System.out.println();
-		}
-		
-		factor = l - r;	
-		
-		graphicNode.setNewFactor(Integer.toString(factor));
-		
-		return Math.max(r, l) + 1;
-		
 	}
 	
 	/********************************************************************************************************
@@ -123,28 +87,28 @@ public class AVLNode implements INode<AVLNode> {
 	}
 	
 	@Override
-	public AVLNode getParent() {
+	public RedBlackNode getParent() {
 		return parent;
 	}
 
 	@Override
-	public void setParentWithGraphic(AVLNode node) {
+	public void setParentWithGraphic(RedBlackNode node) {
 		parent = node;
 		graphicNode.setParent(node.getGraphicNode());
 	}
 	
 	@Override
-	public void setParent(AVLNode node) {
+	public void setParent(RedBlackNode node) {
 		parent = node;
 	}
 	
 	@Override
-	public AVLNode getRight() {
+	public RedBlackNode getRight() {
 		return right;
 	}
 
 	@Override
-	public void setRightWithGraphic(AVLNode node) {
+	public void setRightWithGraphic(RedBlackNode node) {
 		right = node;
 		graphicNode.setRight(node.getGraphicNode());
 		node.setParentWithGraphic(this);
@@ -153,7 +117,7 @@ public class AVLNode implements INode<AVLNode> {
 	}
 	
 	@Override
-	public void setRight(AVLNode node) {
+	public void setRight(RedBlackNode node) {
 		right = node;
 		if (node != null) {
 			node.setParent(this);
@@ -161,12 +125,12 @@ public class AVLNode implements INode<AVLNode> {
 	}
 	
 	@Override
-	public AVLNode getLeft() {
+	public RedBlackNode getLeft() {
 		return left;
 	}
 
 	@Override
-	public void setLeftWithGraphic(AVLNode node) {
+	public void setLeftWithGraphic(RedBlackNode node) {
 		left = node;
 		graphicNode.setLeft(node.getGraphicNode());
 		node.setParentWithGraphic(this);	
@@ -175,12 +139,11 @@ public class AVLNode implements INode<AVLNode> {
 	}
 	
 	@Override
-	public void setLeft(AVLNode node) {
+	public void setLeft(RedBlackNode node) {
 		left = node;
 		if (node != null) {
 			node.setParent(this);
-		}
-			
+		}			
 	}
 
 	@Override
@@ -215,19 +178,11 @@ public class AVLNode implements INode<AVLNode> {
 		} else {
 			this.graphicNode.setParent(null);
 		}		
-	}
-	
-	public int getFactor() {
-		return factor;
-	}
-
-	public void setFactor(int factor) {
-		this.factor = factor;
 	}	
 	
 	@Override
 	public boolean equals(Object obj) {
-		AVLNode node = (AVLNode) obj;
+		RedBlackNode node = (RedBlackNode) obj;
 		return (value == node.getValue());
 	}
 }
