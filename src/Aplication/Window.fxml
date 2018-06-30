@@ -29,7 +29,7 @@
 			<Button fx:id="btnBack" text="Zpět" prefWidth="160" prefHeight="47" onAction="#hideMenu" alignment="CENTER_LEFT" styleClass="tree-button, menu-button" />
 			<Button fx:id="btnBinary" text="Binární strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button-focus" />
 			<Button fx:id="btnAVL" text="AVL strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
-			<Button fx:id="btnRedBlack" text="Červeno-černý strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button fx:id="btnRedBlack" text="Červeno černý" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
 		<!--<Button fx:id="btnB" text="B-strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />			
 			<Button fx:id="btnRadixSearch" text="Radix Search tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
 			<Button fx:id="btnPatricia" text="Patricia tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />  -->

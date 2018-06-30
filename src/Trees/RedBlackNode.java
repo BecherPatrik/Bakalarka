@@ -71,6 +71,10 @@ public class RedBlackNode implements INode<RedBlackNode> {
 		}		
 	}
 	
+	public void reColor() {
+		// TODO Auto-generated method stub		
+	}
+	
 	/********************************************************************************************************
 	 * GETS & SETS
 	 * 
@@ -191,6 +195,11 @@ public class RedBlackNode implements INode<RedBlackNode> {
 	@Override
 	public boolean equals(Object obj) {
 		RedBlackNode node = (RedBlackNode) obj;
+		if (node == null) {
+			return false;
+		}
 		return (value == node.getValue());
 	}
+
+	
 }

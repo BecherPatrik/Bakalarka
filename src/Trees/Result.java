@@ -57,6 +57,7 @@ public class Result<T> {
 	 * (MOVEVALUE, cíl, (INode) zdroj)<br>
 	 * (MOVENODE, cíl, (INode) zdroj)<br>
 	 * (UPDATEFACTOR, začátek, (boolean) animovat)<br>
+	 * (RECOLOR, rodič, (boolean) animovat)<br>
 	 * </p>
 	 * @param action
 	 * @param node1

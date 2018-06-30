@@ -13,18 +13,8 @@ public class RedBlackGraphicNode extends BinaryGraphicNode {
 	@Override
 	public void createStackPaneNode() {		
 		super.createStackPaneNode();
-		super.getCircle().setFill(Color.RED);
-	}
-	
-	@Override
-	public void highlightFindNode() {
-		super.highlightFindNode();
-	}
-
-	@Override
-	public void setDefaultColorNode() {
-		super.setDefaultColorNode();
-	}
+		super.getCircle().setFill(Color.DARKRED);
+	}	
 	
 	/********************************************************************************************************
 	 * GETS & SETS
@@ -37,5 +27,10 @@ public class RedBlackGraphicNode extends BinaryGraphicNode {
 
 	public void setColor(Trees.Color color) {
 		this.color = color;
+		if (color == Trees.Color.BLACK) {
+			super.getCircle().setFill(Color.BLACK);
+		} else {
+			super.getCircle().setFill(Color.DARKRED);
+		}		
 	}
 }

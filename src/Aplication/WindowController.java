@@ -17,6 +17,7 @@ import Trees.AnimatedAction;
 import Trees.BinaryTree;
 import Trees.INode;
 import Trees.ITree;
+import Trees.RedBlackTree;
 import Trees.Result;
 import javafx.animation.FadeTransition;
 import javafx.beans.value.ChangeListener;

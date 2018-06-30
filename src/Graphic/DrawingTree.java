@@ -28,6 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import sun.reflect.generics.tree.Tree;
 
 public class DrawingTree {
 	private WindowController windowController;
@@ -65,6 +66,8 @@ public class DrawingTree {
 	private boolean isRedraw = false;
 	private boolean notFind = false;
 	private boolean isBalance = false;
+	private boolean isReColor = false;
+	private boolean isRedBlack = false;
 	
 	private int balanceRedraw = 0;
 	
@@ -499,7 +502,7 @@ public class DrawingTree {
 	private void nextAnimation() {
 		if (indexAnimation >= recordOfAnimations.size()) {
 			balanceTree();
-			
+			isReColor = false;
 			if (isRedraw) {				
 				redraw();
 			}			
@@ -549,11 +552,15 @@ public class DrawingTree {
 			updateFactor();
 			break;
 			
+		case RECOLOR: 
+			reColor();
+			break;
+			
 		default:
 			break;
 		}	
-	}
-	
+	}	
+
 	/**
 	 * Zavolá znovu metodu highlightNode pro každý list zvlášť
 	 */
@@ -889,9 +896,7 @@ public class DrawingTree {
 			//dosadím na místo mazaného ten co ho nahradí
 			listGraphicNodes.remove(graphicNodeMoved);
 			listGraphicNodes.add(listGraphicNodes.indexOf(graphicNodeRemoved), graphicNodeMoved);
-			listGraphicNodes.remove(graphicNodeRemoved);
-			
-			
+			listGraphicNodes.remove(graphicNodeRemoved);			
 		}
 		
 		appendNewText("\n • Smazání proběhlo úspěšně.");
@@ -998,6 +1003,26 @@ public class DrawingTree {
 				}				
 			}
 		});			
+	}	
+
+	/**
+	 * Změní barvu u vybraného node
+	 */
+	private void reColor() {
+		isRedBlack = true;
+		if (!(isReColor)) {		
+			oldText = text.getText();
+			setTextWithHistory("PŘEBARVENÍ STROMU:");
+			isReColor = true;
+		}
+		
+		RedBlackGraphicNode node = (RedBlackGraphicNode) recordOfAnimations.get(indexAnimation).getNode1();
+		Trees.Color color = (Trees.Color) recordOfAnimations.get(indexAnimation).getObject();		
+		
+		node.setColor(color);		
+				
+		indexAnimation++;
+		nextAnimation();
 	}
 	
 	private void rrAnimation() {		
@@ -1006,14 +1031,22 @@ public class DrawingTree {
 		
 		if (animationSpeed.get() == 0) {
 			oldText = text.getText();
-			setTextWithHistory("VYVÁŽENÍ STROMU");
+			if (!isRedBlack) {
+				setTextWithHistory("VYVÁŽENÍ STROMU:");
+			} else if (!(isReColor)) {
+				setTextWithHistory("PŘEBARVENÍ STROMU:");
+			}
 			appendNewText("\n • Rotace RR.");
 			hideMovedBranchRecursive(nodeB);
 			rrAnimationFinished(nodeA, nodeB);
 			return;
 		}		
 		
-		nodeA.highlightNode();		
+		nodeA.highlightNode();	
+		
+		if (isRedBlack) {
+			nodeA.getLeft().highlightNode();
+		}
 		
 		appendNewText("\n • Rotace RR.");
 		
@@ -1095,6 +1128,10 @@ public class DrawingTree {
 		nodeA.setDefaultColorNode();
 		nodeB.setDefaultColorNode();
 		
+		if (isRedBlack) {
+			nodeA.getLeft().setDefaultColorNode();
+		}
+		
 		listGraphicNodes.remove(nodeA); //posunu list A před B
 		listGraphicNodes.add(listGraphicNodes.indexOf(nodeB), nodeA);
 		
@@ -1113,7 +1150,11 @@ public class DrawingTree {
 		
 		if (animationSpeed.get() == 0) {
 			oldText = text.getText();
-			setTextWithHistory("VYVÁŽENÍ STROMU");
+			if (!isRedBlack) {
+				setTextWithHistory("VYVÁŽENÍ STROMU:");
+			} else if (!(isReColor)) {
+				setTextWithHistory("PŘEBARVENÍ STROMU:");
+			}
 			appendNewText("\n • Rotace RL.");
 			hideMovedBranchRecursive(nodeC);
 			rlAnimationFinished(nodeA, nodeB, nodeC);
@@ -1235,14 +1276,22 @@ public class DrawingTree {
 		
 		if (animationSpeed.get() == 0) {
 			oldText = text.getText();
-			setTextWithHistory("VYVÁŽENÍ STROMU");
+			if (!isRedBlack) {
+				setTextWithHistory("VYVÁŽENÍ STROMU:");
+			} else if (!(isReColor)) {
+				setTextWithHistory("PŘEBARVENÍ STROMU:");
+			}
 			appendNewText("\n • Rotace LL.");
 			hideMovedBranchRecursive(nodeB);
 			llAnimationFinished(nodeA, nodeB);
 			return;
 		}		
 		
-		nodeA.highlightNode();		
+		nodeA.highlightNode();	
+		
+		if (isRedBlack) {
+			nodeA.getRight().highlightNode();
+		}
 		
 		appendNewText("\n • Rotace LL.");
 		
@@ -1326,6 +1375,10 @@ public class DrawingTree {
 		nodeA.setDefaultColorNode();
 		nodeB.setDefaultColorNode();
 		
+		if (isRedBlack) {
+			nodeA.getRight().setDefaultColorNode();
+		}
+		
 		listGraphicNodes.remove(nodeA); //posunu list A před B
 		listGraphicNodes.add(listGraphicNodes.indexOf(nodeB), nodeA);
 		
@@ -1345,7 +1398,11 @@ public class DrawingTree {
 		
 		if (animationSpeed.get() == 0) {
 			oldText = text.getText();
-			setTextWithHistory("VYVÁŽENÍ STROMU");
+			if (!isRedBlack) {
+				setTextWithHistory("VYVÁŽENÍ STROMU:");
+			} else if (!(isReColor)) {
+				setTextWithHistory("PŘEBARVENÍ STROMU:");
+			}
 			appendNewText("\n • Rotace LR.");
 			hideMovedBranchRecursive(nodeC);
 			lrAnimationFinished(nodeA, nodeB, nodeC);
