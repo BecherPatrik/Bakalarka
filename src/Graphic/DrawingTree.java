@@ -1085,8 +1085,10 @@ public class DrawingTree {
 		timeline.play();		
 	}
 	
-	private void rrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {		
-		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+	private void rrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {	
+		if (!isRedBlack) {
+			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		}		
 		
 		nodeB.setLeft(nodeA.getRight());
 		
@@ -1117,8 +1119,7 @@ public class DrawingTree {
 			}		
 			nodeA.setX(xAnimatedNode);
 			nodeA.setY(yAnimatedNode);
-		}				
-		
+		}
 		
 		xAnimatedBranch.bind(nodeB.getParent().getX().add(rootSize));
 		yAnimatedBranch.bind(nodeB.getParent().getY().add(DOWNMARGIN));
@@ -1135,9 +1136,13 @@ public class DrawingTree {
 		listGraphicNodes.remove(nodeA); //posunu list A před B
 		listGraphicNodes.add(listGraphicNodes.indexOf(nodeB), nodeA);
 		
-		appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
-		
-		recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		if (!isRedBlack) {
+			appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
+			
+			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		} else {
+			appendNewText("\n • Rotace dokončena. \n • Přebarvení proběhlo úspěšně.");			
+		}		
 		
 		indexAnimation++;
 		nextAnimation();
@@ -1208,12 +1213,12 @@ public class DrawingTree {
 		hideMovedBranchRecursive(nodeC);
 		
 		timeline.play();		
-		
-		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
 	}
 	
 	private void rlAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {
-		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		if (!isRedBlack) {
+			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		}
 		
 		nodeA.setRight(nodeB.getLeft());
 		nodeC.setLeft(nodeB.getRight());
@@ -1262,9 +1267,13 @@ public class DrawingTree {
 		listGraphicNodes.remove(nodeB); //posunu list B před C
 		listGraphicNodes.add(listGraphicNodes.indexOf(nodeC), nodeB);
 		
-		appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
-		
-		recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		if (!isRedBlack) {
+			appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
+			
+			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		} else {
+			appendNewText("\n • Rotace dokončena. \n • Přebarvení proběhlo úspěšně.");			
+		}
 		
 		indexAnimation++;
 		nextAnimation();		
@@ -1324,16 +1333,16 @@ public class DrawingTree {
 		nodeA.getY().unbind();
 		
 		nodeB.getX().unbind();
-		nodeB.getY().unbind();
-		
-		System.out.println("-" + nodeA.getX()+ ", "+nodeB.getX());
+		nodeB.getY().unbind();		
 		
 		hideMovedBranchRecursive(nodeB);
 		timeline.play();		
 	}
 	
 	private void llAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {
-		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		if (!isRedBlack) {
+			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		}
 		
 		nodeB.setRight(nodeA.getLeft());
 		
@@ -1364,8 +1373,7 @@ public class DrawingTree {
 			}				
 			nodeA.setX(xAnimatedNode);
 			nodeA.setY(yAnimatedNode);
-		}				
-		
+		}
 		
 		xAnimatedBranch.bind(nodeB.getParent().getX().subtract(rootSize));
 		yAnimatedBranch.bind(nodeB.getParent().getY().add(DOWNMARGIN));
@@ -1382,10 +1390,13 @@ public class DrawingTree {
 		listGraphicNodes.remove(nodeA); //posunu list A před B
 		listGraphicNodes.add(listGraphicNodes.indexOf(nodeB), nodeA);
 		
-		appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
-		System.out.println("+" + nodeA.getX()+ ", "+nodeB.getX());
-		
-		recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		if (!isRedBlack) {
+			appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
+			
+			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		} else {
+			appendNewText("\n • Rotace dokončena. \n • Přebarvení proběhlo úspěšně.");			
+		}
 		
 		indexAnimation++;
 		nextAnimation();		
@@ -1459,7 +1470,9 @@ public class DrawingTree {
 	}
 	
 	private void lrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {		
-		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		if (!isRedBlack) {
+			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+		}
 		
 		nodeA.setLeft(nodeB.getRight());
 		nodeC.setRight(nodeB.getLeft());
@@ -1509,9 +1522,13 @@ public class DrawingTree {
 		listGraphicNodes.remove(nodeB); //posunu list B před C
 		listGraphicNodes.add(listGraphicNodes.indexOf(nodeC), nodeB);
 		
-		appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
-		
-		recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		if (!isRedBlack) {
+			appendNewText("\n • Rotace dokončena. \n • Vyvážení proběhlo úspěšně.");
+			
+			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
+		} else {
+			appendNewText("\n • Rotace dokončena. \n • Přebarvení proběhlo úspěšně.");			
+		}
 		
 		indexAnimation++;
 		nextAnimation();

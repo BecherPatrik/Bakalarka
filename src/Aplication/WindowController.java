@@ -17,6 +17,7 @@ import Trees.AnimatedAction;
 import Trees.BinaryTree;
 import Trees.INode;
 import Trees.ITree;
+import Trees.RedBlackNode;
 import Trees.RedBlackTree;
 import Trees.Result;
 import javafx.animation.FadeTransition;
@@ -100,12 +101,14 @@ public class WindowController implements Initializable {
 	private Set<Integer> randomValueList;
 	
 	private List<Integer> listHistory = new ArrayList<>();
+	private List<Trees.Color> listHistoryColor = new ArrayList<>();
 	private int lastValue;
 
 	private boolean isRedraw = false;
 	private int finishAnimation = 0;
 	private double oldSpeed;
 	private boolean randomTree = false;
+	private boolean isRedBlack = false;
 
 	/**
 	 * Inicializace okna
@@ -335,20 +338,25 @@ public class WindowController implements Initializable {
 		
 		switch (btnTreesActual.getId()) {
 		case "btnBinary":
+			//isRedBlack = false;
 			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
 			//tree = new BinaryTree();	
 			//tree = new AVLTree();
+			isRedBlack = true;
 			tree = new RedBlackTree();
 			break;
 			
 		case "btnAVL":
+			isRedBlack = false;
 			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
 			tree = new AVLTree();
 			break;
 			
 		case "btnRedBlack":
+			isRedBlack = true;
 			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
 			tree = new RedBlackTree();
+			
 			break;
 		default:
 			break;
@@ -531,6 +539,7 @@ public class WindowController implements Initializable {
 	private void createHistory() {
 		lastValue = Integer.parseInt(inputNumber.getText());
 		listHistory.clear();
+		listHistoryColor.clear();
 		createHistoryRecursion(tree.getRoot());
 	}
 	
@@ -538,6 +547,10 @@ public class WindowController implements Initializable {
 		INode<?> node = (INode<?>) object;
 		if (node != null) {
 			listHistory.add(node.getValue());
+			
+			if (isRedBlack) {
+				listHistoryColor.add(((RedBlackNode)node).getColor());
+			}
 
 			if (node.getLeft() != null) {
 				createHistoryRecursion(node.getLeft());
@@ -562,6 +575,10 @@ public class WindowController implements Initializable {
 		isRedraw  = true;
 		tree.disableBalance();
 		
+		int index = 1;
+		Result<?> result;
+		RedBlackNode redBlackNode;
+		
 		if (!(listHistory.isEmpty())) {
 			graphicTree.hideText();
 			
@@ -569,7 +586,14 @@ public class WindowController implements Initializable {
 			graphicTree.insertRoot((INode<?>)tree.getRoot());
 
 			for (int value : listHistory.subList(1, listHistory.size())) {
-				graphicTree.insertNode(tree.insert(value), lastValue);
+				result = tree.insert(value);
+				graphicTree.insertNode(result, lastValue);
+				if (isRedBlack) {
+					redBlackNode = (RedBlackNode)result.getNode();
+					redBlackNode.setColor(listHistoryColor.get(index));
+					redBlackNode.getGraphicNode().setColor(listHistoryColor.get(index));
+					index++;
+				}
 			}
 			
 			graphicTree.clearText();

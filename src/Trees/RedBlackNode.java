@@ -6,7 +6,7 @@ import Graphic.IGraphicNode;
 public class RedBlackNode implements INode<RedBlackNode> {
 	
 	private int value;
-	private Color color = Color.BLACK;
+	private Color color = Color.RED;
 	private RedBlackNode parent = null;
 	private RedBlackNode right = null;
 	private RedBlackNode left = null;
