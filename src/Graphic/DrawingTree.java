@@ -170,7 +170,6 @@ public class DrawingTree {
 		startNodeY.bind(new SimpleDoubleProperty(ROOTBORDER));	
 		
 		newIGraphicNode = result.getNode().getGraphicNode(); //vkládaný list	
-		//newIGraphicNode.setParent(((INode<?>)result.getNode().getParent()).getGraphicNode());
 		
 		paneTree.getChildren().add(newIGraphicNode.getStackPaneNode()); //přidám list 		
 		
@@ -186,13 +185,7 @@ public class DrawingTree {
 		yAnimatedNode.bind(newIGraphicNode.getParent().getY().add(DOWNMARGIN));
 		
 		//zavolám animaci
-		startAnimation(result.getRecordOfAnimations());			
-		
-	/*	if(animationSpeed.get() != 0) {
-			createBranch(newIGraphicNode);			
-		}*/
-		
-		//listGraphicNodes.add(newIGraphicNode);	
+		startAnimation(result.getRecordOfAnimations());	
 	}
 	
 	/**
@@ -220,12 +213,8 @@ public class DrawingTree {
 	 */
 	public void searchNode(Result<?> result, int value) {
 		this.value = value;
-		//if (!(boolean)result.getRecordOfAnimations().get(0).getObject()) {
-	//		//TODO nenalezen
-	//	} else {
-			wayList = result.getWay();			
-			startAnimation(result.getRecordOfAnimations());			
-	//	}
+		wayList = result.getWay();			
+		startAnimation(result.getRecordOfAnimations());			
 	}	
 	
 	/**
@@ -265,10 +254,7 @@ public class DrawingTree {
 	/**
 	 * Upraví vzdálenosti listů 
 	 */
-	private void balanceTree() {		
-		
-		//listGraphicNodes.forEach(x -> x.createBackUpBranch());
-
+	private void balanceTree() {
 		if (listGraphicNodes.isEmpty()) {
 			windowController.enableButtons();
 			return;
@@ -300,9 +286,7 @@ public class DrawingTree {
 		xAnimatedBranch = new SimpleDoubleProperty();
 		yAnimatedBranch = new SimpleDoubleProperty();
 		
-		IGraphicNode iGraphicNode = listGraphicNodes.get(balanceRedraw);
-		
-		//System.out.println("balance pro: "+ iGraphicNode.getValue());
+		IGraphicNode iGraphicNode = listGraphicNodes.get(balanceRedraw);		
 
 		if (iGraphicNode.getSide() == Side.LEFT) {
 			xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));
@@ -328,9 +312,7 @@ public class DrawingTree {
 
 			kf = new KeyFrame(duration,
 					new KeyValue(iGraphicNode.getX(), xAnimatedNode.get()),
-					new KeyValue(iGraphicNode.getY(), yAnimatedNode.get())
-					//,	new KeyValue(iGraphicNode.getBranchEndX(), xAnimatedBranch.get())
-					);
+					new KeyValue(iGraphicNode.getY(), yAnimatedNode.get()));
 
 			timeline.getKeyFrames().add(kf);
 
@@ -378,10 +360,7 @@ public class DrawingTree {
 			});
 
 			iGraphicNode.getX().unbind();
-			iGraphicNode.getY().unbind();
-			
-			//iGraphicNode.getBranchEndX().unbind();
-			//iGraphicNode.getBranchEndY().unbind();			
+			iGraphicNode.getY().unbind();			
 			
 			hideMovedBranchRecursive(iGraphicNode);
 			
@@ -897,9 +876,7 @@ public class DrawingTree {
 				graphicNodeMoved.setX(rootX);
 				listGraphicNodes.remove(graphicNodeMoved); //dám roota na první místo
 				listGraphicNodes.add(0, graphicNodeMoved);
-			}// else {
-				//graphicNodeMoved.setParent(graphicNodeRemoved.getParent()); /** smazané **/
-			///}
+			}
 							
 			graphicNodeMoved.setDefaultColorNode();
 			graphicNodeMoved.getStackPaneNode().toFront();					
@@ -1041,10 +1018,7 @@ public class DrawingTree {
 		appendNewText("\n • Rotace RR.");
 		
 		xAnimatedNode = new SimpleDoubleProperty(nodeB.getX().get() + rootSize);	
-		yAnimatedNode = new SimpleDoubleProperty(nodeB.getY().get() + DOWNMARGIN);
-		
-		//xAnimatedNode.bind(nodeB.getX().add(rootSize));	
-		//yAnimatedNode.bind(nodeB.getY().add(DOWNMARGIN));
+		yAnimatedNode = new SimpleDoubleProperty(nodeB.getY().get() + DOWNMARGIN);		
 		
 		Timeline timeline = new Timeline();
 
@@ -1078,13 +1052,7 @@ public class DrawingTree {
 		timeline.play();		
 	}
 	
-	private void rrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {
-		/*xAnimatedBranch = new SimpleDoubleProperty();
-		yAnimatedBranch = new SimpleDoubleProperty();
-		xAnimatedNode = new SimpleDoubleProperty();
-		yAnimatedNode = new SimpleDoubleProperty();*/
-		
-		
+	private void rrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {		
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
 		
 		nodeB.setLeft(nodeA.getRight());
@@ -1204,11 +1172,6 @@ public class DrawingTree {
 	}
 	
 	private void rlAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {
-		/*xAnimatedBranch = new SimpleDoubleProperty();
-		yAnimatedBranch = new SimpleDoubleProperty();
-		xAnimatedNode = new SimpleDoubleProperty();
-		yAnimatedNode = new SimpleDoubleProperty();	*/	
-		
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
 		
 		nodeA.setRight(nodeB.getLeft());
@@ -1321,11 +1284,6 @@ public class DrawingTree {
 	}
 	
 	private void llAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {
-		/*xAnimatedBranch = new SimpleDoubleProperty();
-		yAnimatedBranch = new SimpleDoubleProperty();
-		xAnimatedNode = new SimpleDoubleProperty();
-		yAnimatedNode = new SimpleDoubleProperty();*/		
-		
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
 		
 		nodeB.setRight(nodeA.getLeft());
@@ -1443,12 +1401,7 @@ public class DrawingTree {
 		timeline.play();		
 	}
 	
-	private void lrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {
-		/*xAnimatedBranch = new SimpleDoubleProperty();
-		yAnimatedBranch = new SimpleDoubleProperty();
-		xAnimatedNode = new SimpleDoubleProperty();
-		yAnimatedNode = new SimpleDoubleProperty();*/		
-		
+	private void lrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {		
 		((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
 		
 		nodeA.setLeft(nodeB.getRight());

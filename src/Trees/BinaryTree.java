@@ -79,16 +79,11 @@ public class BinaryTree implements ITree<BinaryNode> {
             	}
             	
             	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
-            	result.addAnimation(AnimatedAction.MOVENODE, helpNode.getGraphicNode(), helpNode.getRight().getGraphicNode());
-            	//result.addAnimation(AnimatedAction.MOVEVALUEFINISH, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
-            	
-            	//helpNode.setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
+            	result.addAnimation(AnimatedAction.MOVENODE, helpNode.getGraphicNode(), helpNode.getRight().getGraphicNode());            	
             }
         } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka má mazaný  2.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
-            result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getLeft().getGraphicNode());
-            
-            //result.getNode().setGraphicNode(removedNode.getLeft().getGraphicNode()); /******nové******/
+            result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getLeft().getGraphicNode());            
             
             removedNode.setNodeWithGraphic(removedNode.getLeft());
             
@@ -96,9 +91,7 @@ public class BinaryTree implements ITree<BinaryNode> {
             
         } else if (removedNode.getRight() != null) { // 3.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
-            result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getRight().getGraphicNode());
-            
-          //  result.getNode().setGraphicNode(removedNode.getRight().getGraphicNode()); /******nové******/
+            result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getRight().getGraphicNode());            
             
             removedNode.setNodeWithGraphic(removedNode.getRight());  
             System.out.println("\n3.\n");

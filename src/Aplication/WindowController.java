@@ -240,12 +240,7 @@ public class WindowController implements Initializable {
 	 * Funkce pro vkládání čísla
 	 */
 	@FXML
-	private void insertNumber() {
-		//treeLog();
-		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
-		//listOldGraphicTreeNodes.clear();
-		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
-		
+	private void insertNumber() {		
 		graphicTree.clearText();
 		lastAction = AnimatedAction.INSERT;
 		createHistory();		
@@ -259,8 +254,6 @@ public class WindowController implements Initializable {
 		} else {
 			graphicTree.insertRoot((INode<?>)tree.getRoot());
 		}
-		//System.out.println("-----------------------------------");
-		//treeLog();
 	}
 	
 	/**
@@ -268,12 +261,8 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void searchNumber() {
-		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp());
-		//listOldGraphicTreeNodes.clear();
-		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		lastAction = AnimatedAction.SEARCH;
 		
-		//createHistory();
 		graphicTree.clearText();
 		
 		disableButtons();
@@ -287,14 +276,7 @@ public class WindowController implements Initializable {
 	 */
 	@FXML
 	private void deleteNumber() {
-		//System.out.println();
-		//System.out.println("##########################################################################");
-		//System.out.println();
-		//treeLog();
 		graphicTree.clearText();
-		//graphicTree.getListGraphicNodes().forEach(x -> x.deleteBackUp()); //smažu zálohy 
-		//listOldGraphicTreeNodes.clear();
-		//listOldGraphicTreeNodes.addAll(graphicTree.getListGraphicNodes());
 		
 		lastAction = AnimatedAction.DELETE;
 		createHistory();	
@@ -303,8 +285,6 @@ public class WindowController implements Initializable {
 		
 		lastResult = tree.delete(Integer.parseInt(inputNumber.getText()));		
 		graphicTree.deleteNode(lastResult, lastValue);	
-		//System.out.println("----------------------------------");
-		//treeLog();
 	}
 	
 	@FXML 
@@ -347,7 +327,6 @@ public class WindowController implements Initializable {
 	private void newEmptyTree() {
 		listOldGraphicTreeNodes = new ArrayList<>();
 		lastResult = null;		
-		//listHistory = new ArrayList<>();
 		
 		paneTree.getChildren().clear();
 		
@@ -357,7 +336,8 @@ public class WindowController implements Initializable {
 		case "btnBinary":
 			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
 			//tree = new BinaryTree();	
-			tree = new AVLTree();
+			//tree = new AVLTree();
+			tree = new RedBlackTree();
 			break;
 			
 		case "btnAVL":
@@ -367,8 +347,7 @@ public class WindowController implements Initializable {
 			
 		case "btnRedBlack":
 			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
-			tree = new BinaryTree();
-			//tree = new RedBlackTree();
+			tree = new RedBlackTree();
 			break;
 		default:
 			break;
@@ -688,9 +667,7 @@ public class WindowController implements Initializable {
 		}
 	}
 	
-	private void updatePaneTree() {
-	//	listOldGraphicTreeNodes.forEach(x -> x.useBackUp());		
-		
+	private void updatePaneTree() {		
 		graphicTree.setListGraphicNodes(listOldGraphicTreeNodes);		
 
 		paneTree.getChildren().clear();
@@ -724,12 +701,7 @@ public class WindowController implements Initializable {
 			btnDelete.setDisable(true);
 			btnSearch.setDisable(true);
 		}
-		
-		/*if (isAnimationDisable || (listOldGraphicTreeNodes.isEmpty() && paneTree.getChildren().isEmpty()) || listOldGraphicTreeNodes.isEmpty())  {
-			btnRepeat.setDisable(true);
-		} else {
-			btnRepeat.setDisable(false);
-		}*/		
+			
 		if (isAnimationDisable || paneTree.getChildren().isEmpty() && listHistory.isEmpty()) {
 			btnRepeat.setDisable(true);
 		} else {
@@ -753,11 +725,7 @@ public class WindowController implements Initializable {
 			graphicTree.showText();
 			sliderSpeed.setValue(oldSpeed);
 			randomTree = false;
-		}
-		
-		//System.out.println(paneTree.getWidth()+ " - "+ scrollPane.getWidth()+ " + "+ scrollPane.getPrefViewportWidth());
-		//System.out.println("===============================");
-		//treeLog();
+		}		
 		
 		primaryStage.setResizable(true);
 		
