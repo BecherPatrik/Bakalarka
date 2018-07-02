@@ -55,6 +55,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
         if (side != Side.NONE) {  //pokud ho nenajdu TODO
             return result;
         }
+        
 
 		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud má 2 potomky 1.
 			helpNode = removedNode.getRight(); // dosadím pravého
@@ -81,6 +82,10 @@ public class RedBlackTree implements ITree<RedBlackNode> {
                 result.addAnimation(AnimatedAction.MOVENODE, removedNode.getGraphicNode(), helpNode.getGraphicNode()); 
                 removedNode.setGraphicNode(helpNode.getGraphicNode());
                 
+                if (helpNode.getColor() == Color.BLACK) {
+                	return doubleBlack(result, helpNode); /** B1 **/
+                }
+                
             } else { //0.2
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.2.1
             		helpNode.getParent().setRightWithGraphic(helpNode.getRight());
@@ -105,12 +110,21 @@ public class RedBlackTree implements ITree<RedBlackNode> {
         	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá děti
         	
         	if (removedNode.getGraphicNode().getSide() == Side.LEFT) { //nemá žádného potomka, tak je to list => smažu ho
-                removedNode.getParent().deleteLeftWithGraphic();  
+                removedNode.getParent().deleteLeftWithGraphic(); 
+                
+                if (removedNode.getColor() == Color.BLACK) {
+                	return doubleBlack(result, helpNode); /** B1 **/
+                }
+                
             } else if (removedNode.equals(root)) { //osamocený root
             	root = null;
-            	return balanceTree(result, null);
+            	return result;
             } else {
-            	removedNode.getParent().deleteRightWithGraphic();  //pravý            	
+            	removedNode.getParent().deleteRightWithGraphic();  //pravý
+            	
+            	if (removedNode.getColor() == Color.BLACK) {
+                	return doubleBlack(result, helpNode); /** B1 **/
+                }
             }
             
             return balanceTree(result, removedNode.getParent());
@@ -119,6 +133,11 @@ public class RedBlackTree implements ITree<RedBlackNode> {
         return balanceTree(result, removedNode);
 	}	
 	
+	private Result<RedBlackNode> doubleBlack(Result<RedBlackNode> result, RedBlackNode helpNode) {
+		// TODO Auto-generated method stub
+		return result;
+	}
+
 	/**
 	 * @param value - hledaný list
 	 * @return ResultNode<RedBlackNode> - vrací nalezený list (side = NONE) nebo vrací rodiče a stranu
@@ -165,22 +184,27 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 	 * @param result
 	 * @return
 	 */
-	private Result<RedBlackNode> balanceTree(Result<RedBlackNode> result, RedBlackNode startNode) {		
-		RedBlackNode balanceNode = startNode.getParent();		
+	private Result<RedBlackNode> balanceTree(Result<RedBlackNode> result, RedBlackNode startNode) {			
+		RedBlackNode balanceNode = startNode.getParent();
+		if (balanceNode == null) {
+			result.addAnimation(AnimatedAction.RECOLOR, root.getGraphicNode(), Color.BLACK);
+			return result;
+		}
+		
 		
 		while (balanceNode != null) {			
 			if (balanceNode.getColor() == Color.RED) {
 				if (balanceNode.getParent().getLeft() != null && balanceNode.getParent().getRight() != null) {
 					balanceNode.getParent().getLeft().setColor(Color.BLACK);
-					balanceNode.getParent().getRight().setColor(Color.BLACK);
+					balanceNode.getParent().getRight().setColor(Color.BLACK);					
 					
+					result.addAnimation(AnimatedAction.RECOLOR, balanceNode.getParent().getLeft().getGraphicNode(), Color.BLACK);
+					result.addAnimation(AnimatedAction.RECOLOR, balanceNode.getParent().getRight().getGraphicNode(), Color.BLACK);
 					if (balanceNode.getParent().getParent() != null) {
 						balanceNode.getParent().setColor(Color.RED);
 						result.addAnimation(AnimatedAction.RECOLOR, balanceNode.getParent().getGraphicNode(), Color.RED);
+						balanceNode = balanceNode.getParent(); //musím ho přeskočit
 					}
-					result.addAnimation(AnimatedAction.RECOLOR, balanceNode.getParent().getLeft().getGraphicNode(), Color.BLACK);
-					result.addAnimation(AnimatedAction.RECOLOR, balanceNode.getParent().getRight().getGraphicNode(), Color.BLACK);
-					
 					
 				} else {
 					result.addAnimation(AnimatedAction.RECOLOR, balanceNode.getGraphicNode(), balanceNode.getGraphicNode().getColor());

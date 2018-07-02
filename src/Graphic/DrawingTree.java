@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -89,7 +90,8 @@ public class DrawingTree {
 		text.setMaxHeight(95);
 		text.setEditable(false);		
 		text.setFont(new Font(text.getFont().toString(), 15));
-		text.layoutXProperty().bind(stageWidthProperty.subtract(270));		
+		text.layoutXProperty().bind(stageWidthProperty.subtract(270));	
+		//text.setStyle("-fx-background-color: green");
 		
 		paneTree.getChildren().add(text);
 	}
@@ -1022,6 +1024,9 @@ public class DrawingTree {
 		node.setColor(color);		
 				
 		indexAnimation++;
+		if (indexAnimation >= recordOfAnimations.size()) {
+			appendNewText("\n • Přebarvení proběhlo úspěšně.");
+		}
 		nextAnimation();
 	}
 	
