@@ -185,6 +185,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 	 * @return
 	 */
 	private Result<RedBlackNode> balanceTree(Result<RedBlackNode> result, RedBlackNode startNode) {			
+		boolean reColor = false;
 		RedBlackNode balanceNode = startNode.getParent();
 		if (balanceNode == null) {
 			result.addAnimation(AnimatedAction.RECOLOR, root.getGraphicNode(), Color.BLACK);
@@ -194,7 +195,8 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 		
 		while (balanceNode != null) {			
 			if (balanceNode.getColor() == Color.RED) {
-				if (balanceNode.getParent().getLeft() != null && balanceNode.getParent().getRight() != null) {
+				if (balanceNode.getParent().getLeft() != null && balanceNode.getParent().getRight() != null
+						&& balanceNode.getParent().getLeft().getColor() == balanceNode.getParent().getRight().getColor()) {
 					balanceNode.getParent().getLeft().setColor(Color.BLACK);
 					balanceNode.getParent().getRight().setColor(Color.BLACK);					
 					
@@ -203,9 +205,13 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 					if (balanceNode.getParent().getParent() != null) {
 						balanceNode.getParent().setColor(Color.RED);
 						result.addAnimation(AnimatedAction.RECOLOR, balanceNode.getParent().getGraphicNode(), Color.RED);
-						balanceNode = balanceNode.getParent(); //musím ho přeskočit
-					}
-					
+						if (!(balanceNode.getParent().getParent().getColor() == Color.RED)) {
+							balanceNode = balanceNode.getParent(); //musím ho přeskočit
+						} else {
+							balanceNode = balanceNode.getParent();
+							startNode = balanceNode;
+						}												
+					}					
 				} else {
 					result.addAnimation(AnimatedAction.RECOLOR, balanceNode.getGraphicNode(), balanceNode.getGraphicNode().getColor());
 					break;

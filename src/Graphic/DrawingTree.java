@@ -1025,7 +1025,7 @@ public class DrawingTree {
 				
 		indexAnimation++;
 		if (indexAnimation >= recordOfAnimations.size()) {
-			appendNewText("\n • Přebarvení proběhlo úspěšně.");
+			appendNewText("\n • Rotace dokončena. \n • Přebarvení proběhlo úspěšně.");
 		}
 		nextAnimation();
 	}
@@ -1146,7 +1146,7 @@ public class DrawingTree {
 			
 			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
 		} else {
-			appendNewText("\n • Rotace dokončena. \n • Přebarvení proběhlo úspěšně.");			
+			appendNewText("\n • Rotace dokončena.");			
 		}		
 		
 		indexAnimation++;
@@ -1277,7 +1277,7 @@ public class DrawingTree {
 			
 			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
 		} else {
-			appendNewText("\n • Rotace dokončena. \n • Přebarvení proběhlo úspěšně.");			
+			appendNewText("\n • Rotace dokončena.");			
 		}
 		
 		indexAnimation++;
@@ -1400,7 +1400,7 @@ public class DrawingTree {
 			
 			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
 		} else {
-			appendNewText("\n • Rotace dokončena. \n • Přebarvení proběhlo úspěšně.");			
+			appendNewText("\n • Rotace dokončena.");			
 		}
 		
 		indexAnimation++;
@@ -1532,7 +1532,7 @@ public class DrawingTree {
 			
 			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
 		} else {
-			appendNewText("\n • Rotace dokončena. \n • Přebarvení proběhlo úspěšně.");			
+			appendNewText("\n • Rotace dokončena.");			
 		}
 		
 		indexAnimation++;
