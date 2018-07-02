@@ -50,6 +50,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
         
         Result<RedBlackNode> result = search(value);
         Side side = result.getSide(); //zjistím směr
+        Color oldColor;
         removedNode = (RedBlackNode) result.getNode();
 
         if (side != Side.NONE) {  //pokud ho nenajdu TODO
@@ -82,8 +83,12 @@ public class RedBlackTree implements ITree<RedBlackNode> {
                 result.addAnimation(AnimatedAction.MOVENODE, removedNode.getGraphicNode(), helpNode.getGraphicNode()); 
                 removedNode.setGraphicNode(helpNode.getGraphicNode());
                 
+            	result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), removedNode.getColor());/***/
+                
                 if (helpNode.getColor() == Color.BLACK) {
-                	return doubleBlack(result, helpNode); /** B1 **/
+                	return doubleBlack(result, helpNode); /** B1 **/ //TODO
+                } else {
+                	return result;
                 }
                 
             } else { //0.2
@@ -95,17 +100,43 @@ public class RedBlackTree implements ITree<RedBlackNode> {
             	
             	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
             	result.addAnimation(AnimatedAction.MOVENODE, helpNode.getGraphicNode(), helpNode.getRight().getGraphicNode());
+            	
+            	result.addAnimation(AnimatedAction.RECOLOR, helpNode.getRight().getGraphicNode(), helpNode.getColor()); /***/
+            	
+            	if (helpNode.getRight().getColor() == Color.BLACK) {
+            		return doubleBlack(result, helpNode.getRight()); /** B1 **/
+            	} else {
+            		return result;
+            	}            	
             }
         } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka má mazaný  2.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
             result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getLeft().getGraphicNode());
             
-            removedNode.setNodeWithGraphic(removedNode.getLeft());            
+            helpNode = removedNode.getLeft();
+            removedNode.setNodeWithGraphic(removedNode.getLeft());  
+            
+            result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), removedNode.getColor()); /***/
+        	
+        	if (helpNode.getColor() == Color.BLACK) {
+        		return doubleBlack(result, helpNode); /** B1 **/
+        	} else {
+        		return result;
+        	}
         } else if (removedNode.getRight() != null) { // 3.
         	result.addAnimation(AnimatedAction.DELETE, null, true);
             result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getRight().getGraphicNode());
             
+            helpNode = removedNode.getRight();
             removedNode.setNodeWithGraphic(removedNode.getRight());  
+            
+            result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), removedNode.getColor()); /***/
+        	
+        	if (helpNode.getColor() == Color.BLACK) {
+        		return doubleBlack(result, removedNode.getRight()); /** B1 **/
+        	} else {
+        		return result;
+        	}
         } else { // 4.   
         	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá děti
         	
@@ -113,7 +144,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
                 removedNode.getParent().deleteLeftWithGraphic(); 
                 
                 if (removedNode.getColor() == Color.BLACK) {
-                	return doubleBlack(result, helpNode); /** B1 **/
+                	return doubleBlack(result, removedNode); /** B1 **/
                 }
                 
             } else if (removedNode.equals(root)) { //osamocený root
@@ -123,14 +154,12 @@ public class RedBlackTree implements ITree<RedBlackNode> {
             	removedNode.getParent().deleteRightWithGraphic();  //pravý
             	
             	if (removedNode.getColor() == Color.BLACK) {
-                	return doubleBlack(result, helpNode); /** B1 **/
+                	return doubleBlack(result, removedNode); /** B1 **/
                 }
             }
             
-            return balanceTree(result, removedNode.getParent());
-        } 
-        
-        return balanceTree(result, removedNode);
+            return result;
+        }       
 	}	
 	
 	private Result<RedBlackNode> doubleBlack(Result<RedBlackNode> result, RedBlackNode helpNode) {

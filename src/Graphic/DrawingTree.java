@@ -822,6 +822,7 @@ public class DrawingTree {
 		
 		if (animationSpeed.get() == 0) {
 			moveNodeAnimationFinished(graphicNodeRemoved, graphicNodeMoved);
+			return;
 		}		
 		
 		graphicNodeMoved.highlightNode();
