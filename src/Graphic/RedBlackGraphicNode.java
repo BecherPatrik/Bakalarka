@@ -16,6 +16,10 @@ public class RedBlackGraphicNode extends BinaryGraphicNode {
 		super.getCircle().setFill(Color.DARKRED);
 	}	
 	
+	public void doubleBlackHighlight() {
+		super.getCircle().setStroke(Color.AQUA);
+	}
+	
 	/********************************************************************************************************
 	 * GETS & SETS
 	 * 

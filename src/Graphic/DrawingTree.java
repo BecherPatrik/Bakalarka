@@ -3,6 +3,8 @@ package Graphic;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.plaf.basic.BasicTreeUI.TreePageAction;
+
 import Aplication.WindowController;
 import Trees.AVLNode;
 import Trees.AnimatedAction;
@@ -60,7 +62,10 @@ public class DrawingTree {
 	private ArrayList<IGraphicNode> wayList;
 	private ArrayList<RecordOfAnimation> recordOfAnimations;
 	
-	private final int SLOWANIMATION = 250;
+	//private final int SLOWANIMATION = 250;
+	//private final int FASTANIMATION = 105;
+	
+	private final int SLOWANIMATION = 800;
 	private final int FASTANIMATION = 105;
 	
 	private int wayIndex = 0;
@@ -564,12 +569,17 @@ public class DrawingTree {
 		case DOUBLEBLACK:
 			doubleBlack();
 			break;
+		
+		case SETDOUBLEBLACK:
+			setDoublBlack();
+			break;
 			
 		default:
 			break;
 		}	
 	}
 	
+
 	/**
 	 * Zavolá znovu metodu highlightNode pro každý list zvlášť
 	 */
@@ -1048,7 +1058,7 @@ public class DrawingTree {
 			balanceTree();
 			return;
 		}*/
-		
+		isRedBlack = true;
 		oldText = text.getText();
 		setTextWithHistory("VYVÁŽENÍ STROMU:");
 		appendNewText("\n • Smazaný list byl černý.");
@@ -1072,6 +1082,7 @@ public class DrawingTree {
 		nullNode.setY(yAnimatedNode);
 		
 		nullNode.setColor(Trees.Color.BLACK);
+		nullNode.doubleBlackHighlight();
 		
 		nullNode.setParent(recordOfAnimations.get(indexAnimation).getNode1());
 		createBranch(nullNode);		
@@ -1081,6 +1092,67 @@ public class DrawingTree {
 		
 		indexAnimation++;		
 		nextAnimation();
+	}
+	
+	/**
+	 * Odstraní NULL list případně přesune označení na jiný list
+	 */
+	private void setDoublBlack() {
+		RedBlackGraphicNode node;
+		if (recordOfAnimations.get(indexAnimation).getNode1() != null) {
+			node = (RedBlackGraphicNode) recordOfAnimations.get(indexAnimation).getNode1();
+			nullNode.setDefaultColorNode();
+			appendNewText("\n • Přesunu označení.");
+			nullNode = node;			
+		} else {
+			if (nullNode.getValue().equals("NULL")) {
+				appendNewText("\n • Odstraním NULL list.");
+				
+				if (animationSpeed.get() == 0) { 
+					paneTree.getChildren().remove(nullNode.getStackPaneNode());
+					paneTree.getChildren().remove(nullNode.getBranch());
+					return;
+				}
+				
+				FadeTransition fadeTransitionNode = new FadeTransition(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())), nullNode.getStackPaneNode());
+				fadeTransitionNode.setFromValue(1.0);
+				fadeTransitionNode.setToValue(0.0);			
+				
+				FadeTransition fadeTransitionBranch = new FadeTransition(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())), nullNode.getBranch());
+				fadeTransitionBranch.setFromValue(1.0);
+				fadeTransitionBranch.setToValue(0.0);
+
+				fadeTransitionBranch.play();
+				fadeTransitionNode.play();
+				
+				fadeTransitionNode.setOnFinished(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {	
+						paneTree.getChildren().remove(nullNode.getStackPaneNode());
+						paneTree.getChildren().remove(nullNode.getBranch());
+						if (nullNode.getSide() == Side.LEFT) {
+							nullNode.getParent().setLeft(null);
+						} else {
+							nullNode.getParent().setRight(null);
+						}
+						
+						indexAnimation++;
+						nextAnimation();
+					}
+				});
+				
+				return;				
+								
+			} else if (recordOfAnimations.get(indexAnimation).getObject() != null) {				
+				appendNewText("\n • Kořen je vždy černý.");
+			} else {
+				appendNewText("\n • Odstraním obarevní listu.");
+			}
+			nullNode.setDefaultColorNode();
+		}
+		
+		indexAnimation++;
+		nextAnimation();		
 	}
 	
 	private void rrAnimation() {		
