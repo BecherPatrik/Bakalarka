@@ -34,7 +34,12 @@ public class BinaryGraphicNode implements IGraphicNode {
 	private Line branch = null;	
 
 	public BinaryGraphicNode(int value) {
-		this.value = new Text(Integer.toString(value));
+		if (value == -1) {
+			this.value = new Text("NULL"); //redblack
+		} else {
+			this.value = new Text(Integer.toString(value));
+		}
+		
 		stackPaneNode = new StackPane();
 		createStackPaneNode();		
 	}

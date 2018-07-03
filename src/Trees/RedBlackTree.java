@@ -76,8 +76,10 @@ public class RedBlackTree implements ITree<RedBlackNode> {
             if (helpNode.getRight() == null) { //0.1
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.1.1
             		helpNode.getParent().deleteRightWithGraphic();
+            		side = Side.RIGHT;
             	} else { //0.1.2
-            		helpNode.getParent().deleteLeftWithGraphic(); 
+            		helpNode.getParent().deleteLeftWithGraphic();
+            		side = Side.LEFT;
             	}
                 
                 result.addAnimation(AnimatedAction.MOVENODE, removedNode.getGraphicNode(), helpNode.getGraphicNode()); 
@@ -86,7 +88,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
             	result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), removedNode.getColor());/***/
                 
                 if (helpNode.getColor() == Color.BLACK) {
-                	return doubleBlack(result, helpNode); /** B1 **/ //TODO
+                	return doubleBlack(result, removedNode, side); /** B1 **/ //TODO
                 } else {
                 	return result;
                 }
@@ -104,7 +106,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
             	result.addAnimation(AnimatedAction.RECOLOR, helpNode.getRight().getGraphicNode(), helpNode.getColor()); /***/
             	
             	if (helpNode.getRight().getColor() == Color.BLACK) {
-            		return doubleBlack(result, helpNode.getRight()); /** B1 **/
+            		return doubleBlack(result, helpNode, Side.RIGHT); /** B1 **/
             	} else {
             		return result;
             	}            	
@@ -119,7 +121,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
             result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), removedNode.getColor()); /***/
         	
         	if (helpNode.getColor() == Color.BLACK) {
-        		return doubleBlack(result, helpNode); /** B1 **/
+        		return doubleBlack(result, removedNode, Side.LEFT); /** B1 **/
         	} else {
         		return result;
         	}
@@ -133,7 +135,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
             result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), removedNode.getColor()); /***/
         	
         	if (helpNode.getColor() == Color.BLACK) {
-        		return doubleBlack(result, removedNode.getRight()); /** B1 **/
+        		return doubleBlack(result, removedNode, Side.RIGHT); /** B1 **/
         	} else {
         		return result;
         	}
@@ -144,7 +146,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
                 removedNode.getParent().deleteLeftWithGraphic(); 
                 
                 if (removedNode.getColor() == Color.BLACK) {
-                	return doubleBlack(result, removedNode); /** B1 **/
+                	return doubleBlack(result, removedNode.getParent(), Side.LEFT); /** B1 **/
                 }
                 
             } else if (removedNode.equals(root)) { //osamocený root
@@ -154,7 +156,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
             	removedNode.getParent().deleteRightWithGraphic();  //pravý
             	
             	if (removedNode.getColor() == Color.BLACK) {
-                	return doubleBlack(result, removedNode); /** B1 **/
+                	return doubleBlack(result, removedNode.getParent(), Side.RIGHT); /** B1 **/
                 }
             }
             
@@ -162,8 +164,9 @@ public class RedBlackTree implements ITree<RedBlackNode> {
         }       
 	}	
 	
-	private Result<RedBlackNode> doubleBlack(Result<RedBlackNode> result, RedBlackNode helpNode) {
-		// TODO Auto-generated method stub
+	private Result<RedBlackNode> doubleBlack(Result<RedBlackNode> result, RedBlackNode parent, Side side) {
+		result.addAnimation(AnimatedAction.DOUBLEBLACK, parent.getGraphicNode(), side);
+		System.out.println(parent.getGraphicNode().getX() +"-"+ side);
 		return result;
 	}
 

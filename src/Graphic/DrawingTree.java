@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TreeSortMode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -77,6 +78,8 @@ public class DrawingTree {
 	
 	private DoubleProperty xAnimatedBranch = new SimpleDoubleProperty();
 	private DoubleProperty yAnimatedBranch = new SimpleDoubleProperty();
+	
+	RedBlackGraphicNode nullNode;
 
 	public DrawingTree(Pane paneTree, DoubleProperty speed, ReadOnlyDoubleProperty stageWidthProperty, WindowController windowController) {
 		this.paneTreeWeight = stageWidthProperty;
@@ -86,11 +89,11 @@ public class DrawingTree {
 		
 		//Přidá text
 		text = new TextArea("");		
-		text.setMaxWidth(250);
-		text.setMaxHeight(95);
+		text.setMaxWidth(255);
+		text.setMaxHeight(100);
 		text.setEditable(false);		
 		text.setFont(new Font(text.getFont().toString(), 15));
-		text.layoutXProperty().bind(stageWidthProperty.subtract(270));	
+		text.layoutXProperty().bind(stageWidthProperty.subtract(275));	
 		//text.setStyle("-fx-background-color: green");
 		
 		paneTree.getChildren().add(text);
@@ -558,11 +561,15 @@ public class DrawingTree {
 			reColor();
 			break;
 			
+		case DOUBLEBLACK:
+			doubleBlack();
+			break;
+			
 		default:
 			break;
 		}	
-	}	
-
+	}
+	
 	/**
 	 * Zavolá znovu metodu highlightNode pro každý list zvlášť
 	 */
@@ -1026,8 +1033,53 @@ public class DrawingTree {
 				
 		indexAnimation++;
 		if (indexAnimation >= recordOfAnimations.size()) {
-			appendNewText("\n • Rotace dokončena. \n • Přebarvení proběhlo úspěšně.");
+			appendNewText("\n • Přebarvení proběhlo úspěšně.");
 		}
+		nextAnimation();
+	}
+	
+	/**
+	 * Doplní dvojtě černý uzel
+	 */
+	private void doubleBlack() {
+	/*	if (!(isBalance) && animationSpeed.get() != 0) {
+			indexAnimation--;
+			isBalance = true;
+			balanceTree();
+			return;
+		}*/
+		
+		oldText = text.getText();
+		setTextWithHistory("VYVÁŽENÍ STROMU:");
+		appendNewText("\n • Smazaný list byl černý.");
+		
+		xAnimatedNode = new SimpleDoubleProperty(); //souřadnice x listu	
+		yAnimatedNode = new SimpleDoubleProperty();		
+		
+		nullNode = new RedBlackGraphicNode(-1);			
+		
+		if (((Side)recordOfAnimations.get(indexAnimation).getObject()) == Side.LEFT) {
+			xAnimatedNode.bind(recordOfAnimations.get(indexAnimation).getNode1().getX().subtract(rootSize));
+			recordOfAnimations.get(indexAnimation).getNode1().setLeft(nullNode);
+		} else {
+			xAnimatedNode.bind(recordOfAnimations.get(indexAnimation).getNode1().getX().add(rootSize));	
+			recordOfAnimations.get(indexAnimation).getNode1().setRight(nullNode);
+		}
+		
+		yAnimatedNode.bind(recordOfAnimations.get(indexAnimation).getNode1().getY().add(DOWNMARGIN));
+		
+		nullNode.setX(xAnimatedNode); 
+		nullNode.setY(yAnimatedNode);
+		
+		nullNode.setColor(Trees.Color.BLACK);
+		
+		nullNode.setParent(recordOfAnimations.get(indexAnimation).getNode1());
+		createBranch(nullNode);		
+		
+		paneTree.getChildren().addAll(nullNode.getBranch(), nullNode.getStackPaneNode());	
+		nullNode.getParent().getStackPaneNode().toFront();
+		
+		indexAnimation++;		
 		nextAnimation();
 	}
 	
