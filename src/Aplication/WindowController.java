@@ -37,6 +37,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -120,7 +122,7 @@ public class WindowController implements Initializable {
 		hideMenu();
 		numberOnly();
 		sliderFormat();
-		toolTips();		
+		toolTips();			
 	}	
 
 	/**
@@ -132,6 +134,7 @@ public class WindowController implements Initializable {
 		sliderSpeed.setValue(50);
 		
 		newEmptyTree();		
+		inputNumber.requestFocus();
 	}
 	
 	/**
@@ -186,6 +189,17 @@ public class WindowController implements Initializable {
 				
 				checkEnableButtons();
 			}
+		});
+		
+		inputNumber.setOnKeyPressed(new EventHandler<KeyEvent>() {			 
+		    @Override
+		    public void handle(KeyEvent event) {
+		        if(event.getCode().equals(KeyCode.ENTER)) {
+		             if (!(btnInsert.isDisable())) {
+		            	 insertNumber();
+		             }
+		        }
+		    }
 		});
 	}
 	
@@ -772,6 +786,7 @@ public class WindowController implements Initializable {
 		
 		inputNumber.setDisable(false);
 		inputNumber.clear();
+		inputNumber.requestFocus();
 	}
 	
 	/**

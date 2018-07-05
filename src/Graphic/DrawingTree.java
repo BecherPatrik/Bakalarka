@@ -848,7 +848,7 @@ public class DrawingTree {
 		node.highlightFindNode(); // zvýrazním mazaný node
 		setTextWithHistory("MAZÁNÍ PRVKU "+ node.getValue() + ":");
 		if ((boolean) recordOfAnimations.get(indexAnimation).getObject()) { //pokud má děti
-			appendNewText("\n • Mazaný má potomky.");
+			appendNewText("\n • Mazaný list má potomky.");
 			
 			node.setValue("");
 			indexAnimation++;
