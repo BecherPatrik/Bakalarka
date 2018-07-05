@@ -76,7 +76,9 @@ public class DrawingTree {
 	private boolean isReColor = false;
 	private boolean isRedBlack = false;
 	private boolean isMoveNode = false;
-	
+	private boolean isAnimation = true;	
+	private boolean isInsertAnimation = true;
+
 	private int balanceRedraw = 0;
 	
 	private DoubleProperty xAnimatedNode = new SimpleDoubleProperty();
@@ -110,9 +112,9 @@ public class DrawingTree {
 	 * @param root
 	 */
 	public void insertRoot(INode<?> rootNode){
-		IGraphicNode root = rootNode.getGraphicNode();
-		rootSize = root.getRadiusSize();
-		stackPaneHeight = root.getStackPaneNode().getPrefHeight();
+		newIGraphicNode = rootNode.getGraphicNode();
+		rootSize = newIGraphicNode.getRadiusSize();
+		stackPaneHeight = newIGraphicNode.getStackPaneNode().getPrefHeight();
 		
 		rootY.bind(new SimpleDoubleProperty(ROOTBORDER));	
 		rootX.bind(paneTreeWeight.subtract(31).divide(2.0));	
@@ -123,42 +125,64 @@ public class DrawingTree {
 		startNodeX.bind(paneTreeWeight.subtract(paneTreeWeight.get()).add(80));	
 		startNodeY.bind(new SimpleDoubleProperty(ROOTBORDER));			
 		
-		paneTree.getChildren().add(root.getStackPaneNode());
+		paneTree.getChildren().add(newIGraphicNode.getStackPaneNode());
 		
-		listGraphicNodes.add(root);
+		listGraphicNodes.add(newIGraphicNode);
 		
 		if (animationSpeed.get() == 0) { //žádná animace
-			root.setY(rootY);
-			root.setX(rootX);			
+			newIGraphicNode.setY(rootY);
+			newIGraphicNode.setX(rootX);			
 			windowController.enableButtons();
 			return;
 		}
 		
-		root.setX(startNodeX); // vložím počáteční souřadnice
-		root.setY(startNodeY);	
+		newIGraphicNode.setX(startNodeX); // vložím počáteční souřadnice
+		newIGraphicNode.setY(startNodeY);
+		newIGraphicNode.highlightFindNode();
+		
+		PauseTransition pt2 = new PauseTransition(Duration.millis(SLOWANIMATION - 50 - animationSpeed.get()));
+		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), newIGraphicNode.getCircleShape(), Color.YELLOW, Color.WHITE);
+
+		SequentialTransition seqT = new SequentialTransition(pt2, st4);
+
+		seqT.setOnFinished(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				windowController.enableButtons();
+				newIGraphicNode.setDefaultColorNode();
+			}
+		});
+
+		seqT.play();
 		
 		Timeline timeline = new Timeline();
 
 		KeyFrame kf = new KeyFrame(Duration.millis(10 * (FASTANIMATION - animationSpeed.get())),
-				new KeyValue(root.getX(), rootX.get()),
-				new KeyValue(root.getY(), rootY.get()));
+				new KeyValue(newIGraphicNode.getX(), rootX.get()),
+				new KeyValue(newIGraphicNode.getY(), rootY.get()));
 
 		timeline.getKeyFrames().add(kf);
 
 		timeline.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {				
-				root.setY(rootY);
-				root.setX(rootX);
+				newIGraphicNode.setY(rootY);
+				newIGraphicNode.setX(rootX);
 				text.appendText("\n • Vložení proběhlo úspěšně.");
-				windowController.enableButtons();				
+				if (!isInsertAnimation) { 
+					windowController.enableButtons();
+					newIGraphicNode.setDefaultColorNode();
+				} else {
+					seqT.play();
+				}
+											
 			}
 		});
 
-		root.getX().unbind();
-		root.getY().unbind();
+		newIGraphicNode.getX().unbind();
+		newIGraphicNode.getY().unbind();
 
-		text.setText("VLOŽENÍ PRVKU " + root.getValue() +":");
+		text.setText("VLOŽENÍ PRVKU " + newIGraphicNode.getValue() +":");
 		timeline.play();
 	}
 	
@@ -199,6 +223,7 @@ public class DrawingTree {
 		yAnimatedNode.bind(newIGraphicNode.getParent().getY().add(DOWNMARGIN));
 		
 		//zavolám animaci
+		newIGraphicNode.highlightFindNode();
 		startAnimation(result.getRecordOfAnimations());	
 	}
 	
@@ -274,7 +299,7 @@ public class DrawingTree {
 	 * Upraví vzdálenosti listů 
 	 */
 	private void balanceTree() {
-		if (listGraphicNodes.isEmpty()) {
+		if (listGraphicNodes.isEmpty() || !isAnimation) {			
 			windowController.enableButtons();
 			return;
 		} else {
@@ -289,7 +314,7 @@ public class DrawingTree {
 	 */
 	private void balanceTreeNext() {
 		if (listGraphicNodes.size() == balanceRedraw) {
-			balanceRedraw = 0;
+			balanceRedraw = 1;
 			checkBranches();
 			redraw();
 			return;
@@ -488,7 +513,8 @@ public class DrawingTree {
 			}				
 		}
 		if (indexAnimation >= recordOfAnimations.size()) {
-			windowController.enableButtons();	
+			windowController.enableButtons();
+			return;
 		} else {
 			indexAnimation++;
 			nextAnimation();
@@ -519,10 +545,10 @@ public class DrawingTree {
 	 */
 	private void nextAnimation() {
 		if (indexAnimation >= recordOfAnimations.size()) {
-			balanceTree();			
-			if (isRedraw) {				
-				redraw();
-			}			
+			balanceTree();
+			//if (isRedraw) {				
+			//	redraw();
+			//}			
 			return;
 		}
 		
@@ -725,6 +751,33 @@ public class DrawingTree {
 	}
 	
 	/**
+	 * po vložení odbarví node
+	 */
+	private void highlightInsertNode() {
+		if (!isInsertAnimation) { 
+			indexAnimation++;
+			nextAnimation();
+			newIGraphicNode.setDefaultColorNode();
+			return;
+		}
+		PauseTransition pt2 = new PauseTransition(Duration.millis(SLOWANIMATION - 50 - animationSpeed.get()));
+		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), newIGraphicNode.getCircleShape(), Color.YELLOW, Color.WHITE);
+
+		SequentialTransition seqT = new SequentialTransition(pt2, st4);
+
+		seqT.setOnFinished(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				indexAnimation++;
+				nextAnimation();
+				newIGraphicNode.setDefaultColorNode();
+			}
+		});
+
+		seqT.play();
+	}
+	
+	/**
 	 * Animace vložení nového listu
 	 */
 	private void insertNodeAnimation() {
@@ -781,9 +834,8 @@ public class DrawingTree {
 		listGraphicNodes.add(newIGraphicNode);
 
 		appendNewText("\n • Vložení proběhlo úspěšně.");	
-
-		indexAnimation++;
-		nextAnimation();
+		
+		highlightInsertNode();		
 	}
 	
 	/**
@@ -1766,11 +1818,7 @@ public class DrawingTree {
 	 */
 	public void showText() {
 		paneTree.getChildren().remove(text);
-		paneTree.getChildren().add(2, text);
-		text.toBack();
-		text.toBack();
-		text.toBack();
-		text.toBack();
+		paneTree.getChildren().add(text);		
 	}
 	
 	/**
@@ -1809,4 +1857,15 @@ public class DrawingTree {
 	public void setRedraw() {
 		redraw();
 	}
+	
+
+	public void setAnimation(boolean isAnimation) {
+		this.isAnimation = isAnimation;
+	}
+
+	
+
+	public void setInsertAnimation(boolean isInsertAnimation) {
+		this.isInsertAnimation = isInsertAnimation;
+	}	
 }

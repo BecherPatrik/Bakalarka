@@ -93,18 +93,13 @@ public class AVLNode implements INode<AVLNode> {
 		
 		if (right != null) {
 			r += right.countFactor();
-		}
-		
-		if (this.value == 2) {
-			System.out.println();
-		}
+		}		
 		
 		factor = l - r;	
 		
 		graphicNode.setNewFactor(Integer.toString(factor));
 		
-		return Math.max(r, l) + 1;
-		
+		return Math.max(r, l) + 1;		
 	}
 	
 	/********************************************************************************************************

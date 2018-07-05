@@ -292,7 +292,7 @@ public class WindowController implements Initializable {
 	}
 	
 	@FXML 
-	private void dialogNewTree() {
+	private void dialogNewTree0() {
 		newRandomTree();
 	}
 	
@@ -300,7 +300,7 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového stromu přes tlačítko
 	 */
 	@FXML 
-	private void dialogNewTree1() {
+	private void dialogNewTree() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Nový strom");
 		alert.setHeaderText("Chcete pouze smazat aktuální strom,\nnebo vytvořit nový s náhodnými hodnotami?");
@@ -338,12 +338,12 @@ public class WindowController implements Initializable {
 		
 		switch (btnTreesActual.getId()) {
 		case "btnBinary":
-			//isRedBlack = false;
+			isRedBlack = false;
 			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
-			//tree = new BinaryTree();	
+			tree = new BinaryTree();	
 			//tree = new AVLTree();
-			isRedBlack = true;
-			tree = new RedBlackTree();
+			//isRedBlack = true;
+			//tree = new RedBlackTree();
 			break;
 			
 		case "btnAVL":
@@ -363,7 +363,7 @@ public class WindowController implements Initializable {
 		}		
 	}	
 	
-	private void newRandomTree() {
+	private void newRandomTree0() {
 		double oldSpeed = sliderSpeed.getValue();
 		newEmptyTree();
 		sliderSpeed.setValue(0);
@@ -401,8 +401,9 @@ public class WindowController implements Initializable {
 	 * Vytvoření nového náhodného stromu 
 	 * @param count
 	 */
-	private void newRandomTree1() {	
+	private void newRandomTree() {	
 		int count = dialogRandomTree();
+		int index = 1;
 		oldSpeed = sliderSpeed.getValue();
 		graphicTree.hideText();
 		
@@ -421,8 +422,14 @@ public class WindowController implements Initializable {
 			
 			sliderSpeed.setValue(0);
 			
+			graphicTree.setAnimation(false);
+			graphicTree.setInsertAnimation(false);
+			
 			for (int value : randomValueList) {
 				disableButtons();	
+				if (index == randomValueList.size()) {
+					graphicTree.setAnimation(true);
+				}
 				
 				lastResult = tree.insert(value);				
 				if (lastResult != null) {
@@ -431,8 +438,10 @@ public class WindowController implements Initializable {
 					graphicTree.insertRoot((INode<?>)tree.getRoot());
 					graphicTree.hideText();
 				}
+				index++;
 			}			
 			
+			graphicTree.setInsertAnimation(true);
 			randomTree = true;
 			
 			lastResult = null;
@@ -737,7 +746,7 @@ public class WindowController implements Initializable {
 	/**
 	 * Povolí manipulaci s tlačítkami po ukončení animace
 	 */
-	public void enableButtons() {
+	public void enableButtons() {		
 		if (isRedraw) {
 			if (++finishAnimation == listHistory.size()) {
 				repeatLastAction();
