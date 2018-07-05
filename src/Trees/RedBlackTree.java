@@ -53,11 +53,11 @@ public class RedBlackTree implements ITree<RedBlackNode> {
         Result<RedBlackNode> result = search(value);
         Side side = result.getSide(); //zjistím směr
         removedNode = (RedBlackNode) result.getNode();
+        RedBlackNode parent;
 
         if (side != Side.NONE) {  //pokud ho nenajdu 
             return result;
-        }
-        
+        }        
 
 		if ((removedNode.getLeft() != null) && (removedNode.getRight() != null)) { // pokud má 2 potomky 1.
 			helpNode = removedNode.getRight(); // dosadím pravého
@@ -83,13 +83,14 @@ public class RedBlackTree implements ITree<RedBlackNode> {
             		side = Side.LEFT;
             	}
                 
-                result.addAnimation(AnimatedAction.MOVENODE, removedNode.getGraphicNode(), helpNode.getGraphicNode()); 
+                result.addAnimation(AnimatedAction.MOVENODE, removedNode.getGraphicNode(), helpNode.getGraphicNode());
+                parent = helpNode.getParent();
                 removedNode.setGraphicNode(helpNode.getGraphicNode());
                 
             	result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), removedNode.getColor());/***/
                 
                 if (helpNode.getColor() == Color.BLACK) {
-                	return doubleBlack(result, removedNode, side); /** B1 **/ 
+                	return doubleBlack(result, parent, side); /** B1 **/ 
                 } else {
                 	return result;
                 }
@@ -376,12 +377,30 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 		nodeB.setLeft(nodeA.getRight());
 		nodeA.setRight(nodeB);
 		
-		nodeA.setColor(Color.BLACK);
-		nodeB.setColor(Color.RED);
-		
 		result.addAnimation(AnimatedAction.RR, nodeB.getGraphicNode(), null);
-		result.addAnimation(AnimatedAction.RECOLOR, nodeA.getGraphicNode(), Color.BLACK);
-		result.addAnimation(AnimatedAction.RECOLOR, nodeB.getGraphicNode(), Color.RED);
+		
+		if (dblackColor) {
+			nodeA.setColor(nodeB.getColor());
+			result.addAnimation(AnimatedAction.RECOLOR, nodeA.getGraphicNode(), nodeB.getColor());
+			
+			nodeB.setColor(Color.BLACK);
+			result.addAnimation(AnimatedAction.RECOLOR, nodeB.getGraphicNode(), Color.BLACK);
+			
+			nodeA.getRight().setColor(Color.BLACK);
+			result.addAnimation(AnimatedAction.RECOLOR, nodeA.getRight().getGraphicNode(), Color.BLACK);
+			
+			dblackColor = false;
+		} else {
+			nodeA.setColor(Color.BLACK);
+			nodeB.setColor(Color.RED);
+			result.addAnimation(AnimatedAction.RECOLOR, nodeA.getGraphicNode(), Color.BLACK);
+			result.addAnimation(AnimatedAction.RECOLOR, nodeB.getGraphicNode(), Color.RED);
+		}
+		
+		if (dblack) {
+			result.addAnimation(AnimatedAction.SETDOUBLEBLACK, null, null);
+			dblack = false;
+		}
 		
 		return result;
 	}
@@ -416,6 +435,14 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 		return result;
 	}
 	
+	/**
+	 * Řeší dvakrát obarvený černý list
+	 * 
+	 * @param result
+	 * @param parent
+	 * @param side
+	 * @return
+	 */
 	private Result<RedBlackNode> doubleBlack(Result<RedBlackNode> result, RedBlackNode parent, Side side) {
 		RedBlackNode helpNode;
 		if (!dblack) { //pokud to volám znovu nebudu dělat výpis
@@ -462,9 +489,43 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 				return llBalance(result, parent);				
 			}			
 		} else {
-			
-		}
-		
+			if (parent.getLeft().getColor() == Color.BLACK) {
+				helpNode = parent.getLeft();
+				if (helpNode.getRight() != null && helpNode.getRight().getColor() == Color.RED) {
+					dblackColor = true;
+					dblack = true;
+					return rrBalance(result, parent);
+				} else if (helpNode.getLeft() != null && helpNode.getLeft().getColor() == Color.RED) {
+					dblackColor = true;
+					dblack = true;
+					return rlBalance(result, parent);
+				} else {
+					if (parent.getColor() == Color.RED) {
+						parent.setColor(Color.BLACK);
+						helpNode.setColor(Color.RED);
+						
+						result.addAnimation(AnimatedAction.RECOLOR, parent.getGraphicNode(), Color.BLACK);
+						result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), Color.RED);
+						result.addAnimation(AnimatedAction.SETDOUBLEBLACK, null, null);
+					} else {
+						helpNode.setColor(Color.RED);
+						
+						result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), null);
+						result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), Color.RED);
+						
+						if (parent.equals(root)) { //přebarvím kořen
+							result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), true);
+						} else {
+							dblack = true;
+							return doubleBlack(result, parent.getParent(), parent.getGraphicNode().getSide());
+						}
+					}
+				}				
+			} else {
+				dblack = true;
+				return rrBalance(result, parent);				
+			}
+		}		
 		
 		return result;
 	}

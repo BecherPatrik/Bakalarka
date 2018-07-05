@@ -65,8 +65,8 @@ public class DrawingTree {
 	//private final int SLOWANIMATION = 250;
 	//private final int FASTANIMATION = 105;
 	
-	private final int SLOWANIMATION = 800;
-	private final int FASTANIMATION = 105;
+	private final int SLOWANIMATION = 600;
+	private final int FASTANIMATION = 150;
 	
 	private int wayIndex = 0;
 	private int indexAnimation = 0;
@@ -75,6 +75,7 @@ public class DrawingTree {
 	private boolean isBalance = false;
 	private boolean isReColor = false;
 	private boolean isRedBlack = false;
+	private boolean isMoveNode = false;
 	
 	private int balanceRedraw = 0;
 	
@@ -235,9 +236,14 @@ public class DrawingTree {
 	 * @param node
 	 */	
 	private void createBranch(IGraphicNode node) {
-		if (node.getBranch() != null) {
+		if (node.getParent() == null) {
+			node.setBranch(null);
 			return;
 		}
+		
+		if (node.getBranch() != null) {
+			return;
+		}		
 		
 		Line line = new Line();
 		line.startXProperty().bind(node.getParent().getX().add(rootSize / 2));
@@ -502,6 +508,8 @@ public class DrawingTree {
 		indexAnimation = 0;
 		notFind = false;
 		isBalance = false;
+		isMoveNode = false;
+		isReColor = false;
 		this.recordOfAnimations = recordOfAnimations;
 		nextAnimation();
 	}
@@ -511,8 +519,7 @@ public class DrawingTree {
 	 */
 	private void nextAnimation() {
 		if (indexAnimation >= recordOfAnimations.size()) {
-			balanceTree();
-			isReColor = false;
+			balanceTree();			
 			if (isRedraw) {				
 				redraw();
 			}			
@@ -577,8 +584,7 @@ public class DrawingTree {
 		default:
 			break;
 		}	
-	}
-	
+	}	
 
 	/**
 	 * Zavolá znovu metodu highlightNode pro každý list zvlášť
@@ -701,7 +707,8 @@ public class DrawingTree {
 	 */
 	private void highlightFindNode() {
 		StrokeTransition st3 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getCircleShape(), Color.WHITE, Color.YELLOW);
-		PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (SLOWANIMATION - 50 - animationSpeed.get())));
+		//PauseTransition pt2 = new PauseTransition(Duration.millis(10 * (SLOWANIMATION - 50 - animationSpeed.get())));
+		PauseTransition pt2 = new PauseTransition(Duration.millis(3 * (SLOWANIMATION - 50 - animationSpeed.get())));
 		StrokeTransition st4 = new StrokeTransition(Duration.millis(SLOWANIMATION), wayList.get(wayList.size() - 1).getCircleShape(), Color.YELLOW, Color.WHITE);
 
 		SequentialTransition seqT = new SequentialTransition(st3, pt2, st4);
@@ -861,20 +868,21 @@ public class DrawingTree {
 		});
 
 		graphicNodeMoved.getX().unbind();
-		graphicNodeMoved.getY().unbind();	
+		graphicNodeMoved.getY().unbind();		
 		
-		appendNewText("\n • Mazaný uzel nahradí:");
-		text.appendText("");
-		
-		if (graphicNodeRemoved.getRight() == null || graphicNodeRemoved.getLeft() == null) {
-			if (graphicNodeMoved.getX().get() <= graphicNodeRemoved.getX().get()) {
-				appendNewText("\n\tLEVÝ potomek " + graphicNodeMoved.getValue());
-			} else {
-				appendNewText("\n\tPRAVÝ potomek " + graphicNodeMoved.getValue());
-			}
-		} else if(graphicNodeRemoved.getRight() != null || graphicNodeRemoved.getLeft() != null) {
-			appendNewText("\n\tNEJLEVĚJŠÍ potomek "+  graphicNodeMoved.getValue() + "\n\tz PRAVÉHO podstromu");			
-		}		
+		if (!(isMoveNode)) {
+			appendNewText("\n • Mazaný uzel nahradí:");
+			text.appendText("");
+			if (graphicNodeRemoved.getRight() == null || graphicNodeRemoved.getLeft() == null) {
+				if (graphicNodeMoved.getX().get() <= graphicNodeRemoved.getX().get()) {
+					appendNewText("\n\tLEVÝ potomek " + graphicNodeMoved.getValue());
+				} else {
+					appendNewText("\n\tPRAVÝ potomek " + graphicNodeMoved.getValue());
+				}
+			} else if(graphicNodeRemoved.getRight() != null || graphicNodeRemoved.getLeft() != null) {
+				appendNewText("\n\tNEJLEVĚJŠÍ potomek "+  graphicNodeMoved.getValue() + "\n\tz PRAVÉHO podstromu");			
+			}	
+		}
 		
 		//odstraním větve
 		hideMovedBranchRecursive(graphicNodeMoved);
@@ -901,6 +909,7 @@ public class DrawingTree {
 		} else {	
 			if (graphicNodeRemoved.getParent() == null) {
 				graphicNodeMoved.setX(rootX);
+				graphicNodeMoved.setParent(null);
 				listGraphicNodes.remove(graphicNodeMoved); //dám roota na první místo
 				listGraphicNodes.add(0, graphicNodeMoved);
 			}
@@ -929,13 +938,28 @@ public class DrawingTree {
 	 * Přesune hodnotu do jiného listu
 	 */
 	private void moveValueAnimation() {
-		IGraphicNode node1 = recordOfAnimations.get(indexAnimation).getNode1();
-		IGraphicNode node2 = ((IGraphicNode) recordOfAnimations.get(indexAnimation).getObject());
+		IGraphicNode graphicNodeRemoved = recordOfAnimations.get(indexAnimation).getNode1();
+		IGraphicNode graphicNodeMoved = ((IGraphicNode) recordOfAnimations.get(indexAnimation).getObject());
 		
-		node1.setValue(node2.getValue());
-		node2.setValue("");
-		node1.setDefaultColorNode();
-		node2.setDefaultColorNode();
+		graphicNodeRemoved.setValue(graphicNodeMoved.getValue());
+		graphicNodeMoved.setValue("");
+		graphicNodeRemoved.setDefaultColorNode();
+		graphicNodeMoved.setDefaultColorNode();
+		
+		isMoveNode = true;
+		
+		appendNewText("\n • Mazaný uzel nahradí:");
+		text.appendText("");
+		
+		if (graphicNodeRemoved.getRight() == null || graphicNodeRemoved.getLeft() == null) {
+			if (graphicNodeMoved.getX().get() <= graphicNodeRemoved.getX().get()) {
+				appendNewText("\n\tLEVÝ potomek " + graphicNodeMoved.getValue());
+			} else {
+				appendNewText("\n\tPRAVÝ potomek " + graphicNodeMoved.getValue());
+			}
+		} else if(graphicNodeRemoved.getRight() != null || graphicNodeRemoved.getLeft() != null) {
+			appendNewText("\n\tNEJLEVĚJŠÍ potomek "+  graphicNodeMoved.getValue() + "\n\tz PRAVÉHO podstromu");			
+		}
 
 		indexAnimation++;
 		nextAnimation();			
@@ -1030,7 +1054,7 @@ public class DrawingTree {
 	 */
 	private void reColor() {
 		isRedBlack = true;
-		if (!(isReColor)) {		
+		if (!(isReColor) && nullNode == null) {		
 			oldText = text.getText();
 			setTextWithHistory("PŘEBARVENÍ STROMU:");
 			isReColor = true;
@@ -1111,6 +1135,15 @@ public class DrawingTree {
 				if (animationSpeed.get() == 0) { 
 					paneTree.getChildren().remove(nullNode.getStackPaneNode());
 					paneTree.getChildren().remove(nullNode.getBranch());
+					if (nullNode.getSide() == Side.LEFT) {
+						nullNode.getParent().setLeft(null);
+					} else {
+						nullNode.getParent().setRight(null);
+					}
+					nullNode = null;					
+					
+					indexAnimation++;
+					nextAnimation();
 					return;
 				}
 				
@@ -1135,6 +1168,7 @@ public class DrawingTree {
 						} else {
 							nullNode.getParent().setRight(null);
 						}
+						nullNode = null;
 						
 						indexAnimation++;
 						nextAnimation();
@@ -1247,14 +1281,14 @@ public class DrawingTree {
 			} else if(nodeA.getSide() == Side.RIGHT) {			
 				xAnimatedNode.bind(nodeA.getParent().getX().add(rootSize));
 			}		
-			nodeA.setX(xAnimatedNode);
-			nodeA.setY(yAnimatedNode);
+			//nodeA.setX(xAnimatedNode);
+			//nodeA.setY(yAnimatedNode);
 		}
 		
 		xAnimatedBranch.bind(nodeB.getParent().getX().add(rootSize));
 		yAnimatedBranch.bind(nodeB.getParent().getY().add(DOWNMARGIN));
-		nodeB.setX(xAnimatedBranch);
-		nodeB.setY(yAnimatedBranch);
+		//nodeB.setX(xAnimatedBranch);
+		//nodeB.setY(yAnimatedBranch);
 		
 		nodeA.setDefaultColorNode();
 		nodeB.setDefaultColorNode();
@@ -1271,7 +1305,9 @@ public class DrawingTree {
 			
 			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
 		} else {
-			appendNewText("\n • Rotace dokončena.");			
+			if (nullNode == null) {
+				appendNewText("\n • Rotace dokončena.");
+			}						
 		}		
 		
 		indexAnimation++;
@@ -1380,15 +1416,15 @@ public class DrawingTree {
 			} else if(nodeB.getSide() == Side.RIGHT) {			
 				xAnimatedNode.bind(nodeB.getParent().getX().add(rootSize));
 			}			
-			nodeB.setX(xAnimatedNode);
-			nodeB.setY(yAnimatedNode);
+			//nodeB.setX(xAnimatedNode);
+			//nodeB.setY(yAnimatedNode);
 		}				
 		
 		
 		xAnimatedBranch.bind(nodeC.getParent().getX().add(rootSize));
 		yAnimatedBranch.bind(nodeC.getParent().getY().add(DOWNMARGIN));
-		nodeC.setX(xAnimatedBranch);
-		nodeC.setY(yAnimatedBranch);
+		//nodeC.setX(xAnimatedBranch);
+		//nodeC.setY(yAnimatedBranch);
 		
 		nodeA.setDefaultColorNode();
 		nodeB.setDefaultColorNode();
@@ -1402,7 +1438,9 @@ public class DrawingTree {
 			
 			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
 		} else {
-			appendNewText("\n • Rotace dokončena.");			
+			if (nullNode == null) {
+				appendNewText("\n • Rotace dokončena.");
+			}			
 		}
 		
 		indexAnimation++;
@@ -1501,14 +1539,14 @@ public class DrawingTree {
 			} else if(nodeA.getSide() == Side.RIGHT) {			
 				xAnimatedNode.bind(nodeA.getParent().getX().add(rootSize));
 			}				
-			nodeA.setX(xAnimatedNode);
-			nodeA.setY(yAnimatedNode);
+			//nodeA.setX(xAnimatedNode);
+			//nodeA.setY(yAnimatedNode);
 		}
 		
 		xAnimatedBranch.bind(nodeB.getParent().getX().subtract(rootSize));
 		yAnimatedBranch.bind(nodeB.getParent().getY().add(DOWNMARGIN));
-		nodeB.setX(xAnimatedBranch);
-		nodeB.setY(yAnimatedBranch);
+		//nodeB.setX(xAnimatedBranch);
+		//nodeB.setY(yAnimatedBranch);
 		
 		nodeA.setDefaultColorNode();
 		nodeB.setDefaultColorNode();
@@ -1525,7 +1563,9 @@ public class DrawingTree {
 			
 			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
 		} else {
-			appendNewText("\n • Rotace dokončena.");			
+			if (nullNode == null) {
+				appendNewText("\n • Rotace dokončena.");
+			}			
 		}
 		
 		indexAnimation++;
@@ -1635,15 +1675,15 @@ public class DrawingTree {
 				xAnimatedNode.bind(nodeB.getParent().getX().add(rootSize));
 			}			
 			yAnimatedNode.bind(nodeB.getParent().getY().add(DOWNMARGIN));			
-			nodeB.setX(xAnimatedNode);
-			nodeB.setY(yAnimatedNode);
+			//nodeB.setX(xAnimatedNode);
+			//nodeB.setY(yAnimatedNode);
 		}				
 		
 		
 		xAnimatedBranch.bind(nodeC.getParent().getX().subtract(rootSize));
 		yAnimatedBranch.bind(nodeC.getParent().getY().add(DOWNMARGIN));
-		nodeC.setX(xAnimatedBranch);
-		nodeC.setY(yAnimatedBranch);
+		//nodeC.setX(xAnimatedBranch);
+		//nodeC.setY(yAnimatedBranch);
 		
 		nodeA.setDefaultColorNode();
 		nodeB.setDefaultColorNode();
@@ -1657,7 +1697,9 @@ public class DrawingTree {
 			
 			recordOfAnimations.add(new RecordOfAnimation(AnimatedAction.UPDATEFACTOR, null, false));
 		} else {
-			appendNewText("\n • Rotace dokončena.");			
+			if (nullNode == null) {
+				appendNewText("\n • Rotace dokončena.");
+			}			
 		}
 		
 		indexAnimation++;
