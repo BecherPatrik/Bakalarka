@@ -65,7 +65,7 @@ public class DrawingTree {
 	//private final int SLOWANIMATION = 250;
 	//private final int FASTANIMATION = 105;
 	
-	private final int SLOWANIMATION = 600;
+	private final int SLOWANIMATION = 500;
 	private final int FASTANIMATION = 150;
 	
 	private int wayIndex = 0;
@@ -1085,7 +1085,7 @@ public class DrawingTree {
 		isRedBlack = true;
 		oldText = text.getText();
 		setTextWithHistory("VYVÁŽENÍ STROMU:");
-		appendNewText("\n • Smazaný list byl černý.");
+		appendNewText("\n • Smazaný list byl černý.");		
 		
 		xAnimatedNode = new SimpleDoubleProperty(); //souřadnice x listu	
 		yAnimatedNode = new SimpleDoubleProperty();		
@@ -1112,10 +1112,28 @@ public class DrawingTree {
 		createBranch(nullNode);		
 		
 		paneTree.getChildren().addAll(nullNode.getBranch(), nullNode.getStackPaneNode());	
-		nullNode.getParent().getStackPaneNode().toFront();
+		nullNode.getParent().getStackPaneNode().toFront();		
 		
-		indexAnimation++;		
-		nextAnimation();
+		if (animationSpeed.get() == 0) {
+			indexAnimation++;
+			nextAnimation();
+			return;
+		}
+		
+		PauseTransition pt2 = new PauseTransition(Duration.millis(SLOWANIMATION - animationSpeed.get()));
+
+		SequentialTransition seqT = new SequentialTransition(pt2);
+
+		seqT.setOnFinished(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				indexAnimation++;
+				nextAnimation();
+				return;
+			}
+		});	
+		
+		seqT.play();
 	}
 	
 	/**
@@ -1127,7 +1145,29 @@ public class DrawingTree {
 			node = (RedBlackGraphicNode) recordOfAnimations.get(indexAnimation).getNode1();
 			nullNode.setDefaultColorNode();
 			appendNewText("\n • Přesunu označení.");
-			nullNode = node;			
+			nullNode = node;	
+			nullNode.doubleBlackHighlight();
+			
+			if (animationSpeed.get() == 0) {
+				indexAnimation++;
+				nextAnimation();
+				return;
+			}
+			
+			PauseTransition pt2 = new PauseTransition(Duration.millis(SLOWANIMATION - animationSpeed.get()));
+
+			SequentialTransition seqT = new SequentialTransition(pt2);
+
+			seqT.setOnFinished(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					indexAnimation++;
+					nextAnimation();
+					return;
+				}
+			});		
+
+			seqT.play();
 		} else {
 			if (nullNode.getValue().equals("NULL")) {
 				appendNewText("\n • Odstraním NULL list.");

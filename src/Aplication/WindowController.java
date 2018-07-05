@@ -129,7 +129,7 @@ public class WindowController implements Initializable {
 	 */
 	public void setPrimaryStage(Stage primaryStage) {
 		this.primaryStage = primaryStage;
-		sliderSpeed.setValue(25);
+		sliderSpeed.setValue(50);
 		
 		newEmptyTree();		
 	}
