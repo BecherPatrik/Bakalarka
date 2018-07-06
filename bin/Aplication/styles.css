@@ -128,7 +128,7 @@ VBox {
 	-fx-text-fill: #d8d8d8; 
 }
 
-.text-area .content{
+.text-area, .text-area .viewport, .text-area .content{
   -fx-background-color: transparent;
 }
 

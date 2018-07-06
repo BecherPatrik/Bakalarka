@@ -62,7 +62,7 @@
 			<center>
 				<BorderPane fx:id="borderPaneTree">
 					<center>			
-					 	<ScrollPane fx:id="scrollPane">
+					 	<ScrollPane fx:id="scrollPane" vbarPolicy="NEVER">
 							<Pane fx:id="paneTree" />							
 						</ScrollPane>
 					</center>

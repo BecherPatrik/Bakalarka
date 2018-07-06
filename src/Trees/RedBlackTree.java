@@ -457,35 +457,40 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 				if (helpNode.getRight() != null && helpNode.getRight().getColor() == Color.RED) {
 					dblackColor = true;
 					dblack = true;
+					result.addAnimation(AnimatedAction.REDBLACKINFO, null, 1);
 					return llBalance(result, parent);
 				} else if (helpNode.getLeft() != null && helpNode.getLeft().getColor() == Color.RED) {
 					dblackColor = true;
 					dblack = true;
+					result.addAnimation(AnimatedAction.REDBLACKINFO, null, 1);
 					return lrBalance(result, parent);
 				} else {
 					if (parent.getColor() == Color.RED) {
 						parent.setColor(Color.BLACK);
 						helpNode.setColor(Color.RED);
 						
+						result.addAnimation(AnimatedAction.REDBLACKINFO, null, 2);
 						result.addAnimation(AnimatedAction.RECOLOR, parent.getGraphicNode(), Color.BLACK);
 						result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), Color.RED);
 						result.addAnimation(AnimatedAction.SETDOUBLEBLACK, null, null);
 					} else {
 						helpNode.setColor(Color.RED);
 						
+						result.addAnimation(AnimatedAction.REDBLACKINFO, null, 3);
 						result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), null);
 						result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), Color.RED);
 						
 						if (parent.equals(root)) { //přebarvím kořen
 							result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), true);
 						} else {
-							dblack = true;
+							dblack = true;							
 							return doubleBlack(result, parent.getParent(), parent.getGraphicNode().getSide());
 						}
 					}
 				}				
 			} else {
 				dblack = true;
+				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 4);
 				return llBalance(result, parent);				
 			}			
 		} else {
@@ -494,22 +499,26 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 				if (helpNode.getRight() != null && helpNode.getRight().getColor() == Color.RED) {
 					dblackColor = true;
 					dblack = true;
+					result.addAnimation(AnimatedAction.REDBLACKINFO, null, 1);
 					return rrBalance(result, parent);
 				} else if (helpNode.getLeft() != null && helpNode.getLeft().getColor() == Color.RED) {
 					dblackColor = true;
 					dblack = true;
+					result.addAnimation(AnimatedAction.REDBLACKINFO, null, 1);
 					return rlBalance(result, parent);
 				} else {
 					if (parent.getColor() == Color.RED) {
 						parent.setColor(Color.BLACK);
 						helpNode.setColor(Color.RED);
 						
+						result.addAnimation(AnimatedAction.REDBLACKINFO, null, 2);
 						result.addAnimation(AnimatedAction.RECOLOR, parent.getGraphicNode(), Color.BLACK);
 						result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), Color.RED);
 						result.addAnimation(AnimatedAction.SETDOUBLEBLACK, null, null);
 					} else {
 						helpNode.setColor(Color.RED);
 						
+						result.addAnimation(AnimatedAction.REDBLACKINFO, null, 3);
 						result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), null);
 						result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), Color.RED);
 						
@@ -523,6 +532,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 				}				
 			} else {
 				dblack = true;
+				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 4);
 				return rrBalance(result, parent);				
 			}
 		}		

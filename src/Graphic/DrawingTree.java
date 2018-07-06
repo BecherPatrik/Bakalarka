@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.swing.plaf.basic.BasicTreeUI.TreePageAction;
 
+import com.sun.org.apache.xml.internal.security.keys.storage.StorageResolver;
+
 import Aplication.WindowController;
 import Trees.AVLNode;
 import Trees.AnimatedAction;
@@ -24,10 +26,17 @@ import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeSortMode;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -44,6 +53,7 @@ public class DrawingTree {
 	private String oldText = "";
 	private String newText;
 	private ReadOnlyDoubleProperty paneTreeWeight;
+	private ReadOnlyDoubleProperty paneTreeHeight;
 	private Pane paneTree;
 	private DoubleProperty animationSpeed = new SimpleDoubleProperty();
 	
@@ -88,24 +98,73 @@ public class DrawingTree {
 	private DoubleProperty yAnimatedBranch = new SimpleDoubleProperty();
 	
 	RedBlackGraphicNode nullNode;
+	
+	double orgSceneX, orgSceneY;
+    double orgTranslateX, orgTranslateY;
 
-	public DrawingTree(Pane paneTree, DoubleProperty speed, ReadOnlyDoubleProperty stageWidthProperty, WindowController windowController) {
+	public DrawingTree(Pane paneTree, DoubleProperty speed, ReadOnlyDoubleProperty stageWidthProperty, ReadOnlyDoubleProperty stageHeightProperty,  WindowController windowController) {
 		this.paneTreeWeight = stageWidthProperty;
+		this.paneTreeHeight = stageHeightProperty;
 		this.paneTree = paneTree;
 		this.animationSpeed = speed;
 		this.windowController = windowController;
 		
 		//Přidá text
 		text = new TextArea("");		
-		text.setMaxWidth(255);
+		text.setMaxWidth(260);
 		text.setMaxHeight(100);
 		text.setEditable(false);		
 		text.setFont(new Font(text.getFont().toString(), 15));
-		text.layoutXProperty().bind(stageWidthProperty.subtract(275));	
-		//text.setStyle("-fx-background-color: green");
+		text.layoutXProperty().bind(stageWidthProperty.subtract(280));	
+		
+		text.setStyle( "-fx-border-style: solid inside;" + 
+                 "-fx-border-width: 5;" +
+                 "-fx-border-insets: 2;" + 
+                 "-fx-border-radius: 0;" + 
+                 "-fx-border-color: gray;");
+
+		text.addEventFilter(MouseEvent.MOUSE_PRESSED, textPressedEventHandler);
+		
+		text.setOnMouseDragged(textDraggedEventHandler);
 		
 		paneTree.getChildren().add(text);
 	}
+	
+	EventHandler<MouseEvent> textPressedEventHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent t) {
+			orgSceneX = t.getSceneX();
+			orgSceneY = t.getSceneY();
+			orgTranslateX = ((TextArea) (t.getSource())).getTranslateX();
+			orgTranslateY = ((TextArea) (t.getSource())).getTranslateY();
+		}
+	};
+
+	EventHandler<MouseEvent> textDraggedEventHandler = new EventHandler<MouseEvent>() {
+		@Override
+		public void handle(MouseEvent t) {
+			double offsetX = t.getSceneX() - orgSceneX;
+			double offsetY = t.getSceneY() - orgSceneY;
+			double newTranslateX = orgTranslateX + offsetX;
+			double newTranslateY = orgTranslateY + offsetY;
+			
+			if (newTranslateX >= 5) {
+				((TextArea) (t.getSource())).setTranslateX(4);
+			} else if (newTranslateX <= 276 - paneTreeWeight.get()) {
+				((TextArea) (t.getSource())).setTranslateX(276 - paneTreeWeight.get() + 1);
+			} else {
+				((TextArea) (t.getSource())).setTranslateX(newTranslateX);
+			}
+			
+			if (newTranslateY >= paneTreeHeight.get() - 243) {
+				((TextArea) (t.getSource())).setTranslateY(paneTreeHeight.get() - 244);
+			} else if (newTranslateY <= -3) {
+				((TextArea) (t.getSource())).setTranslateY(-2);
+			} else {
+				((TextArea) (t.getSource())).setTranslateY(newTranslateY);
+			}
+		}
+	};
 	
 	/**
 	 * Vložení kořenu
@@ -607,10 +666,46 @@ public class DrawingTree {
 			setDoublBlack();
 			break;
 			
+		case REDBLACKINFO:
+			redBlackDeleteInfo();
+			break;
+			
 		default:
 			break;
 		}	
 	}	
+
+	/**
+	 * Výpis pro ččstrom 
+	 */
+	private void redBlackDeleteInfo() {
+		switch ((int)recordOfAnimations.get(indexAnimation).getObject()) {
+		case 1:
+			appendNewText("\n • Sourozenec NULL listu je černý,\nnavíc má červeného následníka.");
+			break;
+			
+		case 2:
+			appendNewText("\n • Sourozenec NULL listu je černý,\nale nemá červeného následníka.\n"
+					+ "NULL list má červeného předchůdce.");
+			appendNewText("\n • Předchůdce získá černou barvu,\n sourozenec červenou.");
+			
+			break;
+			
+		case 3: 
+			appendNewText("\n • Sourozenec NULL listu je černý,\nale nemá červeného následníka.\n"
+					+ "NULL list má černého předchůdce.");
+			appendNewText("\n • Předchůdce získá dvojté označení,\n sourozenec červenou.");
+			break;
+			
+		case 4: 
+			appendNewText("\n • Sourozenec NULL listu je červený.");
+		default:
+			break;
+		}
+		
+		indexAnimation++;
+		nextAnimation();		
+	}
 
 	/**
 	 * Zavolá znovu metodu highlightNode pro každý list zvlášť

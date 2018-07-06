@@ -353,7 +353,7 @@ public class WindowController implements Initializable {
 		switch (btnTreesActual.getId()) {
 		case "btnBinary":
 			isRedBlack = false;
-			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
+			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), primaryStage.heightProperty(), this);
 			tree = new BinaryTree();	
 			//tree = new AVLTree();
 			//isRedBlack = true;
@@ -362,13 +362,13 @@ public class WindowController implements Initializable {
 			
 		case "btnAVL":
 			isRedBlack = false;
-			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
+			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), primaryStage.heightProperty(), this);
 			tree = new AVLTree();
 			break;
 			
 		case "btnRedBlack":
 			isRedBlack = true;
-			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), this);
+			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), primaryStage.heightProperty(), this);
 			tree = new RedBlackTree();
 			
 			break;
@@ -424,15 +424,7 @@ public class WindowController implements Initializable {
 		if (count > 0) {			
 			newEmptyTree();
 			randomValueList = new HashSet<>();
-			generateRandomTreeList(count);
-			
-			/*randomValueList.add(432);
-			randomValueList.add(102);
-			randomValueList.add(532);
-			randomValueList.add(665);
-			randomValueList.add(826);
-			randomValueList.add(954);
-			randomValueList.add(539);*/			
+			generateRandomTreeList(count);					
 			
 			sliderSpeed.setValue(0);
 			
@@ -459,7 +451,8 @@ public class WindowController implements Initializable {
 			randomTree = true;
 			
 			lastResult = null;
-			listOldGraphicTreeNodes.clear();			
+			listOldGraphicTreeNodes.clear();
+			checkEnableButtons();
 		}		
 	}
 	
@@ -601,6 +594,7 @@ public class WindowController implements Initializable {
 		int index = 1;
 		Result<?> result;
 		RedBlackNode redBlackNode;
+		graphicTree.setInsertAnimation(false);
 		
 		if (!(listHistory.isEmpty())) {
 			graphicTree.hideText();
@@ -618,6 +612,8 @@ public class WindowController implements Initializable {
 					index++;
 				}
 			}
+			
+			graphicTree.setInsertAnimation(true);
 			
 			graphicTree.clearText();
 			graphicTree.showText();
@@ -750,7 +746,7 @@ public class WindowController implements Initializable {
 			btnSearch.setDisable(true);
 		}
 			
-		if (isAnimationDisable || paneTree.getChildren().isEmpty() && listHistory.isEmpty()) {
+		if (isAnimationDisable || paneTree.getChildren().isEmpty() || listHistory.isEmpty()) {
 			btnRepeat.setDisable(true);
 		} else {
 			btnRepeat.setDisable(false);
