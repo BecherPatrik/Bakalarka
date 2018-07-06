@@ -746,7 +746,7 @@ public class WindowController implements Initializable {
 			btnSearch.setDisable(true);
 		}
 			
-		if (isAnimationDisable || paneTree.getChildren().isEmpty() || listHistory.isEmpty()) {
+		if (isAnimationDisable || paneTree.getChildren().isEmpty() || (listHistory.isEmpty() && lastAction == null)) {
 			btnRepeat.setDisable(true);
 		} else {
 			btnRepeat.setDisable(false);
