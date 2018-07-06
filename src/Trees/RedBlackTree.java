@@ -386,8 +386,8 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 			nodeB.setColor(Color.BLACK);
 			result.addAnimation(AnimatedAction.RECOLOR, nodeB.getGraphicNode(), Color.BLACK);
 			
-			nodeA.getRight().setColor(Color.BLACK);
-			result.addAnimation(AnimatedAction.RECOLOR, nodeA.getRight().getGraphicNode(), Color.BLACK);
+			nodeA.getLeft().setColor(Color.BLACK);
+			result.addAnimation(AnimatedAction.RECOLOR, nodeA.getLeft().getGraphicNode(), Color.BLACK);
 			
 			dblackColor = false;
 		} else {
@@ -423,14 +423,30 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 		nodeC.setLeft(nodeB.getRight());
 		nodeA.setRight(nodeB.getLeft());
 		nodeB.setRight(nodeC);
-		nodeB.setLeft(nodeA);
+		nodeB.setLeft(nodeA);		
 		
-		nodeB.setColor(Color.BLACK);
-		nodeC.setColor(Color.RED);
+		result.addAnimation(AnimatedAction.RL, nodeC.getGraphicNode(), null);		
 		
-		result.addAnimation(AnimatedAction.RL, nodeC.getGraphicNode(), null);	
-		result.addAnimation(AnimatedAction.RECOLOR, nodeB.getGraphicNode(), Color.BLACK);
-		result.addAnimation(AnimatedAction.RECOLOR, nodeC.getGraphicNode(), Color.RED);
+		if (dblackColor) {
+			nodeB.setColor(nodeC.getColor());
+			result.addAnimation(AnimatedAction.RECOLOR, nodeB.getGraphicNode(), nodeC.getColor());
+			
+			nodeC.setColor(Color.BLACK);
+			result.addAnimation(AnimatedAction.RECOLOR, nodeC.getGraphicNode(), Color.BLACK);
+			
+			dblackColor = false;
+		} else {
+			nodeC.setColor(Color.RED);
+			nodeB.setColor(Color.BLACK);		
+					
+			result.addAnimation(AnimatedAction.RECOLOR, nodeC.getGraphicNode(), Color.RED);
+			result.addAnimation(AnimatedAction.RECOLOR, nodeB.getGraphicNode(), Color.BLACK);
+		}		
+		
+		if (dblack) {
+			result.addAnimation(AnimatedAction.SETDOUBLEBLACK, null, null);
+			dblack = false;
+		}
 		
 		return result;
 	}
@@ -500,12 +516,12 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 					dblackColor = true;
 					dblack = true;
 					result.addAnimation(AnimatedAction.REDBLACKINFO, null, 1);
-					return rrBalance(result, parent);
+					return rlBalance(result, parent);
 				} else if (helpNode.getLeft() != null && helpNode.getLeft().getColor() == Color.RED) {
 					dblackColor = true;
 					dblack = true;
 					result.addAnimation(AnimatedAction.REDBLACKINFO, null, 1);
-					return rlBalance(result, parent);
+					return rrBalance(result, parent);
 				} else {
 					if (parent.getColor() == Color.RED) {
 						parent.setColor(Color.BLACK);

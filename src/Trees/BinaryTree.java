@@ -94,7 +94,7 @@ public class BinaryTree implements ITree<BinaryNode> {
             result.addAnimation(AnimatedAction.MOVENODE, result.getNode().getGraphicNode(), removedNode.getRight().getGraphicNode());            
             
             removedNode.setNodeWithGraphic(removedNode.getRight());  
-            System.out.println("\n3.\n");
+            //System.out.println("\n3.\n");
         } else { // 4.   
         	//System.out.println("\n4.\n");
         	result.addAnimation(AnimatedAction.DELETE, null, false); //pokud nemá děti 
