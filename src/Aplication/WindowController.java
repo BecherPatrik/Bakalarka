@@ -198,6 +198,14 @@ public class WindowController implements Initializable {
 		             if (!(btnInsert.isDisable())) {
 		            	 insertNumber();
 		             }
+		        } else if (event.getCode().equals(KeyCode.DELETE)) {
+		        	if (!(btnDelete.isDisable())) {
+		            	 deleteNumber();
+		             }
+		        } else if (event.getCode().equals(KeyCode.F)) {
+		        	if (!(btnSearch.isDisable())) {
+		            	 searchNumber();
+		             }
 		        }
 		    }
 		});
@@ -246,9 +254,9 @@ public class WindowController implements Initializable {
 	 */
 	private void toolTips() {
 		inputNumber.setTooltip(new Tooltip("Zadávejte pouze hodnoty\nod 0 do 10 000"));
-		btnInsert.setTooltip(new Tooltip("Vloží zadanou hodnotu"));
-		btnSearch.setTooltip(new Tooltip("Vyhledá zadanou hodnotu"));
-		btnDelete.setTooltip(new Tooltip("Smaže zadanou hodnotu"));
+		btnInsert.setTooltip(new Tooltip("Vloží zadanou hodnotu\nKlávesová zkratka: ENTER"));
+		btnSearch.setTooltip(new Tooltip("Vyhledá zadanou hodnotu\nKlávesová zkratka: F"));
+		btnDelete.setTooltip(new Tooltip("Smaže zadanou hodnotu\nKlávesová zkratka: DELETE"));
 		btnNewTree.setTooltip(new Tooltip("Vytvoří nový strom..."));
 		btnRepeat.setTooltip(new Tooltip("Zopakuje poslední krok"));
 		sliderSpeed.setTooltip(new Tooltip("Nastavení rychlosti animace"));
