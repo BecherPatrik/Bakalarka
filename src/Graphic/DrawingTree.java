@@ -315,7 +315,8 @@ public class DrawingTree {
 	 */
 	public void searchNode(Result<?> result, int value) {
 		this.value = value;
-		wayList = result.getWay();			
+		wayList = result.getWay();	
+		checkSpeed();
 		startAnimation(result.getRecordOfAnimations());			
 	}	
 	
