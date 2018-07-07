@@ -1331,7 +1331,7 @@ public class DrawingTree {
 		RedBlackGraphicNode node;
 		if (recordOfAnimations.get(indexAnimation).getNode1() != null) {
 			node = (RedBlackGraphicNode) recordOfAnimations.get(indexAnimation).getNode1();
-			nullNode.setDefaultColorNode();
+			nullNode.removeDoubleBlackHighlight();
 			appendNewText("\n • Přesunu označení.");
 			nullNode = node;	
 			nullNode.doubleBlackHighlight();
@@ -1410,7 +1410,7 @@ public class DrawingTree {
 			} else {
 				appendNewText("\n • Odstraním obarevní listu.");
 			}
-			nullNode.setDefaultColorNode();
+			nullNode.removeDoubleBlackHighlight();
 		}
 		
 		indexAnimation++;
@@ -1513,8 +1513,8 @@ public class DrawingTree {
 			//nodeA.setY(yAnimatedNode);
 		}
 		
-		xAnimatedBranch.bind(nodeB.getParent().getX().add(rootSize));
-		yAnimatedBranch.bind(nodeB.getParent().getY().add(DOWNMARGIN));
+		//xAnimatedBranch.bind(nodeB.getParent().getX().add(rootSize));
+		//yAnimatedBranch.bind(nodeB.getParent().getY().add(DOWNMARGIN));
 		//nodeB.setX(xAnimatedBranch);
 		//nodeB.setY(yAnimatedBranch);
 		
@@ -1649,8 +1649,8 @@ public class DrawingTree {
 		}				
 		
 		
-		xAnimatedBranch.bind(nodeC.getParent().getX().add(rootSize));
-		yAnimatedBranch.bind(nodeC.getParent().getY().add(DOWNMARGIN));
+		//xAnimatedBranch.bind(nodeC.getParent().getX().add(rootSize));
+		//yAnimatedBranch.bind(nodeC.getParent().getY().add(DOWNMARGIN));
 		//nodeC.setX(xAnimatedBranch);
 		//nodeC.setY(yAnimatedBranch);
 		
@@ -1771,8 +1771,8 @@ public class DrawingTree {
 			//nodeA.setY(yAnimatedNode);
 		}
 		
-		xAnimatedBranch.bind(nodeB.getParent().getX().subtract(rootSize));
-		yAnimatedBranch.bind(nodeB.getParent().getY().add(DOWNMARGIN));
+		//xAnimatedBranch.bind(nodeB.getParent().getX().subtract(rootSize));
+		//yAnimatedBranch.bind(nodeB.getParent().getY().add(DOWNMARGIN));
 		//nodeB.setX(xAnimatedBranch);
 		//nodeB.setY(yAnimatedBranch);
 		
@@ -1908,8 +1908,8 @@ public class DrawingTree {
 		}				
 		
 		
-		xAnimatedBranch.bind(nodeC.getParent().getX().subtract(rootSize));
-		yAnimatedBranch.bind(nodeC.getParent().getY().add(DOWNMARGIN));
+		//xAnimatedBranch.bind(nodeC.getParent().getX().subtract(rootSize));
+		//yAnimatedBranch.bind(nodeC.getParent().getY().add(DOWNMARGIN));
 		//nodeC.setX(xAnimatedBranch);
 		//nodeC.setY(yAnimatedBranch);
 		
