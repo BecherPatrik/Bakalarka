@@ -736,7 +736,7 @@ public class DrawingTree {
 		case 3: 
 			appendNewText("\n • Sourozenec NULL listu je černý,\nale nemá červeného následníka.\n"
 					+ "  NULL list má černého předchůdce.");
-			appendNewText("\n • Předchůdce získá dvojté označení,\n  sourozenec červenou.");
+			appendNewText("\n • Předchůdce získá dvojité označení,\n  sourozenec červenou.");
 			break;
 			
 		case 4: 
@@ -1330,10 +1330,20 @@ public class DrawingTree {
 	 */
 	private void setDoublBlack() {
 		RedBlackGraphicNode node;
-		if (recordOfAnimations.get(indexAnimation).getNode1() != null) {
+		if ((recordOfAnimations.get(indexAnimation).getNode1() != null) && recordOfAnimations.get(indexAnimation).getObject() == null) {
 			node = (RedBlackGraphicNode) recordOfAnimations.get(indexAnimation).getNode1();
 			nullNode.removeDoubleBlackHighlight();
 			appendNewText("\n • Přesunu označení.");
+			if (nullNode.getValue().equals("NULL")) {
+				paneTree.getChildren().remove(nullNode.getStackPaneNode());
+				paneTree.getChildren().remove(nullNode.getBranch());
+				if (nullNode.getSide() == Side.LEFT) {
+					nullNode.getParent().setLeft(null);
+				} else {
+					nullNode.getParent().setRight(null);
+				}
+			}			
+			
 			nullNode = node;	
 			nullNode.doubleBlackHighlight();
 			
@@ -1343,7 +1353,7 @@ public class DrawingTree {
 				return;
 			}
 			
-			PauseTransition pt2 = new PauseTransition(Duration.millis(slowAnimationSpeed - animationSpeed.get()));
+			PauseTransition pt2 = new PauseTransition(Duration.millis(slowAnimationSpeed));
 
 			SequentialTransition seqT = new SequentialTransition(pt2);
 
@@ -1358,7 +1368,7 @@ public class DrawingTree {
 
 			seqT.play();
 		} else {
-			if (nullNode.getValue().equals("NULL")) {
+			if (nullNode != null && nullNode.getValue().equals("NULL")) {
 				appendNewText("\n • Odstraním NULL list.");
 				
 				if (animationSpeed.get() == 0) { 
@@ -1407,15 +1417,39 @@ public class DrawingTree {
 				return;				
 								
 			} else if (recordOfAnimations.get(indexAnimation).getObject() != null) {				
-				appendNewText("\n • Kořen je vždy černý.");
+				appendNewText("\n • Kořen je vždy černý.");				
+				nullNode.removeDoubleBlackHighlight();
+				
+				if (nullNode.getValue().equals("NULL")) {
+					paneTree.getChildren().remove(nullNode.getStackPaneNode());
+					paneTree.getChildren().remove(nullNode.getBranch());
+					if (nullNode.getSide() == Side.LEFT) {
+						nullNode.getParent().setLeft(null);
+					} else {
+						nullNode.getParent().setRight(null);
+					}
+				}
+				
+				indexAnimation++;
+				nextAnimation();
 			} else {
 				appendNewText("\n • Odstraním obarevní listu.");
+				nullNode.removeDoubleBlackHighlight();
+				
+				if (nullNode.getValue().equals("NULL")) {
+					paneTree.getChildren().remove(nullNode.getStackPaneNode());
+					paneTree.getChildren().remove(nullNode.getBranch());
+					if (nullNode.getSide() == Side.LEFT) {
+						nullNode.getParent().setLeft(null);
+					} else {
+						nullNode.getParent().setRight(null);
+					}
+				}
+				
+				indexAnimation++;
+				nextAnimation();
 			}
-			nullNode.removeDoubleBlackHighlight();
-		}
-		
-		indexAnimation++;
-		nextAnimation();		
+		}				
 	}
 	
 	private void rrAnimation() {		

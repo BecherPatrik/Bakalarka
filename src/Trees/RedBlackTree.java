@@ -54,6 +54,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
         Side side = result.getSide(); //zjistím směr
         removedNode = (RedBlackNode) result.getNode();
         RedBlackNode parent;
+        Trees.Color oldColor;
 
         if (side != Side.NONE) {  //pokud ho nenajdu 
             return result;
@@ -107,7 +108,10 @@ public class RedBlackTree implements ITree<RedBlackNode> {
             	
             	result.addAnimation(AnimatedAction.RECOLOR, helpNode.getRight().getGraphicNode(), helpNode.getColor()); /***/
             	
-            	if (helpNode.getRight().getColor() == Color.BLACK) {
+            	oldColor = helpNode.getRight().getColor();
+            	helpNode.getRight().setColor(helpNode.getColor());
+            	
+            	if (oldColor == Color.BLACK) {
             		return doubleBlack(result, helpNode, Side.RIGHT); /** B1 **/
             	} else {
             		return result;
@@ -465,7 +469,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 			result.addAnimation(AnimatedAction.DOUBLEBLACK, parent.getGraphicNode(), side);
 		} else {
 			dblack = false;
-		}
+		}		
 		
 		if (side == Side.LEFT) {
 			if (parent.getRight().getColor() == Color.BLACK) {

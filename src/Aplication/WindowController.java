@@ -363,7 +363,6 @@ public class WindowController implements Initializable {
 			isRedBlack = false;
 			graphicTree = new DrawingTree(paneTree, sliderSpeed.valueProperty(), primaryStage.widthProperty(), primaryStage.heightProperty(), this);
 			tree = new BinaryTree();	
-			//tree = new AVLTree();
 			//isRedBlack = true;
 			//tree = new RedBlackTree();
 			break;
@@ -389,7 +388,9 @@ public class WindowController implements Initializable {
 		double oldSpeed = sliderSpeed.getValue();
 		newEmptyTree();
 		sliderSpeed.setValue(0);
-		graphicTree.hideText();		
+		graphicTree.hideText();	
+		
+		graphicTree.setInsertAnimation(false);
 		
 		inputNumber.setText("2");
 		insertNumber();
@@ -412,8 +413,16 @@ public class WindowController implements Initializable {
 		inputNumber.setText("12");
 		insertNumber();
 		
-		//inputNumber.setText("18");
-		//insertNumber();	
+		inputNumber.setText("18");
+		insertNumber();	
+		
+		inputNumber.setText("19");
+		insertNumber();	
+		
+		inputNumber.setText("20");
+		insertNumber();
+		
+		
 		
 		graphicTree.showText();
 		graphicTree.clearText();
