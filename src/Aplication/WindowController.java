@@ -494,7 +494,7 @@ public class WindowController implements Initializable {
 			btnTreesActual.getStyleClass().clear();
 			btnTreesActual.getStyleClass().add("tree-button");			
 
-			primaryStage.setTitle("Trees - " + selectedButton.getText());
+			primaryStage.setTitle("Stromy - " + selectedButton.getText());
 
 			btnTreesActual = selectedButton;
 			hideMenu();
