@@ -723,24 +723,28 @@ public class DrawingTree {
 	private void redBlackDeleteInfo() {
 		switch ((int)recordOfAnimations.get(indexAnimation).getObject()) {
 		case 1:
-			appendNewText("\n • Sourozenec NULL listu je černý,\n  navíc má červeného následníka.");
+			appendNewText("\n • Sourozenec označeného je černý,\n  navíc má červeného následníka.");
 			break;
 			
 		case 2:
-			appendNewText("\n • Sourozenec NULL listu je černý,\nale nemá červeného následníka.\n"
-					+ "  NULL list má červeného předchůdce.");
+			appendNewText("\n • Sourozenec označeného je černý,\nale nemá červeného následníka.\n"
+					+ "  označený má červeného předchůdce.");
 			appendNewText("\n • Předchůdce získá černou barvu,\n  sourozenec červenou.");
 			
 			break;
 			
 		case 3: 
-			appendNewText("\n • Sourozenec NULL listu je černý,\nale nemá červeného následníka.\n"
-					+ "  NULL list má černého předchůdce.");
+			appendNewText("\n • Sourozenec označeného je černý,\nale nemá červeného následníka.\n"
+					+ "  označený má černého předchůdce.");
 			appendNewText("\n • Předchůdce získá dvojité označení,\n  sourozenec červenou.");
 			break;
 			
 		case 4: 
-			appendNewText("\n • Sourozenec NULL listu je červený.");
+			appendNewText("\n • Sourozenec označeného je červený.");
+			
+		case 5: 
+			balanceTree();
+			return;
 		default:
 			break;
 		}
@@ -1433,7 +1437,7 @@ public class DrawingTree {
 				indexAnimation++;
 				nextAnimation();
 			} else {
-				appendNewText("\n • Odstraním obarevní listu.");
+				appendNewText("\n • Odstraním označení listu.");
 				nullNode.removeDoubleBlackHighlight();
 				
 				if (nullNode.getValue().equals("NULL")) {

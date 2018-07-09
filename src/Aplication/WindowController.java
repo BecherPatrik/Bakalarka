@@ -3,6 +3,7 @@ package Aplication;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import Graphic.IGraphicNode;
 import Trees.AVLTree;
 import Trees.AnimatedAction;
 import Trees.BinaryTree;
+import Trees.Color;
 import Trees.INode;
 import Trees.ITree;
 import Trees.RedBlackNode;
@@ -390,39 +392,7 @@ public class WindowController implements Initializable {
 		sliderSpeed.setValue(0);
 		graphicTree.hideText();	
 		
-		graphicTree.setInsertAnimation(false);
-		
-		inputNumber.setText("2");
-		insertNumber();
-		
-		inputNumber.setText("3");
-		insertNumber();
-		
-		inputNumber.setText("4");
-		insertNumber();	
-		
-		inputNumber.setText("9");
-		insertNumber();	
-		
-		inputNumber.setText("7");
-		insertNumber();	
-		
-		inputNumber.setText("15");
-		insertNumber();
-		
-		inputNumber.setText("12");
-		insertNumber();
-		
-		inputNumber.setText("18");
-		insertNumber();	
-		
-		inputNumber.setText("19");
-		insertNumber();	
-		
-		inputNumber.setText("20");
-		insertNumber();
-		
-		
+		graphicTree.setInsertAnimation(false);	
 		
 		graphicTree.showText();
 		graphicTree.clearText();
@@ -577,6 +547,25 @@ public class WindowController implements Initializable {
 	}
 	
 	private void createHistoryRecursion(Object object) {
+		/*int[] pole = {847,255,497,278,671,7,2,48,896,878,972};
+		
+		for(int i=0; i<pole.length;i++) {
+			listHistory.add(pole[i]);
+			
+		}
+		
+		listHistoryColor.add(Color.BLACK);
+		listHistoryColor.add(Color.RED);
+		listHistoryColor.add(Color.BLACK);
+		listHistoryColor.add(Color.BLACK);
+		listHistoryColor.add(Color.BLACK);
+		listHistoryColor.add(Color.BLACK);
+		listHistoryColor.add(Color.BLACK);
+		listHistoryColor.add(Color.BLACK);
+		listHistoryColor.add(Color.BLACK);
+		listHistoryColor.add(Color.BLACK);
+		listHistoryColor.add(Color.BLACK);*/		
+		
 		INode<?> node = (INode<?>) object;
 		if (node != null) {
 			listHistory.add(node.getValue());

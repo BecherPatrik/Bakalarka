@@ -509,9 +509,11 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 					}
 				}				
 			} else {
-				dblack = true;
 				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 4);
-				return llBalance(result, parent);				
+				result = llBalance(result, parent);	
+				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 5);
+				dblack = true;
+				return doubleBlack(result, parent, side);
 			}			
 		} else {
 			if (parent.getLeft().getColor() == Color.BLACK) {
@@ -550,10 +552,12 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 						}
 					}
 				}				
-			} else {
-				dblack = true;
+			} else {	
 				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 4);
-				return rrBalance(result, parent);				
+				result = rrBalance(result, parent);
+				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 5);
+				dblack = true;
+				return doubleBlack(result, parent, side);				
 			}
 		}		
 		
