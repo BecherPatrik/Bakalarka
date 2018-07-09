@@ -438,6 +438,7 @@ public class WindowController implements Initializable {
 			randomTree = true;
 			
 			lastResult = null;
+			lastAction = null;
 			listOldGraphicTreeNodes.clear();
 			checkEnableButtons();
 		}		
@@ -755,7 +756,9 @@ public class WindowController implements Initializable {
 		if (isAnimationDisable || paneTree.getChildren().isEmpty() || (listHistory.isEmpty() && lastAction == null)) {
 			btnRepeat.setDisable(true);
 		} else {
-			btnRepeat.setDisable(false);
+			if (!inputNumber.isDisable()) {
+				btnRepeat.setDisable(false);
+			}			
 		}
 	}
 	
@@ -779,14 +782,15 @@ public class WindowController implements Initializable {
 		
 		primaryStage.setResizable(true);
 		
+		inputNumber.setDisable(false);
+		
 		checkEnableButtons();
 		
 		btnTrees.setDisable(false);
 		btnNewTree.setDisable(false);		
 		
-		sliderSpeed.setDisable(false);
+		sliderSpeed.setDisable(false);		
 		
-		inputNumber.setDisable(false);
 		inputNumber.clear();
 		inputNumber.requestFocus();
 	}
