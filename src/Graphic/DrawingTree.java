@@ -895,10 +895,10 @@ public class DrawingTree {
 	 * po vložení odbarví node
 	 */
 	private void highlightInsertNode() {
-		if (!isInsertAnimation) { 
-			indexAnimation++;
-			nextAnimation();
+		if (!isInsertAnimation) {
 			newIGraphicNode.setDefaultColorNode();
+			indexAnimation++;
+			nextAnimation();			
 			return;
 		}
 		PauseTransition pt2 = new PauseTransition(Duration.millis(slowAnimationSpeed));
@@ -909,9 +909,9 @@ public class DrawingTree {
 		seqT.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				newIGraphicNode.setDefaultColorNode();				
 				indexAnimation++;
-				nextAnimation();
-				newIGraphicNode.setDefaultColorNode();
+				nextAnimation();				
 			}
 		});
 
