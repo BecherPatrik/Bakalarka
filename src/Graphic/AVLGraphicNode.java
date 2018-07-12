@@ -33,7 +33,9 @@ public class AVLGraphicNode extends BinaryGraphicNode {
 	@Override
 	public void highlightFindNode() {
 		super.highlightFindNode();
-		factor.setFill(Color.RED);
+		if (!(factor.getText().equals("0"))) {
+			factor.setFill(Color.RED);
+		}		
 	}
 
 	@Override
