@@ -82,6 +82,7 @@ public class DrawingTree {
 	private int indexAnimation = 0;
 	private boolean isRedraw = false;
 	private boolean notFind = false;
+	private boolean isDelete = false;
 	private boolean isBalance = false;
 	private boolean isReColor = false;
 	private boolean isRedBlack = false;
@@ -600,6 +601,7 @@ public class DrawingTree {
 		isBalance = false;
 		isMoveNode = false;
 		isReColor = false;
+		isDelete = false;
 		this.recordOfAnimations = recordOfAnimations;
 		checkSpeed();
 		nextAnimation();
@@ -983,6 +985,7 @@ public class DrawingTree {
 	 * Smazání listu animace
 	 */
 	private void deleteNodeAnimation() {
+		isDelete = true; //kvůli avl...
 		IGraphicNode node = wayList.get(wayList.size() - 1);
 		oldText = text.getText();
 		
@@ -1215,10 +1218,18 @@ public class DrawingTree {
 				if (factor == -2 || factor == 2) {
 					node.highlightFindNode();
 					appendNewText("\n • Strom je nevyvážený.");
-					indexAnimation++;
-					nextAnimation();
+					PauseTransition pt1 = new PauseTransition(Duration.millis(5 * (fastAnimationSpeed - animationSpeed.get())));
+					SequentialTransition seqT2 = new SequentialTransition(pt1);
+					seqT2.setOnFinished(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent event) {									
+							indexAnimation++;
+							nextAnimation();
+						}
+					});					
+					seqT2.play();
 				} else {
-					if(node.getBranch() != null && (factor != 0 || (node.getLeft() == null && node.getRight() == null))) {
+					if(node.getBranch() != null && (isDelete || (factor != 0 || (node.getLeft() == null && node.getRight() == null)))) {
 						StrokeTransition st1 = new StrokeTransition(Duration.millis(slowAnimationSpeed),(Line) node.getBranch(), Color.WHITE, Color.LIME);
 						PauseTransition pt1 = new PauseTransition(Duration.millis(5 * (fastAnimationSpeed - animationSpeed.get())));
 						StrokeTransition st2 = new StrokeTransition(Duration.millis(slowAnimationSpeed), (Line) node.getBranch(), Color.LIME, Color.WHITE);
