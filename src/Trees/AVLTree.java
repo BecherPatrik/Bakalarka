@@ -80,6 +80,7 @@ public class AVLTree implements ITree<AVLNode> {
                 
                 result.addAnimation(AnimatedAction.MOVENODE, removedNode.getGraphicNode(), helpNode.getGraphicNode()); 
                 removedNode.setGraphicNode(helpNode.getGraphicNode());
+                return balanceTree(result, helpNode.getParent()); 
                 
             } else { //0.2
             	if (helpNode.getGraphicNode().getSide() == Side.RIGHT) { //0.2.1
@@ -90,6 +91,8 @@ public class AVLTree implements ITree<AVLNode> {
             	
             	result.addAnimation(AnimatedAction.MOVEVALUE, result.getNode().getGraphicNode(), helpNode.getGraphicNode());
             	result.addAnimation(AnimatedAction.MOVENODE, helpNode.getGraphicNode(), helpNode.getRight().getGraphicNode());
+            	
+            	return balanceTree(result, helpNode.getParent());
             }
         } else if (removedNode.getLeft() != null) {   //zjistím jakého potomka má mazaný  2.
         	result.addAnimation(AnimatedAction.DELETE, null, true);

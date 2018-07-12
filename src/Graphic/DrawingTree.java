@@ -1218,7 +1218,7 @@ public class DrawingTree {
 					indexAnimation++;
 					nextAnimation();
 				} else {
-					if(node.getBranch() != null) {
+					if(node.getBranch() != null && (factor != 0 || (node.getLeft() == null && node.getRight() == null))) {
 						StrokeTransition st1 = new StrokeTransition(Duration.millis(slowAnimationSpeed),(Line) node.getBranch(), Color.WHITE, Color.LIME);
 						PauseTransition pt1 = new PauseTransition(Duration.millis(5 * (fastAnimationSpeed - animationSpeed.get())));
 						StrokeTransition st2 = new StrokeTransition(Duration.millis(slowAnimationSpeed), (Line) node.getBranch(), Color.LIME, Color.WHITE);
@@ -1226,7 +1226,7 @@ public class DrawingTree {
 						
 						seqT2.setOnFinished(new EventHandler<ActionEvent>() {
 							@Override
-							public void handle(ActionEvent event) {		
+							public void handle(ActionEvent event) {									
 								nextUpdateFactor((AVLGraphicNode)node.getParent());
 							}
 						});

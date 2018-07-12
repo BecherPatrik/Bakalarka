@@ -88,11 +88,11 @@ public class AVLNode implements INode<AVLNode> {
 		int r = 0;
 		
 		if (left != null) {
-			l += left.countFactor();
+			l = left.countFactor();
 		}
 		
 		if (right != null) {
-			r += right.countFactor();
+			r = right.countFactor();
 		}		
 		
 		factor = l - r;	
