@@ -698,6 +698,12 @@ public class DrawingTree {
 			updateFactor();
 			break;
 			
+		case REDBLACK:
+			isRedBlack = true;
+			indexAnimation++;
+			nextAnimation();
+			break;
+			
 		case RECOLOR: 
 			reColor();
 			break;
@@ -911,9 +917,14 @@ public class DrawingTree {
 		seqT.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				newIGraphicNode.setDefaultColorNode();				
-				indexAnimation++;
-				nextAnimation();				
+				newIGraphicNode.setDefaultColorNode();	
+				if (isRedBlack) {					
+					balanceTree();
+				} else {
+					indexAnimation++;
+					nextAnimation();
+				}
+								
 			}
 		});
 
@@ -1257,7 +1268,6 @@ public class DrawingTree {
 	 * Změní barvu u vybraného node
 	 */
 	private void reColor() {
-		isRedBlack = true;
 		if (!(isReColor) && nullNode == null) {		
 			oldText = text.getText();
 			setTextWithHistory("PŘEBARVENÍ STROMU:");
@@ -1286,7 +1296,6 @@ public class DrawingTree {
 			balanceTree();
 			return;
 		}*/
-		isRedBlack = true;
 		oldText = text.getText();
 		setTextWithHistory("VYVÁŽENÍ STROMU:");
 		appendNewText("\n • Smazaný list byl černý.");		

@@ -37,6 +37,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 	    	return result;
 	    }
 	    nodes.add((RedBlackNode)result.getNode());
+	    result.addAnimation(AnimatedAction.REDBLACK, null, null);
 	    result.addAnimation(AnimatedAction.INSERT, null, null);
 	    
 	    if (balance) {
