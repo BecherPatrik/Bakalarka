@@ -348,6 +348,9 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 			nodeA.setColor(Color.BLACK);
 			result.addAnimation(AnimatedAction.RECOLOR, nodeA.getGraphicNode(), Color.BLACK);
 			
+			nodeC.setColor(Color.BLACK);
+			result.addAnimation(AnimatedAction.RECOLOR, nodeC.getGraphicNode(), Color.BLACK);
+			
 			dblackColor = false;
 		} else {
 			nodeC.setColor(Color.RED);
@@ -439,6 +442,9 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 			nodeC.setColor(Color.BLACK);
 			result.addAnimation(AnimatedAction.RECOLOR, nodeC.getGraphicNode(), Color.BLACK);
 			
+			nodeA.setColor(Color.BLACK);
+			result.addAnimation(AnimatedAction.RECOLOR, nodeA.getGraphicNode(), Color.BLACK);
+			
 			dblackColor = false;
 		} else {
 			nodeC.setColor(Color.RED);
@@ -498,8 +504,9 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 						helpNode.setColor(Color.RED);
 						
 						result.addAnimation(AnimatedAction.REDBLACKINFO, null, 3);
-						result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), null);
 						result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), Color.RED);
+						result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), null);
+						
 						
 						if (parent.equals(root)) { //přebarvím kořen
 							result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), true);
@@ -513,6 +520,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 4);
 				result = llBalance(result, parent);	
 				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 5);
+				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 6);
 				dblack = true;
 				return doubleBlack(result, parent, side);
 			}			
@@ -542,8 +550,8 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 						helpNode.setColor(Color.RED);
 						
 						result.addAnimation(AnimatedAction.REDBLACKINFO, null, 3);
-						result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), null);
 						result.addAnimation(AnimatedAction.RECOLOR, helpNode.getGraphicNode(), Color.RED);
+						result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), null);						
 						
 						if (parent.equals(root)) { //přebarvím kořen
 							result.addAnimation(AnimatedAction.SETDOUBLEBLACK, parent.getGraphicNode(), true);
@@ -557,6 +565,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 4);
 				result = rrBalance(result, parent);
 				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 5);
+				result.addAnimation(AnimatedAction.REDBLACKINFO, null, 6);
 				dblack = true;
 				return doubleBlack(result, parent, side);				
 			}

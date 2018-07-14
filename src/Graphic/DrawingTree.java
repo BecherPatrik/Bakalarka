@@ -506,7 +506,15 @@ public class DrawingTree {
 			}						
 			
 			iGraphicNode.getBranch().toBack();			
-		}		
+		}	
+		
+		if (nullNode != null && nullNode.getValue().equals("NULL")) { //null node
+			if (paneTree.getChildren().indexOf(nullNode.getBranch()) == -1) { 
+				paneTree.getChildren().add(nullNode.getBranch());
+			}						
+		
+			nullNode.getBranch().toBack();	
+		}
 	}
 
 	/**
@@ -577,6 +585,32 @@ public class DrawingTree {
 				iGraphicNode.getRight().getBranchStartY().bind(yAnimatedBranch);
 			}				
 		}
+		
+		if (nullNode != null && nullNode.getValue().equals("NULL")) { //na závěr přebinduju nullnode
+			xAnimatedNode = new SimpleDoubleProperty();
+			yAnimatedNode = new SimpleDoubleProperty();
+			
+			xAnimatedBranch = new SimpleDoubleProperty();
+			yAnimatedBranch = new SimpleDoubleProperty();
+			
+			if (nullNode.getSide() == Side.LEFT) {
+				xAnimatedNode.bind(nullNode.getParent().getX().subtract(rootSize));	
+				xAnimatedBranch.bind(nullNode.getParent().getX().subtract(rootSize / 2));	
+			} else {
+				xAnimatedNode.bind(nullNode.getParent().getX().add(rootSize));	
+				xAnimatedBranch.bind(nullNode.getParent().getX().add(rootSize * 1.5));	
+			}
+			
+			yAnimatedNode.bind(nullNode.getParent().getY().add(DOWNMARGIN));
+			yAnimatedBranch.bind(nullNode.getParent().getY().add(stackPaneHeight / 2).add(DOWNMARGIN));
+
+			nullNode.setX(xAnimatedNode);
+			nullNode.setY(yAnimatedNode);
+			
+			nullNode.setBranchEndX(xAnimatedBranch);
+			nullNode.setBranchEndY(yAnimatedBranch);
+		}
+		
 		if (indexAnimation >= recordOfAnimations.size()) {
 			windowController.enableButtons();
 			return;
@@ -639,8 +673,7 @@ public class DrawingTree {
 			
 		default:
 			break;
-		}
-		
+		}		
 	}
 	
 	/**
@@ -752,6 +785,28 @@ public class DrawingTree {
 			
 		case 5: 
 			balanceTree();
+			return;
+			
+		case 6: 
+			if (animationSpeed.get() == 0) {
+				indexAnimation++;
+				nextAnimation();
+				return;
+			}
+			
+			PauseTransition pt2 = new PauseTransition(Duration.millis(slowAnimationSpeed));			
+
+			SequentialTransition seqT = new SequentialTransition(pt2);
+
+			seqT.setOnFinished(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					indexAnimation++;
+					nextAnimation();									
+				}
+			});
+
+			seqT.play();
 			return;
 		default:
 			break;
@@ -1331,7 +1386,7 @@ public class DrawingTree {
 			indexAnimation++;
 			nextAnimation();
 			return;
-		}
+		}		
 		
 		PauseTransition pt2 = new PauseTransition(Duration.millis(slowAnimationSpeed));
 
@@ -1340,8 +1395,7 @@ public class DrawingTree {
 		seqT.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				indexAnimation++;
-				nextAnimation();
+				redraw();
 				return;
 			}
 		});	
@@ -1497,7 +1551,7 @@ public class DrawingTree {
 		
 		if (isRedBlack) {
 			nodeA.getLeft().highlightNode();
-		}
+		}		
 		
 		appendNewText("\n • Rotace RR.");
 		
@@ -1734,7 +1788,7 @@ public class DrawingTree {
 		nextAnimation();		
 	}
 
-	private void llAnimation() {
+	private void llAnimation() {		
 		IGraphicNode nodeB = recordOfAnimations.get(indexAnimation).getNode1();
 		IGraphicNode nodeA = nodeB.getRight();
 		
@@ -1754,8 +1808,8 @@ public class DrawingTree {
 		nodeA.highlightNode();	
 		
 		if (isRedBlack) {
-			nodeA.getRight().highlightNode();
-		}
+			nodeA.getRight().highlightNode();			
+		}		
 		
 		appendNewText("\n • Rotace LL.");
 		
