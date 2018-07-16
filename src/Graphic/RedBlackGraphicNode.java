@@ -1,11 +1,11 @@
-package Graphic;
+package graphic;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 public class RedBlackGraphicNode extends BinaryGraphicNode {
 	
-	private Trees.Color color = Trees.Color.RED;
+	private trees.Color color = trees.Color.RED;
 	private Circle doubleBlackCircle;
 
 	public RedBlackGraphicNode(int value) {
@@ -44,13 +44,13 @@ public class RedBlackGraphicNode extends BinaryGraphicNode {
 	 * 
 	 *******************************************************************************************************/
 	
-	public Trees.Color getColor() {
+	public trees.Color getColor() {
 		return color;
 	}
 
-	public void setColor(Trees.Color color) {
+	public void setColor(trees.Color color) {
 		this.color = color;
-		if (color == Trees.Color.BLACK) {
+		if (color == trees.Color.BLACK) {
 			super.getCircle().setFill(Color.BLACK);
 		} else {
 			super.getCircle().setFill(Color.DARKRED);

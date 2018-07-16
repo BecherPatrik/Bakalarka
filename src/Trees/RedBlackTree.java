@@ -1,4 +1,4 @@
-package Trees;
+package trees;
 
 import java.util.ArrayList;
 
@@ -55,7 +55,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
         Side side = result.getSide(); //zjistím směr
         removedNode = (RedBlackNode) result.getNode();
         RedBlackNode parent;
-        Trees.Color oldColor;
+        trees.Color oldColor;
 
         if (side != Side.NONE) {  //pokud ho nenajdu 
             return result;
@@ -463,7 +463,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 	}
 	
 	/**
-	 * Řeší dvakrát obarvený černý list
+	 * �?eší dvakrát obarvený černý list
 	 * 
 	 * @param result
 	 * @param parent

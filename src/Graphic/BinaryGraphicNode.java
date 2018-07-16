@@ -1,6 +1,5 @@
-package Graphic;
+package graphic;
 
-import Trees.Side;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.layout.StackPane;
@@ -11,6 +10,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
+import trees.Side;
 
 public class BinaryGraphicNode implements IGraphicNode {
 	private final int radiusSize = 20;

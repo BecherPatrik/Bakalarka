@@ -1,10 +1,10 @@
-package Graphic;
+package graphic;
 
-import Trees.Side;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
+import trees.Side;
 
 public interface IGraphicNode {	
 	/**

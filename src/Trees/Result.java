@@ -1,8 +1,8 @@
-package Trees;
+package trees;
 
 import java.util.ArrayList;
 
-import Graphic.IGraphicNode;
+import graphic.IGraphicNode;
 
 public class Result<T> {
 	private INode<T> node;

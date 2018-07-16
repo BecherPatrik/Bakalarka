@@ -1,7 +1,7 @@
-package Trees;
+package trees;
 
-import Graphic.RedBlackGraphicNode;
-import Graphic.IGraphicNode;
+import graphic.IGraphicNode;
+import graphic.RedBlackGraphicNode;
 
 public class RedBlackNode implements INode<RedBlackNode> {
 	

@@ -1,4 +1,4 @@
-package Graphic;
+package graphic;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;

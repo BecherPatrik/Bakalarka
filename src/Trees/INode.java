@@ -1,6 +1,6 @@
-package Trees;
+package trees;
 
-import Graphic.IGraphicNode;
+import graphic.IGraphicNode;
 
 public interface INode<T> {
     void deleteLeftWithGraphic();

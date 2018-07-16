@@ -1,7 +1,7 @@
-package Trees;
+package trees;
 
-import Graphic.AVLGraphicNode;
-import Graphic.IGraphicNode;
+import graphic.AVLGraphicNode;
+import graphic.IGraphicNode;
 
 public class AVLNode implements INode<AVLNode> {
 	

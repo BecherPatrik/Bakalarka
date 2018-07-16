@@ -1,4 +1,4 @@
-package Aplication;
+package application;
 
 import java.io.IOException;
 import java.net.URL;
@@ -11,17 +11,8 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import Graphic.DrawingTree;
-import Graphic.IGraphicNode;
-import Trees.AVLTree;
-import Trees.AnimatedAction;
-import Trees.BinaryTree;
-import Trees.Color;
-import Trees.INode;
-import Trees.ITree;
-import Trees.RedBlackNode;
-import Trees.RedBlackTree;
-import Trees.Result;
+import graphic.DrawingTree;
+import graphic.IGraphicNode;
 import javafx.animation.FadeTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -48,6 +39,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import trees.AVLTree;
+import trees.AnimatedAction;
+import trees.BinaryTree;
+import trees.Color;
+import trees.INode;
+import trees.ITree;
+import trees.RedBlackNode;
+import trees.RedBlackTree;
+import trees.Result;
 
 public class WindowController implements Initializable {
 
@@ -105,7 +105,7 @@ public class WindowController implements Initializable {
 	private Set<Integer> randomValueList;
 	
 	private List<Integer> listHistory = new ArrayList<>();
-	private List<Trees.Color> listHistoryColor = new ArrayList<>();
+	private List<trees.Color> listHistoryColor = new ArrayList<>();
 	private int lastValue;
 
 	private boolean isRedraw = false;

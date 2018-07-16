@@ -1,4 +1,4 @@
-package Trees;
+package trees;
 
 public class BinaryTree implements ITree<BinaryNode> {
     private BinaryNode root = null;

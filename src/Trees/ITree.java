@@ -1,4 +1,4 @@
-package Trees;
+package trees;
 
 public interface ITree<T> {
 	Result<T> insert(int value);

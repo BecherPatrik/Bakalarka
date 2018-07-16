@@ -1,7 +1,7 @@
-package Trees;
+package trees;
 
-import Graphic.BinaryGraphicNode;
-import Graphic.IGraphicNode;
+import graphic.BinaryGraphicNode;
+import graphic.IGraphicNode;
 
 public class BinaryNode implements INode<BinaryNode> {
 	private int value;
