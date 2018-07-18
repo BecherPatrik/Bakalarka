@@ -38,7 +38,7 @@ public class AVLTree implements ITree {
 	    if (balance) {
 	    	return balanceTree(result, (AVLNode)result.getNode());
 	    } else {
-	    	root.countFactor();
+	    	root.computeFactor();
 	    	result.addAnimation(AnimatedAction.UPDATEFACTOR, null, false);
 	    	return result;
 	    }	    
@@ -146,11 +146,11 @@ public class AVLTree implements ITree {
             	resultNode.setSide(Side.RIGHT); 
             } else {               
             	resultNode.setSide(Side.NONE);
-            	resultNode.addSide(result.getGraphicNode());
+            	resultNode.addNodeToWay(result.getGraphicNode());
                 break;
             }            
             
-            resultNode.addSide(parent.getGraphicNode());
+            resultNode.addNodeToWay(parent.getGraphicNode());
         }
       
         if (resultNode.getSide() == Side.NONE) {
@@ -169,7 +169,7 @@ public class AVLTree implements ITree {
 	 * @return
 	 */
 	private Result balanceTree(Result result, AVLNode startNode) {
-		root.countFactor();
+		root.computeFactor();
 		
 		AVLNode balanceNode = startNode;
 		

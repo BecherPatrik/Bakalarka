@@ -35,10 +35,10 @@ public class Result {
 	}		
 
 	/**
-	 * Přídá směr do kolekce směrů
+	 * Přídá navštívený uzel
 	 * @param side
 	 */
-	public void addSide(IGraphicNode node) {
+	public void addNodeToWay(IGraphicNode node) {
 		way.add(node);
 	}
 	
@@ -63,8 +63,8 @@ public class Result {
 	 * @param node1
 	 * @param object	 
 	 */
-	public void addAnimation(AnimatedAction action, IGraphicNode node1, Object object) {
-		recordOfAnimations.add(new RecordOfAnimation(action, node1, object));		
+	public void addAnimation(AnimatedAction action, IGraphicNode node, Object object) {
+		recordOfAnimations.add(new RecordOfAnimation(action, node, object));		
 	}
 	
 	public ArrayList<RecordOfAnimation> getRecordOfAnimations() {

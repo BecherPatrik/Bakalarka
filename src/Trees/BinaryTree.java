@@ -135,11 +135,11 @@ public class BinaryTree implements ITree {
             	resultNode.setSide(Side.RIGHT); 
             } else {               
             	resultNode.setSide(Side.NONE);
-            	resultNode.addSide(result.getGraphicNode());
+            	resultNode.addNodeToWay(result.getGraphicNode());
                 break;
             }            
             
-            resultNode.addSide(parent.getGraphicNode());
+            resultNode.addNodeToWay(parent.getGraphicNode());
         }
       
         if (resultNode.getSide() == Side.NONE) {

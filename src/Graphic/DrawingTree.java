@@ -1592,7 +1592,7 @@ public class DrawingTree {
 	
 	private void rrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {	
 		if (!isRedBlack) {
-			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).computeFactor();
 		}		
 		
 		nodeB.setLeft(nodeA.getRight());
@@ -1724,7 +1724,7 @@ public class DrawingTree {
 	
 	private void rlAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {
 		if (!isRedBlack) {
-			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).computeFactor();
 		}
 		
 		nodeA.setRight(nodeB.getLeft());
@@ -1850,7 +1850,7 @@ public class DrawingTree {
 	
 	private void llAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {
 		if (!isRedBlack) {
-			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).computeFactor();
 		}
 		
 		nodeB.setRight(nodeA.getLeft());
@@ -1982,7 +1982,7 @@ public class DrawingTree {
 	
 	private void lrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {		
 		if (!isRedBlack) {
-			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).countFactor();
+			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).computeFactor();
 		}
 		
 		nodeA.setLeft(nodeB.getRight());
