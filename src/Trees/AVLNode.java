@@ -3,7 +3,7 @@ package trees;
 import graphic.AVLGraphicNode;
 import graphic.IGraphicNode;
 
-public class AVLNode implements INode<AVLNode> {
+public class AVLNode implements INode {
 	
 	private int value;
 	private int factor = 0;
@@ -47,17 +47,17 @@ public class AVLNode implements INode<AVLNode> {
 	}
 	
 	@Override
-	public void setNodeWithGraphic(AVLNode node) {
+	public void setNodeWithGraphic(INode node) {
 		value = node.getValue();
-		right = node.getRight();
-		left = node.getLeft();
+		right = (AVLNode) node.getRight();
+		left = (AVLNode) node.getLeft();
 		
 		node.getGraphicNode().setSide(graphicNode.getSide()); //před změnou musím uložit aktuální stranu node
 		graphicNode.setLeft(node.getGraphicNode().getLeft());
 		graphicNode.setRight(node.getGraphicNode().getRight());
 		
 		if (right != null || left != null) {
-			graphicNode = node.getGraphicNode(); //změním graphicNode
+			graphicNode = (AVLGraphicNode) node.getGraphicNode(); //změním graphicNode
 		}
 		
 		if (parent != null) {
@@ -123,14 +123,14 @@ public class AVLNode implements INode<AVLNode> {
 	}
 
 	@Override
-	public void setParentWithGraphic(AVLNode node) {
-		parent = node;
+	public void setParentWithGraphic(INode node) {
+		parent = (AVLNode) node;
 		graphicNode.setParent(node.getGraphicNode());
 	}
 	
 	@Override
-	public void setParent(AVLNode node) {
-		parent = node;
+	public void setParent(INode node) {
+		parent = (AVLNode) node;
 	}
 	
 	@Override
@@ -139,8 +139,8 @@ public class AVLNode implements INode<AVLNode> {
 	}
 
 	@Override
-	public void setRightWithGraphic(AVLNode node) {
-		right = node;
+	public void setRightWithGraphic(INode node) {
+		right = (AVLNode) node;
 		graphicNode.setRight(node.getGraphicNode());
 		node.setParentWithGraphic(this);
 		node.getGraphicNode().setSide(Side.RIGHT);
@@ -148,8 +148,8 @@ public class AVLNode implements INode<AVLNode> {
 	}
 	
 	@Override
-	public void setRight(AVLNode node) {
-		right = node;
+	public void setRight(INode node) {
+		right = (AVLNode) node;
 		if (node != null) {
 			node.setParent(this);
 		}		
@@ -161,8 +161,8 @@ public class AVLNode implements INode<AVLNode> {
 	}
 
 	@Override
-	public void setLeftWithGraphic(AVLNode node) {
-		left = node;
+	public void setLeftWithGraphic(INode node) {
+		left = (AVLNode) node;
 		graphicNode.setLeft(node.getGraphicNode());
 		node.setParentWithGraphic(this);	
 		node.getGraphicNode().setSide(Side.LEFT);
@@ -170,8 +170,8 @@ public class AVLNode implements INode<AVLNode> {
 	}
 	
 	@Override
-	public void setLeft(AVLNode node) {
-		left = node;
+	public void setLeft(INode node) {
+		left = (AVLNode) node;
 		if (node != null) {
 			node.setParent(this);
 		}

@@ -1,10 +1,10 @@
 package trees;
 
-public interface ITree<T> {
-	Result<T> insert(int value);
-	Result<T> delete(int value);    
-    Result<T> search(int value);
-    T getRoot();
+public interface ITree {
+	Result insert(int value);
+	Result delete(int value);    
+    Result search(int value);
+    INode getRoot();
 	void disableBalance();
 	void enableBalance();    
 }

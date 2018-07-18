@@ -2,7 +2,7 @@ package trees;
 
 import graphic.IGraphicNode;
 
-public interface INode<T> {
+public interface INode {
     void deleteLeftWithGraphic();
     void deleteLeft();
     
@@ -12,7 +12,7 @@ public interface INode<T> {
      * Nahradí aktuální INode (změní value, right, left)
      * @param node
      */
-    void setNodeWithGraphic(T node);
+    void setNodeWithGraphic(INode node);
     
     /********************************************************************************************************
 	 * GETS & SETS
@@ -21,37 +21,37 @@ public interface INode<T> {
     int getValue();
     void setValue(int value);
     
-    T getParent();
+    INode getParent();
     
-    void setParentWithGraphic(T node);
-    void setParent(T node);
+    void setParentWithGraphic(INode node);
+    void setParent(INode node);
     
-    T getRight();
+    INode getRight();
     /**
      * Změní pravého potomka a nastaví mu sebe za rodiče
      * Mění i IGraphicNode
      * @param node
      */
-    void setRightWithGraphic(T node);
+    void setRightWithGraphic(INode node);
     /**
      * Změní pravého potomka a nastaví mu sebe za rodiče
      * @param node
      */
-    void setRight(T node);
+    void setRight(INode node);
     
-    T getLeft();
+    INode getLeft();
     /**
      * Změní levého potomka a nastaví mu sebe za rodiče
      * Mění i IGraphicNode
      * @param node
      */
-    void setLeftWithGraphic(T node);
+    void setLeftWithGraphic(INode node);
     
     /**
      * Změní levého potomka a nastaví mu sebe za rodiče
      * @param node
      */
-    void setLeft(T node);
+    void setLeft(INode node);
     
     IGraphicNode getGraphicNode();
     void setGraphicNode(IGraphicNode graphicNode);        	

@@ -92,14 +92,14 @@ public class WindowController implements Initializable {
 	private @FXML
 	ScrollPane scrollPane;
 
-	private ITree<?> tree;
+	private ITree tree;
 	private DrawingTree graphicTree;	
 	private List<IGraphicNode> listOldGraphicTreeNodes = new ArrayList<>();
 	
 	private final int maxTextLength = 4;
 	boolean isAnimationDisable = false;
 	
-	private Result<?> lastResult = null;
+	private Result lastResult = null;
 	private AnimatedAction lastAction;
 	
 	private Set<Integer> randomValueList;
@@ -280,7 +280,7 @@ public class WindowController implements Initializable {
 		if (lastResult != null) {
 			graphicTree.insertNode(lastResult, lastValue);			
 		} else {
-			graphicTree.insertRoot((INode<?>)tree.getRoot());
+			graphicTree.insertRoot((INode)tree.getRoot());
 		}
 	}
 	
@@ -428,7 +428,7 @@ public class WindowController implements Initializable {
 				if (lastResult != null) {
 					graphicTree.insertNode(lastResult, lastValue);			
 				} else {					
-					graphicTree.insertRoot((INode<?>)tree.getRoot());
+					graphicTree.insertRoot((INode)tree.getRoot());
 					graphicTree.hideText();
 				}
 				index++;
@@ -567,7 +567,7 @@ public class WindowController implements Initializable {
 		listHistoryColor.add(Color.BLACK);
 		listHistoryColor.add(Color.BLACK);*/		
 		
-		INode<?> node = (INode<?>) object;
+		INode node = (INode) object;
 		if (node != null) {
 			listHistory.add(node.getValue());
 			
@@ -599,7 +599,7 @@ public class WindowController implements Initializable {
 		tree.disableBalance();
 		
 		int index = 1;
-		Result<?> result;
+		Result result;
 		RedBlackNode redBlackNode;
 		graphicTree.setInsertAnimation(false);
 		
@@ -607,7 +607,7 @@ public class WindowController implements Initializable {
 			graphicTree.hideText();
 			
 			tree.insert(listHistory.get(0));
-			graphicTree.insertRoot((INode<?>)tree.getRoot());
+			graphicTree.insertRoot((INode)tree.getRoot());
 
 			for (int value : listHistory.subList(1, listHistory.size())) {
 				result = tree.insert(value);
@@ -670,7 +670,7 @@ public class WindowController implements Initializable {
 		case INSERT:	
 			if (tree.getRoot() == null) {
 				lastResult = tree.insert(lastValue);
-				graphicTree.insertRoot((INode<?>)tree.getRoot());			
+				graphicTree.insertRoot((INode)tree.getRoot());			
 			} else {
 				graphicTree.insertNode(tree.insert(lastValue), lastValue);
 			}
@@ -701,7 +701,7 @@ public class WindowController implements Initializable {
 			if (lastResult != null) {
 				graphicTree.insertNode(lastResult, lastValue);			
 			} else {
-				graphicTree.insertRoot((INode<?>)tree.getRoot());
+				graphicTree.insertRoot((INode)tree.getRoot());
 			}
 			break;
 
@@ -816,15 +816,15 @@ public class WindowController implements Initializable {
 	
 	private void treeLog() {
 		paneTree.getChildren().forEach(x-> System.out.println(x));
-		INode<?> root = (INode<?>)tree.getRoot();
+		INode root = (INode)tree.getRoot();
 		if (root == null) {
 			return;
 		}
 		System.out.println(treeLogRecursion(root));
 	}
 	
-	private String treeLogRecursion(INode<?> n) {
-		INode<?> parent = (INode<?>) n.getParent();
+	private String treeLogRecursion(INode n) {
+		INode parent = (INode) n.getParent();
 		String s;
 		if (parent == null) {
 			s = ""+ n.getValue() + " - " + n.getGraphicNode().getValue() + " = " + n.getGraphicNode() + " ->" + n.getGraphicNode().getStackPaneNode() +"\n";
@@ -835,12 +835,12 @@ public class WindowController implements Initializable {
 		
 		if (n.getLeft() != null) {
 			if (n.getRight() != null) {
-				return s + "\t" + treeLogRecursion((INode<?>) n.getLeft()) + treeLogRecursion((INode<?>) n.getRight());
+				return s + "\t" + treeLogRecursion((INode) n.getLeft()) + treeLogRecursion((INode) n.getRight());
 			} else {
-				return s + "\t" + treeLogRecursion((INode<?>) n.getLeft());
+				return s + "\t" + treeLogRecursion((INode) n.getLeft());
 			}
 		} else if (n.getRight() != null) {
-			return s + "\t" + treeLogRecursion((INode<?>) n.getRight());		
+			return s + "\t" + treeLogRecursion((INode) n.getRight());		
 		} else {
 			return s;
 		}

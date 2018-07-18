@@ -3,7 +3,7 @@ package trees;
 import graphic.IGraphicNode;
 import graphic.RedBlackGraphicNode;
 
-public class RedBlackNode implements INode<RedBlackNode> {
+public class RedBlackNode implements INode {
 	
 	private int value;
 	private Color color = Color.RED;
@@ -47,17 +47,17 @@ public class RedBlackNode implements INode<RedBlackNode> {
 	}
 	
 	@Override
-	public void setNodeWithGraphic(RedBlackNode node) {
+	public void setNodeWithGraphic(INode node) {
 		value = node.getValue();
-		right = node.getRight();
-		left = node.getLeft();
+		right = (RedBlackNode) node.getRight();
+		left = (RedBlackNode) node.getLeft();
 		
 		node.getGraphicNode().setSide(graphicNode.getSide()); //před změnou musím uložit aktuální stranu node
 		graphicNode.setLeft(node.getGraphicNode().getLeft());
 		graphicNode.setRight(node.getGraphicNode().getRight());
 		
 		if (right != null || left != null) {
-			graphicNode = node.getGraphicNode(); //změním graphicNode
+			graphicNode = (RedBlackGraphicNode) node.getGraphicNode(); //změním graphicNode
 		}
 		
 		if (parent != null) {
@@ -104,14 +104,14 @@ public class RedBlackNode implements INode<RedBlackNode> {
 	}
 
 	@Override
-	public void setParentWithGraphic(RedBlackNode node) {
-		parent = node;
+	public void setParentWithGraphic(INode node) {
+		parent = (RedBlackNode) node;
 		graphicNode.setParent(node.getGraphicNode());
 	}
 	
 	@Override
-	public void setParent(RedBlackNode node) {
-		parent = node;
+	public void setParent(INode node) {
+		parent = (RedBlackNode) node;
 	}
 	
 	@Override
@@ -120,8 +120,8 @@ public class RedBlackNode implements INode<RedBlackNode> {
 	}
 
 	@Override
-	public void setRightWithGraphic(RedBlackNode node) {
-		right = node;
+	public void setRightWithGraphic(INode node) {
+		right = (RedBlackNode) node;
 		graphicNode.setRight(node.getGraphicNode());
 		node.setParentWithGraphic(this);
 		node.getGraphicNode().setSide(Side.RIGHT);
@@ -129,8 +129,8 @@ public class RedBlackNode implements INode<RedBlackNode> {
 	}
 	
 	@Override
-	public void setRight(RedBlackNode node) {
-		right = node;
+	public void setRight(INode node) {
+		right = (RedBlackNode) node;
 		if (node != null) {
 			node.setParent(this);
 		}		
@@ -142,8 +142,8 @@ public class RedBlackNode implements INode<RedBlackNode> {
 	}
 
 	@Override
-	public void setLeftWithGraphic(RedBlackNode node) {
-		left = node;
+	public void setLeftWithGraphic(INode node) {
+		left = (RedBlackNode) node;
 		graphicNode.setLeft(node.getGraphicNode());
 		node.setParentWithGraphic(this);	
 		node.getGraphicNode().setSide(Side.LEFT);
@@ -151,8 +151,8 @@ public class RedBlackNode implements INode<RedBlackNode> {
 	}
 	
 	@Override
-	public void setLeft(RedBlackNode node) {
-		left = node;
+	public void setLeft(INode node) {
+		left = (RedBlackNode) node;
 		if (node != null) {
 			node.setParent(this);
 		}			

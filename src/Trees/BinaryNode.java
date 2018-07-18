@@ -3,7 +3,7 @@ package trees;
 import graphic.BinaryGraphicNode;
 import graphic.IGraphicNode;
 
-public class BinaryNode implements INode<BinaryNode> {
+public class BinaryNode implements INode {
 	private int value;
 	private BinaryNode parent = null;
 	private BinaryNode right = null;
@@ -45,17 +45,17 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 	
 	@Override
-	public void setNodeWithGraphic(BinaryNode node) {
+	public void setNodeWithGraphic(INode node) {
 		value = node.getValue();
-		right = node.getRight();
-		left = node.getLeft();
+		right = (BinaryNode) node.getRight();
+		left = (BinaryNode) node.getLeft();
 		
 		node.getGraphicNode().setSide(graphicNode.getSide()); //před změnou musím uložit aktuální stranu node
 		graphicNode.setLeft(node.getGraphicNode().getLeft());
 		graphicNode.setRight(node.getGraphicNode().getRight());
 		
 		if (right != null || left != null) {
-			graphicNode = node.getGraphicNode(); //změním graphicNode
+			graphicNode = (BinaryGraphicNode) node.getGraphicNode(); //změním graphicNode
 		}
 		
 		if (parent != null) {
@@ -90,14 +90,14 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 
 	@Override
-	public void setParentWithGraphic(BinaryNode node) {
-		parent = node;
+	public void setParentWithGraphic(INode node) {
+		parent = (BinaryNode) node;
 		graphicNode.setParent(node.getGraphicNode());
 	}
 	
 	@Override
-	public void setParent(BinaryNode node) {
-		parent = node;
+	public void setParent(INode node) {
+		parent = (BinaryNode) node;
 	}
 	
 	@Override
@@ -106,15 +106,15 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 
 	@Override
-	public void setRightWithGraphic(BinaryNode node) {
-		right = node;
+	public void setRightWithGraphic(INode node) {
+		right = (BinaryNode) node;
 		graphicNode.setRight(node.getGraphicNode());
 		node.setParentWithGraphic(this);
 	}
 	
 	@Override
-	public void setRight(BinaryNode node) {
-		right = node;
+	public void setRight(INode node) {
+		right = (BinaryNode) node;
 		if (node != null) {
 			node.setParent(this);
 		}		
@@ -126,15 +126,15 @@ public class BinaryNode implements INode<BinaryNode> {
 	}
 
 	@Override
-	public void setLeftWithGraphic(BinaryNode node) {
-		left = node;
+	public void setLeftWithGraphic(INode node) {
+		left = (BinaryNode) node;
 		graphicNode.setLeft(node.getGraphicNode());
 		node.setParentWithGraphic(this);	
 	}
 	
 	@Override
-	public void setLeft(BinaryNode node) {
-		left = node;
+	public void setLeft(INode node) {
+		left = (BinaryNode) node;
 		if (node != null) {
 			node.setParent(this);
 		}			

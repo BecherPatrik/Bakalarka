@@ -171,7 +171,7 @@ public class DrawingTree {
 	 * Vložení kořenu
 	 * @param root
 	 */
-	public void insertRoot(INode<?> rootNode){
+	public void insertRoot(INode rootNode){
 		newIGraphicNode = rootNode.getGraphicNode();
 		rootSize = newIGraphicNode.getRadiusSize();
 		stackPaneHeight = newIGraphicNode.getStackPaneNode().getPrefHeight();
@@ -253,7 +253,7 @@ public class DrawingTree {
 	 * Vykreslení nového listu 
 	 * @param result
 	 */
-	public void insertNode(Result<?> result, int value) {
+	public void insertNode(Result result, int value) {
 		wayList = result.getWay();	
 		this.value = value;
 		
@@ -294,7 +294,7 @@ public class DrawingTree {
 	 * Smazání listu + zavolá překreslení
 	 * @param node
 	 */
-	public void deleteNode(Result<?> result, int value) {
+	public void deleteNode(Result result, int value) {
 		this.value = value;
 		if (result.getSide() != Side.NONE) {
 			notFind = true;
@@ -314,7 +314,7 @@ public class DrawingTree {
 	 * Najítí listu 
 	 * @param node
 	 */
-	public void searchNode(Result<?> result, int value) {
+	public void searchNode(Result result, int value) {
 		this.value = value;
 		wayList = result.getWay();	
 		checkSpeed();

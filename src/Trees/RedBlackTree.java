@@ -2,7 +2,7 @@ package trees;
 
 import java.util.ArrayList;
 
-public class RedBlackTree implements ITree<RedBlackNode> {
+public class RedBlackTree implements ITree {
 	
 	private RedBlackNode root = null;
 	private ArrayList<RedBlackNode> nodes = new ArrayList<>();
@@ -14,7 +14,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 	public RedBlackTree() {}	
 	
 	@Override
-	public Result<RedBlackNode> insert(int value) {
+	public Result insert(int value) {
 		if (root == null) {
 			root = new RedBlackNode(value);
 			root.setColor(Color.BLACK);
@@ -22,7 +22,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 			nodes.add(root);
 			return null;
 		}
-		Result<RedBlackNode> result = search(value);
+		Result result = search(value);
 	    Side side = result.getSide(); //ověříme poslední stranu
 	    RedBlackNode parent = (RedBlackNode) result.getNode();  // vrátí prvek (side = null) nebo rodiče a místo kam uložit (side = R, L)
 	    
@@ -48,10 +48,10 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 	}
     
     @Override
-	public Result<RedBlackNode> delete(int value) {
+	public Result delete(int value) {
     	RedBlackNode removedNode, helpNode = null;
         
-        Result<RedBlackNode> result = search(value);
+        Result result = search(value);
         Side side = result.getSide(); //zjistím směr
         removedNode = (RedBlackNode) result.getNode();
         RedBlackNode parent;
@@ -177,8 +177,8 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 	 * 
 	 */
 	@Override
-    public Result<RedBlackNode> search(int value) {
-		Result<RedBlackNode> resultNode = new Result<>(root);
+    public Result search(int value) {
+		Result resultNode = new Result(root);
 		RedBlackNode result = root;
 		RedBlackNode parent = root;
 
@@ -217,7 +217,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 	 * @param result
 	 * @return
 	 */
-	private Result<RedBlackNode> balanceTree(Result<RedBlackNode> result, RedBlackNode startNode) {			
+	private Result balanceTree(Result result, RedBlackNode startNode) {			
 		RedBlackNode balanceNode = startNode.getParent();
 		if (balanceNode == null) {
 			result.addAnimation(AnimatedAction.RECOLOR, root.getGraphicNode(), Color.BLACK);
@@ -274,7 +274,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 		return result;		
 	}	
 	
-	private Result<RedBlackNode> llBalance(Result<RedBlackNode> result, RedBlackNode nodeB) {
+	private Result llBalance(Result result, RedBlackNode nodeB) {
 		RedBlackNode nodeA = nodeB.getRight();	
 		
 		if (nodeB.getParent() == null) {
@@ -319,7 +319,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 		return result;
 	}
 
-	private Result<RedBlackNode> lrBalance(Result<RedBlackNode> result, RedBlackNode nodeC) {
+	private Result lrBalance(Result result, RedBlackNode nodeC) {
 		RedBlackNode nodeA = nodeC.getRight();
 		RedBlackNode nodeB = nodeA.getLeft();
 		
@@ -368,7 +368,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 		return result;
 	}
 
-	private Result<RedBlackNode> rrBalance(Result<RedBlackNode> result, RedBlackNode nodeB) {
+	private Result rrBalance(Result result, RedBlackNode nodeB) {
 		RedBlackNode nodeA = nodeB.getLeft();
 		
 		if (nodeB.getParent() == null) {
@@ -413,7 +413,7 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 		return result;
 	}
 
-	private Result<RedBlackNode> rlBalance(Result<RedBlackNode> result, RedBlackNode nodeC) {
+	private Result rlBalance(Result result, RedBlackNode nodeC) {
 		RedBlackNode nodeA = nodeC.getLeft();
 		RedBlackNode nodeB = nodeA.getRight();
 		
@@ -463,14 +463,14 @@ public class RedBlackTree implements ITree<RedBlackNode> {
 	}
 	
 	/**
-	 * �?eší dvakrát obarvený černý list
+	 * �?eší dvakrát obarvený černý list
 	 * 
 	 * @param result
 	 * @param parent
 	 * @param side
 	 * @return
 	 */
-	private Result<RedBlackNode> doubleBlack(Result<RedBlackNode> result, RedBlackNode parent, Side side) {
+	private Result doubleBlack(Result result, RedBlackNode parent, Side side) {
 		RedBlackNode helpNode;
 		if (!dblack) { //pokud to volám znovu nebudu dělat výpis
 			result.addAnimation(AnimatedAction.DOUBLEBLACK, parent.getGraphicNode(), side);

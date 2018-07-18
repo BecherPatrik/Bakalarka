@@ -4,25 +4,25 @@ import java.util.ArrayList;
 
 import graphic.IGraphicNode;
 
-public class Result<T> {
-	private INode<T> node;
+public class Result {
+	private INode node;
 	private Side side; 
 	private ArrayList<IGraphicNode> way;
 	private ArrayList<RecordOfAnimation> recordOfAnimations;
 	//kolekce směrů
 	
-	public Result(INode<T> node) {
+	public Result(INode node) {
 		super();
 		this.node = node;
 		this.way = new ArrayList<>();
 		this.recordOfAnimations = new ArrayList<>();
 	}
 
-	public INode<T> getNode() {
+	public INode getNode() {
 		return node;
 	}	
 	
-	public void setNode(INode<T> node) {
+	public void setNode(INode node) {
 		this.node = node;
 	}
 	

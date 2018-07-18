@@ -2,7 +2,7 @@ package trees;
 
 import java.util.ArrayList;
 
-public class AVLTree implements ITree<AVLNode> {
+public class AVLTree implements ITree {
 	
 	private AVLNode root = null;
 	private ArrayList<AVLNode> nodes = new ArrayList<>();
@@ -12,13 +12,13 @@ public class AVLTree implements ITree<AVLNode> {
 	public AVLTree() {}	
 	
 	@Override
-	public Result<AVLNode> insert(int value) {
+	public Result insert(int value) {
 		if (root == null) {
 			root = new AVLNode(value);
 			nodes.add(root);
 			return null;
 		}
-		Result<AVLNode> result = search(value);
+		Result result = search(value);
 	    Side side = result.getSide(); //ověříme poslední stranu
 	    AVLNode parent = (AVLNode) result.getNode();  // vrátí prvek (side = null) nebo rodiče a místo kam uložit (side = R, L)
 	    
@@ -45,10 +45,10 @@ public class AVLTree implements ITree<AVLNode> {
 	}
     
     @Override
-	public Result<AVLNode> delete(int value) {
+	public Result delete(int value) {
     	AVLNode removedNode, helpNode = null;
         
-        Result<AVLNode> result = search(value);
+        Result result = search(value);
         Side side = result.getSide(); //zjistím směr
         removedNode = (AVLNode) result.getNode();
 
@@ -128,8 +128,8 @@ public class AVLTree implements ITree<AVLNode> {
 	 * 
 	 */
 	@Override
-    public Result<AVLNode> search(int value) {
-		Result<AVLNode> resultNode = new Result<>(root);
+    public Result search(int value) {
+		Result resultNode = new Result(root);
 		AVLNode result = root;
 		AVLNode parent = root;
 
@@ -168,7 +168,7 @@ public class AVLTree implements ITree<AVLNode> {
 	 * @param result
 	 * @return
 	 */
-	private Result<AVLNode> balanceTree(Result<AVLNode> result, AVLNode startNode) {
+	private Result balanceTree(Result result, AVLNode startNode) {
 		root.countFactor();
 		
 		AVLNode balanceNode = startNode;
@@ -201,7 +201,7 @@ public class AVLTree implements ITree<AVLNode> {
 		return result;		
 	}
 	
-	private Result<AVLNode> llBalance(Result<AVLNode> result, AVLNode nodeB) {
+	private Result llBalance(Result result, AVLNode nodeB) {
 		AVLNode nodeA = nodeB.getRight();	
 		
 		if (nodeB.getParent() == null) {
@@ -223,7 +223,7 @@ public class AVLTree implements ITree<AVLNode> {
 		return result;
 	}
 
-	private Result<AVLNode> lrBalance(Result<AVLNode> result, AVLNode nodeC) {
+	private Result lrBalance(Result result, AVLNode nodeC) {
 		AVLNode nodeA = nodeC.getRight();
 		AVLNode nodeB = nodeA.getLeft();
 		
@@ -248,7 +248,7 @@ public class AVLTree implements ITree<AVLNode> {
 		return result;
 	}
 
-	private Result<AVLNode> rrBalance(Result<AVLNode> result, AVLNode nodeB) {
+	private Result rrBalance(Result result, AVLNode nodeB) {
 		AVLNode nodeA = nodeB.getLeft();
 		
 		if (nodeB.getParent() == null) {
@@ -270,7 +270,7 @@ public class AVLTree implements ITree<AVLNode> {
 		return result;
 	}
 
-	private Result<AVLNode> rlBalance(Result<AVLNode> result, AVLNode nodeC) {
+	private Result rlBalance(Result result, AVLNode nodeC) {
 		AVLNode nodeA = nodeC.getLeft();
 		AVLNode nodeB = nodeA.getRight();
 		

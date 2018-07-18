@@ -1,17 +1,17 @@
 package trees;
 
-public class BinaryTree implements ITree<BinaryNode> {
+public class BinaryTree implements ITree {
     private BinaryNode root = null;
     
     public BinaryTree() {}
     
     @Override
-	public Result<BinaryNode> insert(int value) {
+	public Result insert(int value) {
 		if (root == null) {
 			root = new BinaryNode(value);
 			return null;
 		}
-		Result<BinaryNode> result = search(value);
+		Result result = search(value);
 	    Side side = result.getSide(); //ověříme poslední stranu
 	    BinaryNode parent = (BinaryNode) result.getNode();  // vrátí prvek (side = null) nebo rodiče a místo kam uložit (side = R, L)
 	    
@@ -31,10 +31,10 @@ public class BinaryTree implements ITree<BinaryNode> {
 	}
     
     @Override
-	public Result<BinaryNode> delete(int value) {
+	public Result delete(int value) {
     	BinaryNode removedNode, helpNode = null;
         
-        Result<BinaryNode> result = search(value);
+        Result result = search(value);
         Side side = result.getSide(); //zjistím směr
         removedNode = (BinaryNode) result.getNode();
 
@@ -117,8 +117,8 @@ public class BinaryTree implements ITree<BinaryNode> {
 	 * 
 	 */
 	@Override
-    public Result<BinaryNode> search(int value) {
-		Result<BinaryNode> resultNode = new Result<>(root);
+    public Result search(int value) {
+		Result resultNode = new Result(root);
 		BinaryNode result = root;
 		BinaryNode parent = root;
 
