@@ -3,10 +3,6 @@ package graphic;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.basic.BasicTreeUI.TreePageAction;
-
-import com.sun.org.apache.xml.internal.security.keys.storage.StorageResolver;
-
 import application.WindowController;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -20,22 +16,13 @@ import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TreeSortMode;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import sun.reflect.generics.tree.Tree;
 import trees.AVLNode;
 import trees.AnimatedAction;
 import trees.INode;
@@ -57,10 +44,10 @@ public class DrawingTree {
 	private Pane paneTree;
 	private DoubleProperty animationSpeed = new SimpleDoubleProperty();
 	
-	private final static double ROOTBORDER = 40;	
-	private final static double DOWNMARGIN = 40;	
+	private final int ROOTBORDER = 40;	
+	private final int DOWNMARGIN = 40;	
 	
-	private double rootSize = 0;
+	private double graphicNodeSize = 0;
 	private double stackPaneHeight = 0;
 	
 	private DoubleProperty rootY = new SimpleDoubleProperty();
@@ -80,7 +67,6 @@ public class DrawingTree {
 	
 	private int wayIndex = 0;
 	private int indexAnimation = 0;
-	private boolean isRedraw = false;
 	private boolean notFind = false;
 	private boolean isDelete = false;
 	private boolean isBalance = false;
@@ -103,11 +89,11 @@ public class DrawingTree {
 	double orgSceneX, orgSceneY;
     double orgTranslateX, orgTranslateY;
 
-	public DrawingTree(Pane paneTree, DoubleProperty speed, ReadOnlyDoubleProperty stageWidthProperty, ReadOnlyDoubleProperty stageHeightProperty,  WindowController windowController) {
+	public DrawingTree(Pane paneTree, DoubleProperty animationSpeed, ReadOnlyDoubleProperty stageWidthProperty, ReadOnlyDoubleProperty stageHeightProperty,  WindowController windowController) {
 		this.paneTreeWeight = stageWidthProperty;
 		this.paneTreeHeight = stageHeightProperty;
 		this.paneTree = paneTree;
-		this.animationSpeed = speed;
+		this.animationSpeed = animationSpeed;
 		this.windowController = windowController;
 		
 		//Přidá text
@@ -171,9 +157,9 @@ public class DrawingTree {
 	 * Vložení kořenu
 	 * @param root
 	 */
-	public void insertRoot(INode rootNode){
-		newIGraphicNode = rootNode.getGraphicNode();
-		rootSize = newIGraphicNode.getRadiusSize();
+	public void insertRoot(INode root){
+		newIGraphicNode = root.getGraphicNode();
+		graphicNodeSize = newIGraphicNode.getRadiusSize();
 		stackPaneHeight = newIGraphicNode.getStackPaneNode().getPrefHeight();
 		
 		rootY.bind(new SimpleDoubleProperty(ROOTBORDER));	
@@ -278,9 +264,9 @@ public class DrawingTree {
 		newIGraphicNode.setY(startNodeY);		
 		
 		if (result.getSide() == Side.LEFT) {
-			xAnimatedNode.bind(newIGraphicNode.getParent().getX().subtract(rootSize));	
+			xAnimatedNode.bind(newIGraphicNode.getParent().getX().subtract(graphicNodeSize));	
 		} else {
-			xAnimatedNode.bind(newIGraphicNode.getParent().getX().add(rootSize));	
+			xAnimatedNode.bind(newIGraphicNode.getParent().getX().add(graphicNodeSize));	
 		}
 		
 		yAnimatedNode.bind(newIGraphicNode.getParent().getY().add(DOWNMARGIN));
@@ -336,14 +322,14 @@ public class DrawingTree {
 		}		
 		
 		Line line = new Line();
-		line.startXProperty().bind(node.getParent().getX().add(rootSize / 2));
+		line.startXProperty().bind(node.getParent().getX().add(graphicNodeSize / 2));
 		line.startYProperty().bind(node.getParent().getY().add(stackPaneHeight / 2));
 		line.setStroke(Color.WHITE);
 		
 		if (node.getSide() == Side.LEFT) {
-			line.endXProperty().bind(node.getParent().getX().subtract(rootSize / 2));	
+			line.endXProperty().bind(node.getParent().getX().subtract(graphicNodeSize / 2));	
 		} else {
-			line.endXProperty().bind(node.getParent().getX().add(rootSize * 1.5));	
+			line.endXProperty().bind(node.getParent().getX().add(graphicNodeSize * 1.5));	
 		}
 		
 		line.endYProperty().bind(node.getY().add(stackPaneHeight / 2));		
@@ -398,18 +384,18 @@ public class DrawingTree {
 		IGraphicNode iGraphicNode = listGraphicNodes.get(balanceRedraw);		
 
 		if (iGraphicNode.getSide() == Side.LEFT) {
-			xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));
+			xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(graphicNodeSize).subtract(graphicNodeSize * iGraphicNode.getRightChildrenCount()));
 		} else {
-			xAnimatedNode.bind(iGraphicNode.getParent().getX().add(rootSize).add(rootSize * iGraphicNode.getLeftChildrenCount()));
+			xAnimatedNode.bind(iGraphicNode.getParent().getX().add(graphicNodeSize).add(graphicNodeSize * iGraphicNode.getLeftChildrenCount()));
 		}
 		
 		yAnimatedNode.bind(iGraphicNode.getParent().getY().add(DOWNMARGIN));
 		
 		if (iGraphicNode.getX().get() != xAnimatedNode.get()) {		
 			if (iGraphicNode.getSide() == Side.LEFT) { // vypočítám nový x pro větev
-				xAnimatedBranch.bind(iGraphicNode.getParent().getX().subtract(rootSize / 2).subtract(rootSize * iGraphicNode.getRightChildrenCount()));
+				xAnimatedBranch.bind(iGraphicNode.getParent().getX().subtract(graphicNodeSize / 2).subtract(graphicNodeSize * iGraphicNode.getRightChildrenCount()));
 			} else {
-				xAnimatedBranch.bind(iGraphicNode.getParent().getX().add(rootSize * 1.5).add(rootSize * iGraphicNode.getLeftChildrenCount()));
+				xAnimatedBranch.bind(iGraphicNode.getParent().getX().add(graphicNodeSize * 1.5).add(graphicNodeSize * iGraphicNode.getLeftChildrenCount()));
 			}			
 
 			if (animationSpeed.get() == 0) {
@@ -437,11 +423,11 @@ public class DrawingTree {
 					xAnimatedNode = new SimpleDoubleProperty();
 					xAnimatedBranch = new SimpleDoubleProperty();
 					if (iGraphicNode.getSide() == Side.LEFT) {
-						xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));
-						xAnimatedBranch.bind(iGraphicNode.getParent().getX().subtract(rootSize / 2).subtract(rootSize * iGraphicNode.getRightChildrenCount()));
+						xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(graphicNodeSize).subtract(graphicNodeSize * iGraphicNode.getRightChildrenCount()));
+						xAnimatedBranch.bind(iGraphicNode.getParent().getX().subtract(graphicNodeSize / 2).subtract(graphicNodeSize * iGraphicNode.getRightChildrenCount()));
 					} else {
-						xAnimatedNode.bind(iGraphicNode.getParent().getX().add(rootSize).add(rootSize * iGraphicNode.getLeftChildrenCount()));
-						xAnimatedBranch.bind(iGraphicNode.getParent().getX().add(rootSize * 1.5).add(rootSize * iGraphicNode.getLeftChildrenCount()));
+						xAnimatedNode.bind(iGraphicNode.getParent().getX().add(graphicNodeSize).add(graphicNodeSize * iGraphicNode.getLeftChildrenCount()));
+						xAnimatedBranch.bind(iGraphicNode.getParent().getX().add(graphicNodeSize * 1.5).add(graphicNodeSize * iGraphicNode.getLeftChildrenCount()));
 					}					
 					
 					yAnimatedNode.bind(iGraphicNode.getParent().getY().add(DOWNMARGIN));
@@ -521,8 +507,6 @@ public class DrawingTree {
 	 * Přebinduje celý strom 
 	 */
 	private void redraw() {	
-		isRedraw = false;
-
 		xAnimatedNode = new SimpleDoubleProperty();
 		yAnimatedNode = new SimpleDoubleProperty();
 		
@@ -538,7 +522,7 @@ public class DrawingTree {
 		root.setX(rootX);
 		root.setY(rootY);		
 		
-		xAnimatedBranch.bind(root.getX().add(rootSize / 2));
+		xAnimatedBranch.bind(root.getX().add(graphicNodeSize / 2));
 		yAnimatedBranch.bind(root.getY().add(stackPaneHeight / 2));
 		
 		if (root.getLeft() != null) {				
@@ -559,11 +543,11 @@ public class DrawingTree {
 			yAnimatedBranch = new SimpleDoubleProperty();
 			
 			if (iGraphicNode.getSide() == Side.LEFT) {
-				xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(rootSize).subtract(rootSize * iGraphicNode.getRightChildrenCount()));	
-				xAnimatedBranch.bind(iGraphicNode.getParent().getX().subtract(rootSize / 2).subtract(rootSize * iGraphicNode.getRightChildrenCount()));	
+				xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(graphicNodeSize).subtract(graphicNodeSize * iGraphicNode.getRightChildrenCount()));	
+				xAnimatedBranch.bind(iGraphicNode.getParent().getX().subtract(graphicNodeSize / 2).subtract(graphicNodeSize * iGraphicNode.getRightChildrenCount()));	
 			} else {
-				xAnimatedNode.bind(iGraphicNode.getParent().getX().add(rootSize).add(rootSize * iGraphicNode.getLeftChildrenCount()));	
-				xAnimatedBranch.bind(iGraphicNode.getParent().getX().add(rootSize * 1.5).add(rootSize * iGraphicNode.getLeftChildrenCount()));	
+				xAnimatedNode.bind(iGraphicNode.getParent().getX().add(graphicNodeSize).add(graphicNodeSize * iGraphicNode.getLeftChildrenCount()));	
+				xAnimatedBranch.bind(iGraphicNode.getParent().getX().add(graphicNodeSize * 1.5).add(graphicNodeSize * iGraphicNode.getLeftChildrenCount()));	
 			}
 			
 			yAnimatedNode.bind(iGraphicNode.getParent().getY().add(DOWNMARGIN));
@@ -594,11 +578,11 @@ public class DrawingTree {
 			yAnimatedBranch = new SimpleDoubleProperty();
 			
 			if (nullNode.getSide() == Side.LEFT) {
-				xAnimatedNode.bind(nullNode.getParent().getX().subtract(rootSize));	
-				xAnimatedBranch.bind(nullNode.getParent().getX().subtract(rootSize / 2));	
+				xAnimatedNode.bind(nullNode.getParent().getX().subtract(graphicNodeSize));	
+				xAnimatedBranch.bind(nullNode.getParent().getX().subtract(graphicNodeSize / 2));	
 			} else {
-				xAnimatedNode.bind(nullNode.getParent().getX().add(rootSize));	
-				xAnimatedBranch.bind(nullNode.getParent().getX().add(rootSize * 1.5));	
+				xAnimatedNode.bind(nullNode.getParent().getX().add(graphicNodeSize));	
+				xAnimatedBranch.bind(nullNode.getParent().getX().add(graphicNodeSize * 1.5));	
 			}
 			
 			yAnimatedNode.bind(nullNode.getParent().getY().add(DOWNMARGIN));
@@ -1361,10 +1345,10 @@ public class DrawingTree {
 		nullNode = new RedBlackGraphicNode(-1);			
 		
 		if (((Side)recordOfAnimations.get(indexAnimation).getObject()) == Side.LEFT) {
-			xAnimatedNode.bind(recordOfAnimations.get(indexAnimation).getNode1().getX().subtract(rootSize));
+			xAnimatedNode.bind(recordOfAnimations.get(indexAnimation).getNode1().getX().subtract(graphicNodeSize));
 			recordOfAnimations.get(indexAnimation).getNode1().setLeft(nullNode);
 		} else {
-			xAnimatedNode.bind(recordOfAnimations.get(indexAnimation).getNode1().getX().add(rootSize));	
+			xAnimatedNode.bind(recordOfAnimations.get(indexAnimation).getNode1().getX().add(graphicNodeSize));	
 			recordOfAnimations.get(indexAnimation).getNode1().setRight(nullNode);
 		}
 		
@@ -1555,7 +1539,7 @@ public class DrawingTree {
 		
 		appendNewText("\n • Rotace RR.");
 		
-		xAnimatedNode = new SimpleDoubleProperty(nodeB.getX().get() + rootSize);	
+		xAnimatedNode = new SimpleDoubleProperty(nodeB.getX().get() + graphicNodeSize);	
 		yAnimatedNode = new SimpleDoubleProperty(nodeB.getY().get() + DOWNMARGIN);		
 		
 		Timeline timeline = new Timeline();
@@ -1618,9 +1602,9 @@ public class DrawingTree {
 			paneTree.getChildren().remove(nodeB.getBranch());
 		} else {
 			if (nodeA.getSide() == Side.LEFT) {
-				xAnimatedNode.bind(nodeA.getParent().getX().subtract(rootSize));
+				xAnimatedNode.bind(nodeA.getParent().getX().subtract(graphicNodeSize));
 			} else if(nodeA.getSide() == Side.RIGHT) {			
-				xAnimatedNode.bind(nodeA.getParent().getX().add(rootSize));
+				xAnimatedNode.bind(nodeA.getParent().getX().add(graphicNodeSize));
 			}		
 			//nodeA.setX(xAnimatedNode);
 			//nodeA.setY(yAnimatedNode);
@@ -1678,7 +1662,7 @@ public class DrawingTree {
 		
 		appendNewText("\n • Rotace RL.");
 		
-		xAnimatedNode = new SimpleDoubleProperty(nodeC.getX().get() + rootSize);	
+		xAnimatedNode = new SimpleDoubleProperty(nodeC.getX().get() + graphicNodeSize);	
 		yAnimatedNode = new SimpleDoubleProperty(nodeC.getY().get() + DOWNMARGIN);		
 		
 		Timeline timeline = new Timeline();
@@ -1753,9 +1737,9 @@ public class DrawingTree {
 			paneTree.getChildren().remove(nodeC.getBranch());
 		} else {
 			if (nodeB.getSide() == Side.LEFT) {
-				xAnimatedNode.bind(nodeB.getParent().getX().subtract(rootSize));
+				xAnimatedNode.bind(nodeB.getParent().getX().subtract(graphicNodeSize));
 			} else if(nodeB.getSide() == Side.RIGHT) {			
-				xAnimatedNode.bind(nodeB.getParent().getX().add(rootSize));
+				xAnimatedNode.bind(nodeB.getParent().getX().add(graphicNodeSize));
 			}			
 			//nodeB.setX(xAnimatedNode);
 			//nodeB.setY(yAnimatedNode);
@@ -1813,7 +1797,7 @@ public class DrawingTree {
 		
 		appendNewText("\n • Rotace LL.");
 		
-		xAnimatedNode = new SimpleDoubleProperty(nodeB.getX().get() - rootSize);	
+		xAnimatedNode = new SimpleDoubleProperty(nodeB.getX().get() - graphicNodeSize);	
 		yAnimatedNode = new SimpleDoubleProperty(nodeB.getY().get() + DOWNMARGIN);
 		
 		Timeline timeline = new Timeline();
@@ -1876,9 +1860,9 @@ public class DrawingTree {
 			paneTree.getChildren().remove(nodeB.getBranch());
 		} else {
 			if (nodeA.getSide() == Side.LEFT) {
-				xAnimatedNode.bind(nodeA.getParent().getX().subtract(rootSize));
+				xAnimatedNode.bind(nodeA.getParent().getX().subtract(graphicNodeSize));
 			} else if(nodeA.getSide() == Side.RIGHT) {			
-				xAnimatedNode.bind(nodeA.getParent().getX().add(rootSize));
+				xAnimatedNode.bind(nodeA.getParent().getX().add(graphicNodeSize));
 			}				
 			//nodeA.setX(xAnimatedNode);
 			//nodeA.setY(yAnimatedNode);
@@ -1936,7 +1920,7 @@ public class DrawingTree {
 		
 		appendNewText("\n • Rotace LR.");
 		
-		xAnimatedNode = new SimpleDoubleProperty(nodeC.getX().get() - rootSize);	
+		xAnimatedNode = new SimpleDoubleProperty(nodeC.getX().get() - graphicNodeSize);	
 		yAnimatedNode = new SimpleDoubleProperty(nodeC.getY().get() + DOWNMARGIN);		
 		
 		Timeline timeline = new Timeline();
@@ -2011,9 +1995,9 @@ public class DrawingTree {
 			paneTree.getChildren().remove(nodeC.getBranch());
 		} else {
 			if (nodeB.getSide() == Side.LEFT) {
-				xAnimatedNode.bind(nodeB.getParent().getX().subtract(rootSize));
+				xAnimatedNode.bind(nodeB.getParent().getX().subtract(graphicNodeSize));
 			} else if(nodeB.getSide() == Side.RIGHT) {			
-				xAnimatedNode.bind(nodeB.getParent().getX().add(rootSize));
+				xAnimatedNode.bind(nodeB.getParent().getX().add(graphicNodeSize));
 			}			
 			yAnimatedNode.bind(nodeB.getParent().getY().add(DOWNMARGIN));			
 			//nodeB.setX(xAnimatedNode);

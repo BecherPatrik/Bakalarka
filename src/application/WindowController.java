@@ -3,7 +3,6 @@ package application;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +41,6 @@ import javafx.util.StringConverter;
 import trees.AVLTree;
 import trees.AnimatedAction;
 import trees.BinaryTree;
-import trees.Color;
 import trees.INode;
 import trees.ITree;
 import trees.RedBlackNode;
@@ -386,6 +384,7 @@ public class WindowController implements Initializable {
 		}		
 	}	
 	
+	@SuppressWarnings("unused")
 	private void newRandomTree0() {
 		double oldSpeed = sliderSpeed.getValue();
 		newEmptyTree();
@@ -814,6 +813,7 @@ public class WindowController implements Initializable {
 		inputNumber.setDisable(true);
 	}
 	
+	@SuppressWarnings("unused")
 	private void treeLog() {
 		paneTree.getChildren().forEach(x-> System.out.println(x));
 		INode root = (INode)tree.getRoot();
