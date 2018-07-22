@@ -729,7 +729,7 @@ public class DrawingTree {
 			break;
 		
 		case SETDOUBLEBLACK:
-			setDoublBlack();
+			setDoubleBlack();
 			break;
 			
 		case REDBLACKINFO:
@@ -1389,7 +1389,7 @@ public class DrawingTree {
 	/**
 	 * Odstraní NULL list případně přesune označení na jiný list
 	 */
-	private void setDoublBlack() {
+	private void setDoubleBlack() {
 		RedBlackGraphicNode node;
 		if ((recordOfAnimations.get(animationIndex).getNode1() != null) && recordOfAnimations.get(animationIndex).getObject() == null) {
 			node = (RedBlackGraphicNode) recordOfAnimations.get(animationIndex).getNode1();
