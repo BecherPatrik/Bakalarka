@@ -66,7 +66,8 @@ public class DrawingTree {
 	private int fastAnimationSpeed = 150;
 	
 	private int wayIndex = 0;
-	private int indexAnimation = 0;
+	private int animationIndex = 0;
+	private int balanceIndex = 0;
 	private boolean notFind = false;
 	private boolean isDelete = false;
 	private boolean isBalance = false;
@@ -74,9 +75,7 @@ public class DrawingTree {
 	private boolean isRedBlack = false;
 	private boolean isMoveNode = false;
 	private boolean isAnimation = true;	
-	private boolean isInsertAnimation = true;
-
-	private int balanceRedraw = 0;
+	private boolean isInsertAnimation = true;	
 	
 	private DoubleProperty xAnimatedNode = new SimpleDoubleProperty();
 	private DoubleProperty yAnimatedNode = new SimpleDoubleProperty();
@@ -355,7 +354,7 @@ public class DrawingTree {
 			return;
 		} else {
 			listGraphicNodes.get(0).countChildren(); // nechám rekurzivně vypočítat děti
-			balanceRedraw = 1;
+			balanceIndex = 1;
 			balanceTreeNext();
 		}
 	}
@@ -364,8 +363,8 @@ public class DrawingTree {
 	 * Postupné animace balancování stromu
 	 */
 	private void balanceTreeNext() {
-		if (listGraphicNodes.size() == balanceRedraw) {
-			balanceRedraw = 1;
+		if (listGraphicNodes.size() == balanceIndex) {
+			balanceIndex = 1;
 			checkBranches();
 			redraw();
 			return;
@@ -381,7 +380,7 @@ public class DrawingTree {
 		xAnimatedBranch = new SimpleDoubleProperty();
 		yAnimatedBranch = new SimpleDoubleProperty();
 		
-		IGraphicNode iGraphicNode = listGraphicNodes.get(balanceRedraw);		
+		IGraphicNode iGraphicNode = listGraphicNodes.get(balanceIndex);		
 
 		if (iGraphicNode.getSide() == Side.LEFT) {
 			xAnimatedNode.bind(iGraphicNode.getParent().getX().subtract(graphicNodeSize).subtract(graphicNodeSize * iGraphicNode.getRightChildrenCount()));
@@ -415,7 +414,7 @@ public class DrawingTree {
 				@Override
 				public void handle(ActionEvent event) {
 					if (iGraphicNode.getParent() == null) { //pokud dojde ke změně rootu mezi animací
-						balanceRedraw++;
+						balanceIndex++;
 						balanceTreeNext();
 						return;
 					}
@@ -449,7 +448,7 @@ public class DrawingTree {
 						iGraphicNode.getRight().getBranchStartY().bind(yAnimatedBranch);
 					}				
 
-					balanceRedraw++;
+					balanceIndex++;
 					balanceTreeNext();
 				}
 			});
@@ -461,7 +460,7 @@ public class DrawingTree {
 			
 			timeline.play();
 		} else {
-			balanceRedraw++;
+			balanceIndex++;
 			balanceTreeNext();
 		}
 	}	
@@ -595,11 +594,11 @@ public class DrawingTree {
 			nullNode.setBranchEndY(yAnimatedBranch);
 		}
 		
-		if (indexAnimation >= recordOfAnimations.size()) {
+		if (animationIndex >= recordOfAnimations.size()) {
 			windowController.enableButtons();
 			return;
 		} else {
-			indexAnimation++;
+			animationIndex++;
 			nextAnimation();
 		}
 	}	
@@ -614,7 +613,7 @@ public class DrawingTree {
 	 * @param recordOfAnimations
 	 */
 	private void startAnimation(ArrayList<RecordOfAnimation> recordOfAnimations) {
-		indexAnimation = 0;
+		animationIndex = 0;
 		notFind = false;
 		isBalance = false;
 		isMoveNode = false;
@@ -664,7 +663,7 @@ public class DrawingTree {
 	 * Spuští další animace po skončení předchozích, aby na sebe navazovaly
 	 */
 	private void nextAnimation() {
-		if (indexAnimation >= recordOfAnimations.size()) {
+		if (animationIndex >= recordOfAnimations.size()) {
 			balanceTree();
 			//if (isRedraw) {				
 			//	redraw();
@@ -672,7 +671,7 @@ public class DrawingTree {
 			return;
 		}
 		
-		switch (recordOfAnimations.get(indexAnimation).getAction()) {
+		switch (recordOfAnimations.get(animationIndex).getAction()) {
 		case SEARCH:
 			wayIndex = 0;
 			nextSearchNode();
@@ -717,7 +716,7 @@ public class DrawingTree {
 			
 		case REDBLACK:
 			isRedBlack = true;
-			indexAnimation++;
+			animationIndex++;
 			nextAnimation();
 			break;
 			
@@ -746,7 +745,7 @@ public class DrawingTree {
 	 * Výpis pro ččstrom 
 	 */
 	private void redBlackDeleteInfo() {
-		switch ((int)recordOfAnimations.get(indexAnimation).getObject()) {
+		switch ((int)recordOfAnimations.get(animationIndex).getObject()) {
 		case 1:
 			appendNewText("\n • Sourozenec označeného je černý,\n  navíc má červeného následníka.");
 			break;
@@ -773,7 +772,7 @@ public class DrawingTree {
 			
 		case 6: 
 			if (animationSpeed.get() == 0) {
-				indexAnimation++;
+				animationIndex++;
 				nextAnimation();
 				return;
 			}
@@ -785,7 +784,7 @@ public class DrawingTree {
 			seqT.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					indexAnimation++;
+					animationIndex++;
 					nextAnimation();									
 				}
 			});
@@ -796,7 +795,7 @@ public class DrawingTree {
 			break;
 		}
 		
-		indexAnimation++;
+		animationIndex++;
 		nextAnimation();		
 	}
 
@@ -839,10 +838,10 @@ public class DrawingTree {
 			int oldValue = Integer.parseInt(wayList.get(wayIndex-1).getValue());
 			
 			if (value > oldValue) {
-				text.setText("HLED�?NÍ PRVKU: " + value + "\n • Porovnání " + value + " > " + oldValue + "\n" + oldText);
+				text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " > " + oldValue + "\n" + oldText);
 				oldText = (" • Porovnání " + value + " > " + oldValue + "\n" + oldText);				
 			} else if (value < oldValue) {
-				text.setText("HLED�?NÍ PRVKU: " + value + "\n • Porovnání " + value + " < " + oldValue + "\n" + oldText);
+				text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " < " + oldValue + "\n" + oldText);
 				oldText = (" • Porovnání " + value + " < " + oldValue + "\n" + oldText);
 			}
 			
@@ -850,7 +849,7 @@ public class DrawingTree {
 		} else {
 			seqT = new SequentialTransition(st3, pt2, st4);
 			oldText = text.getText();
-			text.setText("HLED�?NÍ PRVKU: " + value + "\n • Porovnání " + value + " a " + node.getValue() + "\n" + oldText);
+			text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " a " + node.getValue() + "\n" + oldText);
 			seqT.play();
 		}
 		
@@ -861,13 +860,13 @@ public class DrawingTree {
 					nextSearchNode();
 				} else {				
 					if (value > Integer.parseInt(node.getValue())) {
-						text.setText("HLED�?NÍ PRVKU: " + value + "\n • Porovnání " + value + " > " + node.getValue() + "\n" + oldText);
+						text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " > " + node.getValue() + "\n" + oldText);
 						oldText = (" • Porovnání " + value + " > " + node.getValue() + "\n" + oldText);
 					} else if (value < Integer.parseInt(node.getValue())) {
-						text.setText("HLED�?NÍ PRVKU: " + value + "\n • Porovnání " + value + " < " + node.getValue() + "\n" + oldText);
+						text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " < " + node.getValue() + "\n" + oldText);
 						oldText = (" • Porovnání " + value + " < " + node.getValue() + "\n" + oldText);
 					} else {
-						text.setText("HLED�?NÍ PRVKU: " + value + "\n • Porovnání " + value + " = " + node.getValue() + "\n" + oldText);
+						text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " = " + node.getValue() + "\n" + oldText);
 						oldText = (" • Porovnání " + value + " = " + node.getValue() + "\n" + oldText);
 					}
 					highlightNodeAnimationFinished();
@@ -879,7 +878,7 @@ public class DrawingTree {
 			seqT2.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {		
-					text.setText("HLED�?NÍ PRVKU: " + value + "\n • Porovnání " + value + " a " + node.getValue() + "\n" + oldText);
+					text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Porovnání " + value + " a " + node.getValue() + "\n" + oldText);
 					seqT.play();
 				}
 			});
@@ -893,25 +892,25 @@ public class DrawingTree {
 	}
 	
 	private void highlightNodeAnimationFinished() {
-		if(!notFind && ((boolean)recordOfAnimations.get(indexAnimation).getObject())) {
+		if(!notFind && ((boolean)recordOfAnimations.get(animationIndex).getObject())) {
 			if (animationSpeed.get() == 0) { //když nebude animace
-				text.setText("HLED�?NÍ PRVKU: " + value + "\n • Prvek byl nalezen!");
+				text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Prvek byl nalezen!");
 			} else {
-				text.setText("HLED�?NÍ PRVKU: " + value +"\n • Prvek byl nalezen!" + "\n" + oldText);
+				text.setText("HLEDÁNÍ PRVKU: " + value +"\n • Prvek byl nalezen!" + "\n" + oldText);
 			}
 			
 			highlightFindNode();
 		} else {
 			if (animationSpeed.get() == 0) { //když nebude animace
-				text.setText("HLED�?NÍ PRVKU: " + value + "\n • Prvek nebyl nalezen!");
+				text.setText("HLEDÁNÍ PRVKU: " + value + "\n • Prvek nebyl nalezen!");
 			} else {
-				text.setText("HLED�?NÍ PRVKU: " + value +"\n • Prvek nebyl nalezen." + "\n"+ oldText);
+				text.setText("HLEDÁNÍ PRVKU: " + value +"\n • Prvek nebyl nalezen." + "\n"+ oldText);
 			}
 			if (notFind) {
 				windowController.enableButtons();
 				return;
 			}
-			indexAnimation++;
+			animationIndex++;
 			nextAnimation();
 		}		
 	}
@@ -930,7 +929,7 @@ public class DrawingTree {
 		seqT.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				indexAnimation++;
+				animationIndex++;
 				nextAnimation();
 			}
 		});
@@ -944,7 +943,7 @@ public class DrawingTree {
 	private void highlightInsertNode() {
 		if (!isInsertAnimation) {
 			newIGraphicNode.setDefaultColorNode();
-			indexAnimation++;
+			animationIndex++;
 			nextAnimation();			
 			return;
 		}
@@ -960,7 +959,7 @@ public class DrawingTree {
 				if (isRedBlack) {					
 					balanceTree();
 				} else {
-					indexAnimation++;
+					animationIndex++;
 					nextAnimation();
 				}
 								
@@ -1040,12 +1039,12 @@ public class DrawingTree {
 		oldText = text.getText();
 		
 		node.highlightFindNode(); // zvýrazním mazaný node
-		setTextWithHistory("MAZ�?NÍ PRVKU "+ node.getValue() + ":");
-		if ((boolean) recordOfAnimations.get(indexAnimation).getObject()) { //pokud má děti
+		setTextWithHistory("MAZÁNÍ PRVKU "+ node.getValue() + ":");
+		if ((boolean) recordOfAnimations.get(animationIndex).getObject()) { //pokud má děti
 			appendNewText("\n • Mazaný list má potomky.");
 			
 			node.setValue("");
-			indexAnimation++;
+			animationIndex++;
 			nextAnimation();
 		} else {	
 			appendNewText("\n • Mazaný je list.");
@@ -1079,7 +1078,7 @@ public class DrawingTree {
 		paneTree.getChildren().remove(node.getStackPaneNode());
 		paneTree.getChildren().remove(node.getBranch());
 		appendNewText("\n • Smazání proběhlo úspěšně.");
-		indexAnimation++;					
+		animationIndex++;					
 		nextAnimation();
 	}
 	
@@ -1087,8 +1086,8 @@ public class DrawingTree {
 	 * Nahradí mazaný list novým listem
 	 */
 	private void moveNodeAnimation() {
-		IGraphicNode graphicNodeRemoved = recordOfAnimations.get(indexAnimation).getNode1(); //zaloha už je 
-		IGraphicNode graphicNodeMoved = (IGraphicNode) recordOfAnimations.get(indexAnimation).getObject();
+		IGraphicNode graphicNodeRemoved = recordOfAnimations.get(animationIndex).getNode1(); //zaloha už je 
+		IGraphicNode graphicNodeMoved = (IGraphicNode) recordOfAnimations.get(animationIndex).getObject();
 		
 		if (animationSpeed.get() == 0) {
 			moveNodeAnimationFinished(graphicNodeRemoved, graphicNodeMoved);
@@ -1176,7 +1175,7 @@ public class DrawingTree {
 		
 		appendNewText("\n • Smazání proběhlo úspěšně.");
 		
-		indexAnimation++;
+		animationIndex++;
 		nextAnimation();
 	}
 	
@@ -1184,8 +1183,8 @@ public class DrawingTree {
 	 * Přesune hodnotu do jiného listu
 	 */
 	private void moveValueAnimation() {
-		IGraphicNode graphicNodeRemoved = recordOfAnimations.get(indexAnimation).getNode1();
-		IGraphicNode graphicNodeMoved = ((IGraphicNode) recordOfAnimations.get(indexAnimation).getObject());
+		IGraphicNode graphicNodeRemoved = recordOfAnimations.get(animationIndex).getNode1();
+		IGraphicNode graphicNodeMoved = ((IGraphicNode) recordOfAnimations.get(animationIndex).getObject());
 		
 		graphicNodeRemoved.setValue(graphicNodeMoved.getValue());
 		graphicNodeMoved.setValue("");
@@ -1207,7 +1206,7 @@ public class DrawingTree {
 			appendNewText("\n\tNEJLEVĚJŠÍ potomek "+  graphicNodeMoved.getValue() + "\n\tz PRAVÉHO podstromu");			
 		}
 
-		indexAnimation++;
+		animationIndex++;
 		nextAnimation();			
 	}
 	
@@ -1216,7 +1215,7 @@ public class DrawingTree {
 	 */
 	private void updateFactor() {
 		if (!(isBalance) && animationSpeed.get() != 0) {
-			indexAnimation--;
+			animationIndex--;
 			isBalance = true;
 			balanceTree();
 			return;
@@ -1224,18 +1223,18 @@ public class DrawingTree {
 		
 		isBalance = false;
 		
-		if (animationSpeed.get() == 0 || (!(boolean)recordOfAnimations.get(indexAnimation).getObject())) { //když nebude animace
+		if (animationSpeed.get() == 0 || (!(boolean)recordOfAnimations.get(animationIndex).getObject())) { //když nebude animace
 			for (IGraphicNode iGraphicNode : listGraphicNodes) {
 				((AVLGraphicNode)iGraphicNode).updateFactor();
 			}
-			indexAnimation++;
+			animationIndex++;
 			nextAnimation();
 			return;
 		}
 		
 		oldText = text.getText();
 		
-		AVLGraphicNode start = (AVLGraphicNode)recordOfAnimations.get(indexAnimation).getNode1();
+		AVLGraphicNode start = (AVLGraphicNode)recordOfAnimations.get(animationIndex).getNode1();
 		nextUpdateFactor(start);		
 	}
 	
@@ -1244,7 +1243,7 @@ public class DrawingTree {
 		
 		if (node == null) {
 			appendNewText("\n • Strom je vyvážený.");
-			indexAnimation++;
+			animationIndex++;
 			nextAnimation();
 			return;
 		}
@@ -1253,7 +1252,7 @@ public class DrawingTree {
 		PauseTransition pt2 = new PauseTransition(Duration.millis(4 * fastAnimationSpeed));
 		StrokeTransition st4 = new StrokeTransition(Duration.millis(0.7 * slowAnimationSpeed), node.getCircleShape(), Color.LIME, Color.WHITE);
 		
-		setTextWithHistory("VÝPOČET FAKTORU VYV�?ŽENÍ:");
+		setTextWithHistory("VÝPOČET FAKTORU VYVÁŽENÍ:");
 		
 		seqT = new SequentialTransition(st3, pt2, st4);		
 		
@@ -1273,7 +1272,7 @@ public class DrawingTree {
 					seqT2.setOnFinished(new EventHandler<ActionEvent>() {
 						@Override
 						public void handle(ActionEvent event) {									
-							indexAnimation++;
+							animationIndex++;
 							nextAnimation();
 						}
 					});					
@@ -1295,7 +1294,7 @@ public class DrawingTree {
 						seqT2.play();
 					} else {
 						appendNewText("\n • Strom je vyvážený.");
-						indexAnimation++;
+						animationIndex++;
 						nextAnimation();
 					}					
 				}				
@@ -1309,17 +1308,17 @@ public class DrawingTree {
 	private void reColor() {
 		if (!(isReColor) && nullNode == null) {		
 			oldText = text.getText();
-			setTextWithHistory("P�?EBARVENÍ STROMU:");
+			setTextWithHistory("PŘEBARVENÍ STROMU:");
 			isReColor = true;
 		}
 		
-		RedBlackGraphicNode node = (RedBlackGraphicNode) recordOfAnimations.get(indexAnimation).getNode1();
-		trees.Color color = (trees.Color) recordOfAnimations.get(indexAnimation).getObject();		
+		RedBlackGraphicNode node = (RedBlackGraphicNode) recordOfAnimations.get(animationIndex).getNode1();
+		trees.Color color = (trees.Color) recordOfAnimations.get(animationIndex).getObject();		
 		
 		node.setColor(color);		
 				
-		indexAnimation++;
-		if (indexAnimation >= recordOfAnimations.size()) {
+		animationIndex++;
+		if (animationIndex >= recordOfAnimations.size()) {
 			appendNewText("\n • Přebarvení proběhlo úspěšně.");
 		}
 		nextAnimation();
@@ -1336,7 +1335,7 @@ public class DrawingTree {
 			return;
 		}*/
 		oldText = text.getText();
-		setTextWithHistory("VYV�?ŽENÍ STROMU:");
+		setTextWithHistory("VYVÁŽENÍ STROMU:");
 		appendNewText("\n • Smazaný list byl černý.");		
 		
 		xAnimatedNode = new SimpleDoubleProperty(); //souřadnice x listu	
@@ -1344,15 +1343,15 @@ public class DrawingTree {
 		
 		nullNode = new RedBlackGraphicNode(-1);			
 		
-		if (((Side)recordOfAnimations.get(indexAnimation).getObject()) == Side.LEFT) {
-			xAnimatedNode.bind(recordOfAnimations.get(indexAnimation).getNode1().getX().subtract(graphicNodeSize));
-			recordOfAnimations.get(indexAnimation).getNode1().setLeft(nullNode);
+		if (((Side)recordOfAnimations.get(animationIndex).getObject()) == Side.LEFT) {
+			xAnimatedNode.bind(recordOfAnimations.get(animationIndex).getNode1().getX().subtract(graphicNodeSize));
+			recordOfAnimations.get(animationIndex).getNode1().setLeft(nullNode);
 		} else {
-			xAnimatedNode.bind(recordOfAnimations.get(indexAnimation).getNode1().getX().add(graphicNodeSize));	
-			recordOfAnimations.get(indexAnimation).getNode1().setRight(nullNode);
+			xAnimatedNode.bind(recordOfAnimations.get(animationIndex).getNode1().getX().add(graphicNodeSize));	
+			recordOfAnimations.get(animationIndex).getNode1().setRight(nullNode);
 		}
 		
-		yAnimatedNode.bind(recordOfAnimations.get(indexAnimation).getNode1().getY().add(DOWNMARGIN));
+		yAnimatedNode.bind(recordOfAnimations.get(animationIndex).getNode1().getY().add(DOWNMARGIN));
 		
 		nullNode.setX(xAnimatedNode); 
 		nullNode.setY(yAnimatedNode);
@@ -1360,14 +1359,14 @@ public class DrawingTree {
 		nullNode.setColor(trees.Color.BLACK);
 		nullNode.doubleBlackHighlight();
 		
-		nullNode.setParent(recordOfAnimations.get(indexAnimation).getNode1());
+		nullNode.setParent(recordOfAnimations.get(animationIndex).getNode1());
 		createBranch(nullNode);		
 		
 		paneTree.getChildren().addAll(nullNode.getBranch(), nullNode.getStackPaneNode());	
 		nullNode.getParent().getStackPaneNode().toFront();		
 		
 		if (animationSpeed.get() == 0) {
-			indexAnimation++;
+			animationIndex++;
 			nextAnimation();
 			return;
 		}		
@@ -1392,8 +1391,8 @@ public class DrawingTree {
 	 */
 	private void setDoublBlack() {
 		RedBlackGraphicNode node;
-		if ((recordOfAnimations.get(indexAnimation).getNode1() != null) && recordOfAnimations.get(indexAnimation).getObject() == null) {
-			node = (RedBlackGraphicNode) recordOfAnimations.get(indexAnimation).getNode1();
+		if ((recordOfAnimations.get(animationIndex).getNode1() != null) && recordOfAnimations.get(animationIndex).getObject() == null) {
+			node = (RedBlackGraphicNode) recordOfAnimations.get(animationIndex).getNode1();
 			nullNode.removeDoubleBlackHighlight();
 			appendNewText("\n • Přesunu označení.");
 			if (nullNode.getValue().equals("NULL")) {
@@ -1410,7 +1409,7 @@ public class DrawingTree {
 			nullNode.doubleBlackHighlight();
 			
 			if (animationSpeed.get() == 0) {
-				indexAnimation++;
+				animationIndex++;
 				nextAnimation();
 				return;
 			}
@@ -1422,7 +1421,7 @@ public class DrawingTree {
 			seqT.setOnFinished(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					indexAnimation++;
+					animationIndex++;
 					nextAnimation();
 					return;
 				}
@@ -1443,7 +1442,7 @@ public class DrawingTree {
 					}
 					nullNode = null;					
 					
-					indexAnimation++;
+					animationIndex++;
 					nextAnimation();
 					return;
 				}
@@ -1471,14 +1470,14 @@ public class DrawingTree {
 						}
 						nullNode = null;
 						
-						indexAnimation++;
+						animationIndex++;
 						nextAnimation();
 					}
 				});
 				
 				return;				
 								
-			} else if (recordOfAnimations.get(indexAnimation).getObject() != null) {				
+			} else if (recordOfAnimations.get(animationIndex).getObject() != null) {				
 				appendNewText("\n • Kořen je vždy černý.");				
 				nullNode.removeDoubleBlackHighlight();
 				
@@ -1492,7 +1491,7 @@ public class DrawingTree {
 					}
 				}
 				
-				indexAnimation++;
+				animationIndex++;
 				nextAnimation();
 			} else {
 				appendNewText("\n • Odstraním označení listu.");
@@ -1508,22 +1507,22 @@ public class DrawingTree {
 					}
 				}
 				
-				indexAnimation++;
+				animationIndex++;
 				nextAnimation();
 			}
 		}				
 	}
 	
 	private void rrAnimation() {		
-		IGraphicNode nodeB = recordOfAnimations.get(indexAnimation).getNode1();
+		IGraphicNode nodeB = recordOfAnimations.get(animationIndex).getNode1();
 		IGraphicNode nodeA = nodeB.getLeft();
 		
 		if (animationSpeed.get() == 0) {
 			oldText = text.getText();
 			if (!isRedBlack) {
-				setTextWithHistory("VYV�?ŽENÍ STROMU:");
+				setTextWithHistory("VYVÁŽENÍ STROMU:");
 			} else if (!(isReColor)) {
-				setTextWithHistory("P�?EBARVENÍ STROMU:");
+				setTextWithHistory("PŘEBARVENÍ STROMU:");
 			}
 			appendNewText("\n • Rotace RR.");
 			hideMovedBranchRecursive(nodeB);
@@ -1576,7 +1575,7 @@ public class DrawingTree {
 	
 	private void rrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {	
 		if (!isRedBlack) {
-			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).computeFactor();
+			((AVLNode)recordOfAnimations.get(animationIndex).getObject()).computeFactor();
 		}		
 		
 		nodeB.setLeft(nodeA.getRight());
@@ -1635,21 +1634,21 @@ public class DrawingTree {
 			}						
 		}		
 		
-		indexAnimation++;
+		animationIndex++;
 		nextAnimation();
 	}	
 	
 	private void rlAnimation() {
-		IGraphicNode nodeC = recordOfAnimations.get(indexAnimation).getNode1();
+		IGraphicNode nodeC = recordOfAnimations.get(animationIndex).getNode1();
 		IGraphicNode nodeA = nodeC.getLeft();
 		IGraphicNode nodeB = nodeA.getRight();
 		
 		if (animationSpeed.get() == 0) {
 			oldText = text.getText();
 			if (!isRedBlack) {
-				setTextWithHistory("VYV�?ŽENÍ STROMU:");
+				setTextWithHistory("VYVÁŽENÍ STROMU:");
 			} else if (!(isReColor)) {
-				setTextWithHistory("P�?EBARVENÍ STROMU:");
+				setTextWithHistory("PŘEBARVENÍ STROMU:");
 			}
 			appendNewText("\n • Rotace RL.");
 			hideMovedBranchRecursive(nodeC);
@@ -1708,7 +1707,7 @@ public class DrawingTree {
 	
 	private void rlAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {
 		if (!isRedBlack) {
-			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).computeFactor();
+			((AVLNode)recordOfAnimations.get(animationIndex).getObject()).computeFactor();
 		}
 		
 		nodeA.setRight(nodeB.getLeft());
@@ -1768,20 +1767,20 @@ public class DrawingTree {
 			}			
 		}
 		
-		indexAnimation++;
+		animationIndex++;
 		nextAnimation();		
 	}
 
 	private void llAnimation() {		
-		IGraphicNode nodeB = recordOfAnimations.get(indexAnimation).getNode1();
+		IGraphicNode nodeB = recordOfAnimations.get(animationIndex).getNode1();
 		IGraphicNode nodeA = nodeB.getRight();
 		
 		if (animationSpeed.get() == 0) {
 			oldText = text.getText();
 			if (!isRedBlack) {
-				setTextWithHistory("VYV�?ŽENÍ STROMU:");
+				setTextWithHistory("VYVÁŽENÍ STROMU:");
 			} else if (!(isReColor)) {
-				setTextWithHistory("P�?EBARVENÍ STROMU:");
+				setTextWithHistory("PŘEBARVENÍ STROMU:");
 			}
 			appendNewText("\n • Rotace LL.");
 			hideMovedBranchRecursive(nodeB);
@@ -1834,7 +1833,7 @@ public class DrawingTree {
 	
 	private void llAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB) {
 		if (!isRedBlack) {
-			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).computeFactor();
+			((AVLNode)recordOfAnimations.get(animationIndex).getObject()).computeFactor();
 		}
 		
 		nodeB.setRight(nodeA.getLeft());
@@ -1893,21 +1892,21 @@ public class DrawingTree {
 			}			
 		}
 		
-		indexAnimation++;
+		animationIndex++;
 		nextAnimation();		
 	}
 
 	private void lrAnimation() {
-		IGraphicNode nodeC = recordOfAnimations.get(indexAnimation).getNode1();
+		IGraphicNode nodeC = recordOfAnimations.get(animationIndex).getNode1();
 		IGraphicNode nodeA = nodeC.getRight();
 		IGraphicNode nodeB = nodeA.getLeft();
 		
 		if (animationSpeed.get() == 0) {
 			oldText = text.getText();
 			if (!isRedBlack) {
-				setTextWithHistory("VYV�?ŽENÍ STROMU:");
+				setTextWithHistory("VYVÁŽENÍ STROMU:");
 			} else if (!(isReColor)) {
-				setTextWithHistory("P�?EBARVENÍ STROMU:");
+				setTextWithHistory("PŘEBARVENÍ STROMU:");
 			}
 			appendNewText("\n • Rotace LR.");
 			hideMovedBranchRecursive(nodeC);
@@ -1966,7 +1965,7 @@ public class DrawingTree {
 	
 	private void lrAnimationFinished(IGraphicNode nodeA, IGraphicNode nodeB, IGraphicNode nodeC) {		
 		if (!isRedBlack) {
-			((AVLNode)recordOfAnimations.get(indexAnimation).getObject()).computeFactor();
+			((AVLNode)recordOfAnimations.get(animationIndex).getObject()).computeFactor();
 		}
 		
 		nodeA.setLeft(nodeB.getRight());
@@ -2027,7 +2026,7 @@ public class DrawingTree {
 			}			
 		}
 		
-		indexAnimation++;
+		animationIndex++;
 		nextAnimation();
 	}
 
