@@ -25,7 +25,8 @@
 
 <BorderPane fx:id="bpWindow" fx:controller="application.WindowController" xmlns:fx="http://javafx.com/fxml" stylesheets="@styles.css">
 	<left>
-		<VBox fx:id="treesMenu">
+		<VBox spacing="30" fx:id="treesMenu">
+		<VBox>			
 			<Button fx:id="btnBack" text="Zpět" prefWidth="210" prefHeight="47" onAction="#hideMenu" alignment="CENTER_LEFT" styleClass="tree-button, menu-button" />
 			<Button fx:id="btnBinary" text="Binární vyhledávací strom" prefWidth="210" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button-focus" />
 			<Button fx:id="btnAVL" text="AVL strom" prefWidth="210" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
@@ -33,7 +34,16 @@
 		<!--<Button fx:id="btnB" text="B-strom" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />			
 			<Button fx:id="btnRadixSearch" text="Radix Search tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />
 			<Button fx:id="btnPatricia" text="Patricia tree" prefWidth="160" prefHeight="40" onAction="#changeTree" alignment="CENTER_LEFT" styleClass="tree-button" />  -->
+		</VBox>			
+		<VBox>
+			<!--<Label styleClass="menu-trees" text="Možnosti:"></Label> !-->
+			<Button text="Nový" prefWidth="210" prefHeight="47" onAction="#newEmptyTreeFXML" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button text="Načíst..." prefWidth="210" prefHeight="47" onAction="#load" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button text="Uložit..." prefWidth="210" prefHeight="40" onAction="#save" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button text="Uložit jako obrázek..." prefWidth="210" prefHeight="40" onAction="#savePicture" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button fx:id="btnExit" text="Ukončit" prefWidth="210" prefHeight="40" alignment="CENTER_LEFT" styleClass="tree-button" />
 		</VBox>
+		</VBox>		
 	</left>
 	<center>
 		<BorderPane>
@@ -63,7 +73,7 @@
 				<BorderPane fx:id="borderPaneTree">
 					<center>			
 					 	<ScrollPane fx:id="scrollPane" vbarPolicy="NEVER">
-							<Pane fx:id="paneTree" />							
+							<Pane fx:id="paneTree" styleClass="paneTree" />							
 						</ScrollPane>
 					</center>
 					<bottom>

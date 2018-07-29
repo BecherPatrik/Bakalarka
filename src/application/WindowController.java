@@ -1,6 +1,13 @@
 package application;
 
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,15 +17,20 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 import graphic.DrawingTree;
 import graphic.IGraphicNode;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -29,18 +41,25 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
+import javafx.scene.transform.Scale;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import trees.AVLTree;
 import trees.AnimatedAction;
 import trees.BinaryTree;
+import trees.Color;
 import trees.INode;
 import trees.ITree;
 import trees.RedBlackNode;
@@ -57,6 +76,8 @@ public class WindowController implements Initializable {
 	Button btnBinary;
 	private @FXML
 	Button btnTreesActual;
+	private @FXML 
+	Button btnExit;
 
 	private @FXML
 	Button btnSearch;
@@ -122,7 +143,8 @@ public class WindowController implements Initializable {
 		hideMenu();
 		numberOnly();
 		sliderFormat();
-		toolTips();			
+		toolTips();	
+		menuFormat();
 	}	
 
 	/**
@@ -261,6 +283,14 @@ public class WindowController implements Initializable {
 		btnRepeat.setTooltip(new Tooltip("Zopakuje poslední krok"));
 		sliderSpeed.setTooltip(new Tooltip("Nastavení rychlosti animace"));
 	}
+	
+	/**
+	 * Nastaví menu
+	 */
+	private void menuFormat() {
+		treesMenu.spacingProperty().bind(bpWindow.heightProperty().subtract(395));
+		btnExit.setOnAction(e -> Platform.exit());
+	}
 
 	/**
 	 * Funkce pro vkládání čísla
@@ -347,6 +377,111 @@ public class WindowController implements Initializable {
 		}		
 	}
 	
+	@FXML
+	private void newEmptyTreeFXML() {
+		listHistory.clear();
+	    newEmptyTree();
+	    hideMenu();
+	}
+	
+	@FXML
+	private void save() throws ClassNotFoundException {
+		FileChooser fileChooser = new FileChooser();
+
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("(*.tree)", "*.tree"));
+
+		File file = fileChooser.showSaveDialog(null);
+
+		if (!(file == null)) {
+			try {
+				FileOutputStream f = new FileOutputStream(file);
+				ObjectOutputStream o = new ObjectOutputStream(f);
+
+				//o.writeObject(btnTreesActual);
+				o.writeObject(listHistory);
+				o.writeObject(listHistoryColor);
+
+				o.flush();
+				f.flush();
+				
+				o.close();
+				f.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("File not found");
+			} catch (IOException e) {
+				System.out.println("Error initializing stream");
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@FXML private void load() {
+		FileChooser fileChooser = new FileChooser();
+
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("(*.tree)", "*.tree"));
+
+		File file = fileChooser.showOpenDialog(null);
+
+		if (!(file == null)) {
+			try {
+				FileInputStream fi = new FileInputStream(file);
+				ObjectInputStream oi = new ObjectInputStream(fi);
+				//btnTreesActual = (Button) oi.readObject();
+				listHistory =  (List<Integer>) oi.readObject();
+				listHistoryColor =  (List<Color>) oi.readObject();
+				
+				oi.close(); 
+				fi.close();
+
+			} catch (FileNotFoundException e) {
+				System.out.println("File not found");
+			} catch (IOException e) {
+				System.out.println("Error initializing stream");
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@FXML private void savePicture() {
+		SnapshotParameters snapshotParameters = new SnapshotParameters();
+		
+		//snapshotParameters.setTransform(new Scale(2, 2));
+		snapshotParameters.setFill(Paint.valueOf("#1d1d1d"));
+		
+		graphicTree.hideText();
+		WritableImage image = paneTree.snapshot(snapshotParameters, null);
+		PixelReader reader = image.getPixelReader();
+
+	    int startX = (int) graphicTree.getLeftX() - 1;
+	    int startY = 38;
+	    int endX =  (int) paneTree.getWidth();
+	    int endY = (int) paneTree.getHeight();
+	    
+
+	    image = new WritableImage(reader, startX, startY, endX - startX, endY - startY);
+		
+		graphicTree.showText();
+		
+		FileChooser fileChooser = new FileChooser();
+
+	    //Set extension filter
+	    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("(*.png)", "*.png"));
+
+	    //Prompt user to select a file
+	    File file = fileChooser.showSaveDialog(null);
+
+	    if (!(file == null)) {
+	    	try {
+	        	ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+	    	} catch (IOException e) {
+	        	// TODO: handle exception here
+	    	}
+	    }
+	    
+	    hideMenu();
+	}
 	/**
 	 * Vytvoření nového prázdného stromu
 	 */

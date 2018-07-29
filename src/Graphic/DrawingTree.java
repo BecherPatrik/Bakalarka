@@ -53,6 +53,8 @@ public class DrawingTree {
 	private DoubleProperty rootY = new SimpleDoubleProperty();
 	private DoubleProperty rootX = new SimpleDoubleProperty();	
 	
+	private double leftX = 0;
+	
 	private IGraphicNode newIGraphicNode;	
 	
 	//animation variable
@@ -173,6 +175,7 @@ public class DrawingTree {
 		paneTree.getChildren().add(newIGraphicNode.getStackPaneNode());
 		
 		listGraphicNodes.add(newIGraphicNode);
+		leftX = rootX.get();
 		
 		if (animationSpeed.get() == 0) { //žádná animace
 			newIGraphicNode.setY(rootY);
@@ -348,7 +351,7 @@ public class DrawingTree {
 	/**
 	 * Upraví vzdálenosti listů 
 	 */
-	private void balanceTree() {
+	private void balanceTree() {		
 		if (listGraphicNodes.isEmpty() || !isAnimation) {			
 			windowController.enableButtons();
 			return;
@@ -367,6 +370,7 @@ public class DrawingTree {
 			balanceIndex = 1;
 			checkBranches();
 			redraw();
+			checkLeftX();
 			return;
 		}
 		
@@ -2072,6 +2076,14 @@ public class DrawingTree {
 		text.setText(newText + "\n\n" + oldText);
 	}
 	
+	private void checkLeftX() {
+		for (IGraphicNode iGraphicNode : listGraphicNodes) {
+			if (iGraphicNode.getX().get() <= leftX) {
+				leftX = iGraphicNode.getX().get();
+			}
+		}
+	}
+	
 	/********************************************************************************************************
 	 * GETS & SETS
 	 * 
@@ -2096,5 +2108,9 @@ public class DrawingTree {
 
 	public void setInsertAnimation(boolean isInsertAnimation) {
 		this.isInsertAnimation = isInsertAnimation;
-	}	
+	}
+
+	public double getLeftX() {		
+		return leftX;
+	}
 }

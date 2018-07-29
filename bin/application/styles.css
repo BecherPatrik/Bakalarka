@@ -2,6 +2,10 @@
     -fx-background-color: #1d1d1d;
 }
 
+.paneTree {
+	-fx-background-color: #1d1d1d;
+}
+
 #menu {
     -fx-background-color: derive(#1d1d1d,20.0%);
 }
@@ -10,6 +14,14 @@
     -fx-font-size: 14.0pt;
     -fx-font-family: "Segoe UI Light";
     -fx-fill: white;
+}
+
+.menu-trees {
+	-fx-padding: 5.0 22.0 5.0 22.0;   
+    -fx-font-family: "Segoe UI";
+	-fx-font-size: 14.0pt;
+    -fx-text-fill: #d8d8d8; 
+    -fx-font-weight: bold;   
 }
 
 .tooltip {
