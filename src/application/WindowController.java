@@ -1,6 +1,5 @@
 package application;
 
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -41,7 +40,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
@@ -51,7 +49,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -74,6 +71,11 @@ public class WindowController implements Initializable {
 	Button btnTrees;
 	private @FXML
 	Button btnBinary;
+	private @FXML
+	Button btnAVL;
+	private @FXML
+	Button btnRedBlack;
+
 	private @FXML
 	Button btnTreesActual;
 	private @FXML 
@@ -115,8 +117,7 @@ public class WindowController implements Initializable {
 	private DrawingTree graphicTree;	
 	private List<IGraphicNode> listOldGraphicTreeNodes = new ArrayList<>();
 	
-	private final int maxTextLength = 4;
-	boolean isAnimationDisable = false;
+	private final int maxTextLength = 4;	
 	
 	private Result lastResult = null;
 	private AnimatedAction lastAction;
@@ -127,12 +128,15 @@ public class WindowController implements Initializable {
 	private List<trees.Color> listHistoryColor = new ArrayList<>();
 	private int lastValue;
 
-	private boolean isRedraw = false;
-	private int finishAnimation = 0;
-	private double oldSpeed;
+	private boolean isRedraw = false;	
 	private boolean randomTree = false;
 	private boolean isRedBlack = false;
+	private boolean isAnimationDisable = false;
+	private boolean isLoad = false;
 
+	private int finishAnimation = 0;
+	private double oldSpeed;
+	
 	/**
 	 * Inicializace okna
 	 */
@@ -360,7 +364,7 @@ public class WindowController implements Initializable {
 
 		ButtonType buttonTypeOne = new ButtonType("Smazat aktuální");
 		ButtonType buttonTypeTwo = new ButtonType("Nový náhodný...");		
-		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+		ButtonType buttonTypeCancel = new ButtonType("Zrušit", ButtonData.CANCEL_CLOSE);
 
 		alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
 
@@ -379,14 +383,19 @@ public class WindowController implements Initializable {
 	
 	@FXML
 	private void newEmptyTreeFXML() {
-		listHistory.clear();
-	    newEmptyTree();
-	    hideMenu();
+		if ((tree == null || tree.getRoot() == null)) {
+			hideMenu();
+		} else if (dialogChangeTreeNew()) {
+			listHistory.clear();
+	    	newEmptyTree();
+	    	hideMenu();
+		}
 	}
 	
 	@FXML
 	private void save() throws ClassNotFoundException {
 		FileChooser fileChooser = new FileChooser();
+		List<Integer> oldListHistory = listHistory;
 
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("(*.tree)", "*.tree"));
 
@@ -397,8 +406,12 @@ public class WindowController implements Initializable {
 				FileOutputStream f = new FileOutputStream(file);
 				ObjectOutputStream o = new ObjectOutputStream(f);
 
-				//o.writeObject(btnTreesActual);
+				o.writeObject(btnTreesActual.getId());
+				
+				createHistory();
 				o.writeObject(listHistory);
+				listHistory = oldListHistory;
+				
 				o.writeObject(listHistoryColor);
 
 				o.flush();
@@ -417,6 +430,8 @@ public class WindowController implements Initializable {
 	@SuppressWarnings("unchecked")
 	@FXML private void load() {
 		FileChooser fileChooser = new FileChooser();
+		String btnTreesActualString;
+		Button selectedButton = null;
 
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("(*.tree)", "*.tree"));
 
@@ -426,13 +441,84 @@ public class WindowController implements Initializable {
 			try {
 				FileInputStream fi = new FileInputStream(file);
 				ObjectInputStream oi = new ObjectInputStream(fi);
-				//btnTreesActual = (Button) oi.readObject();
+				
+				btnTreesActualString = (String) oi.readObject();
 				listHistory =  (List<Integer>) oi.readObject();
 				listHistoryColor =  (List<Color>) oi.readObject();
 				
 				oi.close(); 
-				fi.close();
+				fi.close();				
+				
+				switch (btnTreesActualString) {
+				case "btnBinary":
+					selectedButton = btnBinary;
+					break;
+					
+				case "btnAVL":
+					selectedButton = btnAVL;
+					break;
+					
+				case "btnRedBlack":
+					selectedButton = btnRedBlack;
+					break;
 
+				default:
+					break;
+				}
+				
+				if (tree == null || tree.getRoot() == null || dialogChangeTreeLoad()) {		
+					isLoad = true;
+					selectedButton.getStyleClass().clear();
+					selectedButton.getStyleClass().add("tree-button-focus");
+					
+					btnTreesActual.getStyleClass().clear();
+					btnTreesActual.getStyleClass().add("tree-button");			
+
+					primaryStage.setTitle("Stromy - " + selectedButton.getText());
+
+					btnTreesActual = selectedButton;
+					hideMenu();					
+					
+					oldSpeed = sliderSpeed.getValue();
+
+					newEmptyTree();
+
+					sliderSpeed.setValue(0);
+					finishAnimation = 0;
+					isRedraw  = true;
+					tree.disableBalance();
+					
+					int index = 1;
+					Result result;
+					RedBlackNode redBlackNode;
+					graphicTree.setInsertAnimation(false);
+					
+					if (!(listHistory.isEmpty())) {
+						graphicTree.hideText();
+						
+						tree.insert(listHistory.get(0));
+						graphicTree.insertRoot((INode)tree.getRoot());
+
+						for (int value : listHistory.subList(1, listHistory.size())) {
+							result = tree.insert(value);
+							graphicTree.insertNode(result, lastValue);
+							if (isRedBlack) {
+								redBlackNode = (RedBlackNode)result.getNode();
+								redBlackNode.setColor(listHistoryColor.get(index));
+								redBlackNode.getGraphicNode().setColor(listHistoryColor.get(index));
+								index++;
+							}
+						}
+						
+						graphicTree.setInsertAnimation(true);
+						
+						graphicTree.clearText();
+						graphicTree.showText();
+					}
+					
+					sliderSpeed.setValue(oldSpeed);	
+				}
+				
 			} catch (FileNotFoundException e) {
 				System.out.println("File not found");
 			} catch (IOException e) {
@@ -482,6 +568,7 @@ public class WindowController implements Initializable {
 	    
 	    hideMenu();
 	}
+	
 	/**
 	 * Vytvoření nového prázdného stromu
 	 */
@@ -659,13 +746,48 @@ public class WindowController implements Initializable {
 	 * @return
 	 */
 	private boolean dialogChangeTree() {		
-		Alert alert = new Alert(AlertType.CONFIRMATION);
+		ButtonType b1 = new ButtonType("Ok", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+		ButtonType b2 = new ButtonType("Zrušit", javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE);
+		
+		Alert alert = new Alert(AlertType.CONFIRMATION,"", b1, b2);
 		alert.setTitle("Změna typu stromu");
 		alert.setHeaderText("Změnou typu stromu bude smazán aktuální strom.");		
 
 		Optional<ButtonType> result = alert.showAndWait();
 		
-		if (result.get() == ButtonType.OK){
+		if (result.get() == b1){
+		    return true;
+		}
+		return false;
+	}
+	
+	private boolean dialogChangeTreeLoad() {		
+		ButtonType b1 = new ButtonType("Ok", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+		ButtonType b2 = new ButtonType("Zrušit", javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE);
+		
+		Alert alert = new Alert(AlertType.CONFIRMATION,"", b1, b2);
+		alert.setTitle("Načtení stromu");			
+		alert.setHeaderText("Načtením stromu bude smazán aktuální strom.");
+		
+		Optional<ButtonType> result = alert.showAndWait();
+		
+		if (result.get() == b1){
+		    return true;
+		}
+		return false;
+	}
+	
+	private boolean dialogChangeTreeNew() {		
+		ButtonType b1 = new ButtonType("Ano", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+		ButtonType b2 = new ButtonType("Zrušit", javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE);
+		
+		Alert alert = new Alert(AlertType.CONFIRMATION,"", b1, b2);
+		alert.setTitle("Nový strom");			
+		alert.setHeaderText("Smazat aktuální strom?");
+		
+		Optional<ButtonType> result = alert.showAndWait();
+		
+		if (result.get() == b1){
 		    return true;
 		}
 		return false;
@@ -675,7 +797,9 @@ public class WindowController implements Initializable {
 	 * Vytvoří historii pro animace
 	 */
 	private void createHistory() {
-		lastValue = Integer.parseInt(inputNumber.getText());
+		if (!(inputNumber.getText().isEmpty())) {
+			lastValue = Integer.parseInt(inputNumber.getText());
+		}
 		listHistory.clear();
 		listHistoryColor.clear();
 		createHistoryRecursion(tree.getRoot());
@@ -902,7 +1026,18 @@ public class WindowController implements Initializable {
 	public void enableButtons() {		
 		if (isRedraw) {
 			if (++finishAnimation == listHistory.size()) {
-				repeatLastAction();
+				if (isLoad) {
+					isRedraw = false;
+					sliderSpeed.setValue(oldSpeed);
+					listHistory.clear();
+					lastAction = null;
+					graphicTree.clearText();
+					tree.enableBalance();
+					isLoad = false;	
+					enableButtons();
+				} else {				
+					repeatLastAction();
+				}
 			}			
 			return;
 		}
@@ -921,6 +1056,9 @@ public class WindowController implements Initializable {
 		checkEnableButtons();
 		
 		btnTrees.setDisable(false);
+		if (bpWindow.getLeft() != null) {
+			bpWindow.getLeft().setDisable(false);
+		}
 		btnNewTree.setDisable(false);		
 		
 		sliderSpeed.setDisable(false);		
@@ -942,6 +1080,9 @@ public class WindowController implements Initializable {
 		btnRepeat.setDisable(true);		
 		
 		btnTrees.setDisable(true);
+		if (bpWindow.getLeft() != null) {
+			bpWindow.getLeft().setDisable(true);
+		}
 		btnNewTree.setDisable(true);
 		
 		sliderSpeed.setDisable(true);
