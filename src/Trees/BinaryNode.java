@@ -51,12 +51,14 @@ public class BinaryNode implements INode {
 		left = (BinaryNode) node.getLeft();
 		
 		node.getGraphicNode().setSide(graphicNode.getSide()); //před změnou musím uložit aktuální stranu node
-		graphicNode.setLeft(node.getGraphicNode().getLeft());
-		graphicNode.setRight(node.getGraphicNode().getRight());
+		
 		
 		if (right != null || left != null) {
 			graphicNode = (BinaryGraphicNode) node.getGraphicNode(); //změním graphicNode
 		}
+		
+		graphicNode.setLeft(node.getGraphicNode().getLeft());
+		graphicNode.setRight(node.getGraphicNode().getRight());
 		
 		if (parent != null) {
 			graphicNode.setParent(parent.getGraphicNode());

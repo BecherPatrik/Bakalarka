@@ -40,7 +40,7 @@
 			<Button text="Nový" prefWidth="210" prefHeight="47" onAction="#newEmptyTreeFXML" alignment="CENTER_LEFT" styleClass="tree-button" />
 			<Button text="Načíst..." prefWidth="210" prefHeight="47" onAction="#load" alignment="CENTER_LEFT" styleClass="tree-button" />
 			<Button text="Uložit..." prefWidth="210" prefHeight="40" onAction="#save" alignment="CENTER_LEFT" styleClass="tree-button" />
-			<Button text="Uložit jako obrázek..." prefWidth="210" prefHeight="40" onAction="#savePicture" alignment="CENTER_LEFT" styleClass="tree-button" />
+			<Button text="Exportovat jako obrázek..." prefWidth="210" prefHeight="40" onAction="#savePicture" alignment="CENTER_LEFT" styleClass="tree-button" />
 			<Button fx:id="btnExit" text="Ukončit" prefWidth="210" prefHeight="40" alignment="CENTER_LEFT" styleClass="tree-button" />
 		</VBox>
 		</VBox>		
@@ -72,7 +72,7 @@
 			<center>
 				<BorderPane fx:id="borderPaneTree">
 					<center>			
-					 	<ScrollPane fx:id="scrollPane" vbarPolicy="NEVER">
+					 	<ScrollPane fx:id="scrollPane" vbarPolicy="AS_NEEDED">
 							<Pane fx:id="paneTree" styleClass="paneTree" />							
 						</ScrollPane>
 					</center>

@@ -38,7 +38,7 @@ public class BinaryTree implements ITree {
         Side side = result.getSide(); //zjistím směr
         removedNode = (BinaryNode) result.getNode();
 
-        if (side != Side.NONE) {  //pokud ho nenajdu TODO
+        if (side != Side.NONE) {  
             return result;
         }
 

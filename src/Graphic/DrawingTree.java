@@ -54,6 +54,7 @@ public class DrawingTree {
 	private DoubleProperty rootX = new SimpleDoubleProperty();	
 	
 	private double leftX = 0;
+	private double leftPadding = 0;
 	
 	private IGraphicNode newIGraphicNode;	
 	
@@ -78,6 +79,7 @@ public class DrawingTree {
 	private boolean isMoveNode = false;
 	private boolean isAnimation = true;	
 	private boolean isInsertAnimation = true;	
+	private boolean isResize = false;
 	
 	private DoubleProperty xAnimatedNode = new SimpleDoubleProperty();
 	private DoubleProperty yAnimatedNode = new SimpleDoubleProperty();
@@ -103,7 +105,7 @@ public class DrawingTree {
 		text.setMaxHeight(105);
 		text.setEditable(false);		
 		text.setFont(new Font(text.getFont().toString(), 15));
-		text.layoutXProperty().bind(stageWidthProperty.subtract(300));	
+		text.layoutXProperty().bind(stageWidthProperty.subtract(298));	
 		
 		text.setStyle( "-fx-border-style: solid;" + 
                  "-fx-border-width: 5;" +
@@ -135,11 +137,12 @@ public class DrawingTree {
 			double offsetY = t.getSceneY() - orgSceneY;
 			double newTranslateX = orgTranslateX + offsetX;
 			double newTranslateY = orgTranslateY + offsetY;
+			double realWidth = paneTree.getWidth() - paneTreeWeight.get() + 18;
 			
-			if (newTranslateX >= 3) {
-				((TextArea) (t.getSource())).setTranslateX(2);
-			} else if (newTranslateX <= 300 - paneTreeWeight.get()) {
-				((TextArea) (t.getSource())).setTranslateX(299 - paneTreeWeight.get() + 1);
+			if (newTranslateX >= (0 > realWidth ? 0 : realWidth)) {
+				((TextArea) (t.getSource())).setTranslateX((0 > realWidth ? 0 : realWidth));
+			} else if (newTranslateX <= 298 - paneTreeWeight.get()) {
+				((TextArea) (t.getSource())).setTranslateX(298 - paneTreeWeight.get());
 			} else {
 				((TextArea) (t.getSource())).setTranslateX(newTranslateX);
 			}
@@ -164,7 +167,7 @@ public class DrawingTree {
 		stackPaneHeight = newIGraphicNode.getStackPaneNode().getPrefHeight();
 		
 		rootY.bind(new SimpleDoubleProperty(ROOTBORDER));	
-		rootX.bind(paneTreeWeight.subtract(31).divide(2.0));	
+		rootX.bind(paneTreeWeight.subtract(31).divide(2.0).add(leftPadding));	
 		
 		DoubleProperty startNodeX = new SimpleDoubleProperty();	
 		DoubleProperty startNodeY = new SimpleDoubleProperty();	
@@ -369,8 +372,8 @@ public class DrawingTree {
 		if (listGraphicNodes.size() == balanceIndex) {
 			balanceIndex = 1;
 			checkBranches();
-			redraw();
 			checkLeftX();
+			redraw();			
 			return;
 		}
 		
@@ -518,7 +521,7 @@ public class DrawingTree {
 		
 		IGraphicNode root = listGraphicNodes.get(0);
 		rootY.bind(new SimpleDoubleProperty(ROOTBORDER));		
-		rootX.bind(paneTreeWeight.subtract(31).divide(2.0));	
+		rootX.bind(paneTreeWeight.subtract(31).divide(2.0).add(leftPadding));	
 		
 		root.countChildren();
 		
@@ -596,6 +599,10 @@ public class DrawingTree {
 			
 			nullNode.setBranchEndX(xAnimatedBranch);
 			nullNode.setBranchEndY(yAnimatedBranch);
+		}
+		
+		if (isResize) {
+			return;
 		}
 		
 		if (animationIndex >= recordOfAnimations.size()) {
@@ -2077,10 +2084,28 @@ public class DrawingTree {
 	}
 	
 	private void checkLeftX() {
+		isResize = false;
+		leftX = 1000;
 		for (IGraphicNode iGraphicNode : listGraphicNodes) {
 			if (iGraphicNode.getX().get() <= leftX) {
 				leftX = iGraphicNode.getX().get();
 			}
+		}
+		
+		if (leftX < 0) {
+			isResize = true;
+			leftPadding -= leftX;
+			redraw();
+			checkLeftX();			
+		} else if(leftX > 0 && leftPadding > 0) {
+			leftPadding -= leftX;
+			if (leftPadding < 0) {
+				leftPadding = 0;
+			}
+			
+			isResize = true;			
+			redraw();
+			checkLeftX();
 		}
 	}
 	

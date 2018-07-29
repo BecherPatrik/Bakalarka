@@ -52,13 +52,14 @@ public class RedBlackNode implements INode {
 		right = (RedBlackNode) node.getRight();
 		left = (RedBlackNode) node.getLeft();
 		
-		node.getGraphicNode().setSide(graphicNode.getSide()); //před změnou musím uložit aktuální stranu node
-		graphicNode.setLeft(node.getGraphicNode().getLeft());
-		graphicNode.setRight(node.getGraphicNode().getRight());
+		node.getGraphicNode().setSide(graphicNode.getSide()); //před změnou musím uložit aktuální stranu node		
 		
 		if (right != null || left != null) {
 			graphicNode = (RedBlackGraphicNode) node.getGraphicNode(); //změním graphicNode
 		}
+		
+		graphicNode.setLeft(node.getGraphicNode().getLeft());
+		graphicNode.setRight(node.getGraphicNode().getRight());
 		
 		if (parent != null) {
 			graphicNode.setParent(parent.getGraphicNode());
