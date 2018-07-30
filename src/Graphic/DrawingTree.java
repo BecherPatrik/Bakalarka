@@ -99,13 +99,23 @@ public class DrawingTree {
 		this.animationSpeed = animationSpeed;
 		this.windowController = windowController;
 		
+		createTextArea();
 		//Přidá text
+		
+		
+		paneTree.getChildren().add(text);
+	}
+	
+	/**
+	 * Nastaví textArea
+	 */
+	private void createTextArea() {
 		text = new TextArea("");		
 		text.setMaxWidth(280);
 		text.setMaxHeight(105);
 		text.setEditable(false);		
 		text.setFont(new Font(text.getFont().toString(), 15));
-		text.layoutXProperty().bind(stageWidthProperty.subtract(298));	
+		text.layoutXProperty().bind(paneTreeWeight.subtract(298));	
 		
 		text.setStyle( "-fx-border-style: solid;" + 
                  "-fx-border-width: 5;" +
@@ -115,11 +125,12 @@ public class DrawingTree {
 
 		text.addEventFilter(MouseEvent.MOUSE_PRESSED, textPressedEventHandler);
 		
-		text.setOnMouseDragged(textDraggedEventHandler);
-		
-		paneTree.getChildren().add(text);
+		text.setOnMouseDragged(textDraggedEventHandler);		
 	}
-	
+
+	/**
+	 * MouseEvent pro chytnutí textu
+	 */
 	EventHandler<MouseEvent> textPressedEventHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent t) {
@@ -130,6 +141,9 @@ public class DrawingTree {
 		}
 	};
 
+	/**
+	 * MouseEvent pro chytnutí textu
+	 */
 	EventHandler<MouseEvent> textDraggedEventHandler = new EventHandler<MouseEvent>() {
 		@Override
 		public void handle(MouseEvent t) {
@@ -2083,6 +2097,9 @@ public class DrawingTree {
 		text.setText(newText + "\n\n" + oldText);
 	}
 	
+	/**
+	 * Funkce ověří jak je strom zobrazen... případně ho posune
+	 */
 	private void checkLeftX() {
 		isResize = false;
 		leftX = 1000;

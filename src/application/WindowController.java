@@ -346,6 +346,9 @@ public class WindowController implements Initializable {
 		graphicTree.deleteNode(lastResult, lastValue);	
 	}
 	
+	/**
+	 * Funkce na testování
+	 */
 	@FXML 
 	private void dialogNewTree0() {
 		newRandomTree();
@@ -380,6 +383,9 @@ public class WindowController implements Initializable {
 		}		
 	}
 	
+	/**
+	 * Nový strom z menu 
+	 */
 	@FXML
 	private void newEmptyTreeFXML() {
 		if ((tree == null || tree.getRoot() == null)) {
@@ -391,6 +397,10 @@ public class WindowController implements Initializable {
 		}
 	}
 	
+	/**
+	 * Fuknce Uložit... volaná z menu
+	 * @throws ClassNotFoundException
+	 */
 	@FXML
 	private void save() throws ClassNotFoundException {
 		FileChooser fileChooser = new FileChooser();
@@ -427,6 +437,9 @@ public class WindowController implements Initializable {
 		}
 	}
 	
+	/**
+	 * Funkce načíst volaná z menu
+	 */
 	@SuppressWarnings("unchecked")
 	@FXML private void load() {
 		FileChooser fileChooser = new FileChooser();
@@ -528,6 +541,9 @@ public class WindowController implements Initializable {
 		}
 	}
 	
+	/**
+	 * Funkce pro ukládání obrázku v png
+	 */
 	@FXML private void savePicture() {
 		SnapshotParameters snapshotParameters = new SnapshotParameters();
 		
@@ -541,8 +557,7 @@ public class WindowController implements Initializable {
 	    int startX = (int) graphicTree.getLeftX() - 1;
 	    int startY = 38;
 	    int endX =  (int) paneTree.getWidth();
-	    int endY = (int) paneTree.getHeight();
-	    
+	    int endY = (int) paneTree.getHeight();	    
 
 	    image = new WritableImage(reader, startX, startY, endX - startX, endY - startY);
 		
@@ -559,8 +574,11 @@ public class WindowController implements Initializable {
 	    if (!(file == null)) {
 	    	try {
 	        	ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
-	    	} catch (IOException e) {
-	        	// TODO: handle exception here
+	    	} catch (Exception e) {
+	    		Alert alert = new Alert(AlertType.ERROR, "Podrobnosti: "+ e.getMessage());
+				alert.setTitle("Chyba");			
+				alert.setHeaderText("Při exportování obrázku došlo k chybě.");
+				alert.showAndWait();
 	    	}
 	    }
 	    
@@ -604,6 +622,9 @@ public class WindowController implements Initializable {
 		}		
 	}	
 	
+	/**
+	 * Funkce pro testování
+	 */
 	@SuppressWarnings("unused")
 	private void newRandomTree0() {
 		double oldSpeed = sliderSpeed.getValue();
@@ -761,6 +782,10 @@ public class WindowController implements Initializable {
 		return false;
 	}
 	
+	/**
+	 * Dialog pro změnu stromu načteným
+	 * @return
+	 */
 	private boolean dialogChangeTreeLoad() {		
 		ButtonType b1 = new ButtonType("Ok", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
 		ButtonType b2 = new ButtonType("Zrušit", javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -777,6 +802,10 @@ public class WindowController implements Initializable {
 		return false;
 	}
 	
+	/**
+	 * Dialog pro Nový z menu
+	 * @return
+	 */
 	private boolean dialogChangeTreeNew() {		
 		ButtonType b1 = new ButtonType("Ano", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
 		ButtonType b2 = new ButtonType("Zrušit", javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -805,26 +834,11 @@ public class WindowController implements Initializable {
 		createHistoryRecursion(tree.getRoot());
 	}
 	
-	private void createHistoryRecursion(Object object) {
-		/*int[] pole = {847,255,497,278,671,7,2,48,896,878,972};
-		
-		for(int i=0; i<pole.length;i++) {
-			listHistory.add(pole[i]);
-			
-		}
-		
-		listHistoryColor.add(Color.BLACK);
-		listHistoryColor.add(Color.RED);
-		listHistoryColor.add(Color.BLACK);
-		listHistoryColor.add(Color.BLACK);
-		listHistoryColor.add(Color.BLACK);
-		listHistoryColor.add(Color.BLACK);
-		listHistoryColor.add(Color.BLACK);
-		listHistoryColor.add(Color.BLACK);
-		listHistoryColor.add(Color.BLACK);
-		listHistoryColor.add(Color.BLACK);
-		listHistoryColor.add(Color.BLACK);*/		
-		
+	/**
+	 * Rekuzre pro tvorbu historie
+	 * @param object
+	 */
+	private void createHistoryRecursion(Object object) {		
 		INode node = (INode) object;
 		if (node != null) {
 			listHistory.add(node.getValue());
@@ -942,56 +956,6 @@ public class WindowController implements Initializable {
 			break;
 		}		
 	}	
-
-	/**
-	 * Zopakuje poslední animaci
-	 */
-	@FXML
-	private void repeatLastAnimation2() {		
-		disableButtons();		
-		updatePaneTree();
-		
-		graphicTree.setRedraw(); //zapnu vynucené překreslování
-		disableButtons();
-		
-		switch (lastAction) {
-		case INSERT:			
-			if (lastResult != null) {
-				graphicTree.insertNode(lastResult, lastValue);			
-			} else {
-				graphicTree.insertRoot((INode)tree.getRoot());
-			}
-			break;
-
-		case DELETE:			
-			graphicTree.deleteNode(lastResult, lastValue);
-			break;
-
-		case SEARCH:
-			graphicTree.searchNode(lastResult, lastValue);
-			break;
-
-		default:
-			break;
-		}
-	}
-	
-	private void updatePaneTree() {		
-		graphicTree.setListGraphicNodes(listOldGraphicTreeNodes);		
-
-		paneTree.getChildren().clear();
-
-		for (IGraphicNode node : graphicTree.getListGraphicNodes()) {
-			paneTree.getChildren().add(node.getStackPaneNode());			
-
-			if (node.getBranch() != null) {
-				paneTree.getChildren().add(node.getBranch());
-				node.getParent().getStackPaneNode().toFront();
-				node.getStackPaneNode().toFront();
-			}
-		}
-		graphicTree.clearText();
-	}
 	
 	/**
 	 * Povoluje a ruší povolení používání tlačítek podle možností co se s daným stromem dá dělat
@@ -1089,6 +1053,9 @@ public class WindowController implements Initializable {
 		inputNumber.setDisable(true);
 	}
 	
+	/**
+	 * Výpis stromu (pro testování)
+	 */
 	@SuppressWarnings("unused")
 	private void treeLog() {
 		paneTree.getChildren().forEach(x-> System.out.println(x));
