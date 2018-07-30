@@ -2,7 +2,6 @@ package application;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -419,11 +418,12 @@ public class WindowController implements Initializable {
 				
 				o.close();
 				f.close();
-			} catch (FileNotFoundException e) {
-				System.out.println("File not found");
-			} catch (IOException e) {
-				System.out.println("Error initializing stream");
-			}
+			} catch (Exception e) {
+				Alert alert = new Alert(AlertType.ERROR, "Podrobnosti: "+ e.getMessage());
+				alert.setTitle("Chyba");			
+				alert.setHeaderText("Při ukládání došlo k chybě.");
+				alert.showAndWait();
+			} 
 		}
 	}
 	
@@ -467,12 +467,12 @@ public class WindowController implements Initializable {
 				}
 				
 				if (tree == null || tree.getRoot() == null || dialogChangeTreeLoad()) {		
-					isLoad = true;
+					isLoad = true;					
+					btnTreesActual.getStyleClass().clear();
+					btnTreesActual.getStyleClass().add("tree-button");	
+					
 					selectedButton.getStyleClass().clear();
 					selectedButton.getStyleClass().add("tree-button-focus");
-					
-					btnTreesActual.getStyleClass().clear();
-					btnTreesActual.getStyleClass().add("tree-button");			
 
 					primaryStage.setTitle("Stromy - " + selectedButton.getText());
 
@@ -519,13 +519,11 @@ public class WindowController implements Initializable {
 					sliderSpeed.setValue(oldSpeed);	
 				}
 				
-			} catch (FileNotFoundException e) {
-				System.out.println("File not found");
-			} catch (IOException e) {
-				System.out.println("Error initializing stream");
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (Exception e) {
+				Alert alert = new Alert(AlertType.ERROR, "Podrobnosti: "+ e.getMessage());
+				alert.setTitle("Chyba");			
+				alert.setHeaderText("Při načítání došlo k chybě.");
+				alert.showAndWait();
 			}
 		}
 	}
@@ -709,6 +707,8 @@ public class WindowController implements Initializable {
 	 */
 	private int dialogRandomTree() {		
 		TextInputDialog dialog = new TextInputDialog("10");
+		((Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL)).setText("Zrušit");
+		
 		dialog.getEditor().textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
